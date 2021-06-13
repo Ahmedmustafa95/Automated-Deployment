@@ -18,7 +18,13 @@ namespace AutomatedDeployment.Api
         public string AssemblyPath { get; set; }
         public string ConfigurationPath { get; set; }
         [StringLength(50)]
-        public string User { get; set; }
+        public string DeployedBy { get; set; }
+        
+        [StringLength(50)]
+        public string RequestedBy { get; set; }
+        [StringLength(50)]
+        public string ApprovedBy { get; set; }
+     
         public string BackupPath { get; set; }
 
         [ForeignKey(nameof(AppID))]
