@@ -1,41 +1,40 @@
 ﻿using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using System;
 using System.IO;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace AutomatedDeployment.Api.Services
 {
-    public class ReplaceService : IReplaceService
+    public class ReplaceServices:IReplaceServices
     {
-
         FileStream stream;
-        public  void Upload(List<IFormFile> files,string path)
+        public void Upload(List<IFormFile> files, string path)
         {
             string dir = path;
             if (!Directory.Exists(dir))
             {
                 Directory.CreateDirectory(dir);
-            }       
+            }
             foreach (var formFile in files)
             {
-          
+
                 var filePath = Path.GetFullPath(dir + formFile.FileName);
 
-                    // full path to file in temp location
-                    //var filePath = Path.GetTempFileName(); //we are using Temp file name just for the example. Add your own file path.
-                    // filePaths.Add(filePath);
-                    using (stream = new FileStream(filePath, FileMode.Create))
-                    {
+                // full path to file in temp location
+                //var filePath = Path.GetTempFileName(); //we are using Temp file name just for the example. Add your own file path.
+                // filePaths.Add(filePath);
+                using (stream = new FileStream(filePath, FileMode.Create))
+                {
 
-                         formFile.CopyTo(stream);
-                    }
+                    formFile.CopyTo(stream);
+                }
 
 
             }
-          
+
         }
 
 
@@ -51,8 +50,4 @@ namespace AutomatedDeployment.Api.Services
         //            }
         //}
     }
-
-
-    
 }
-    

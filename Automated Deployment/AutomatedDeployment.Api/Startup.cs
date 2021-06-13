@@ -1,4 +1,6 @@
 using AutomatedDeployment.Api.Services;
+using AutomatedDeployment.Core;
+using AutomatedDeployment.Infrastructure;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -28,11 +30,11 @@ namespace AutomatedDeployment.Api
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddDbContext<EfgconfigurationdbContext>(options => options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
+            services.AddInfrastructure(Configuration);
+            services.AddServices();
             services.AddScoped<IPathRepository,PathRepository>();
-            services.AddScoped<IReplaceService, ReplaceService>();
-            services.AddControllers();
-            services.AddDbContext<EfgconfigurationdbContext>(o => o.UseSqlServer(Configuration.GetConnectionString("MyDataBaseConnection")));
+            services.AddScoped<IReplaceServices, ReplaceServices>();
+            services.AddControllers().AddNewtonsoftJson(x => x.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "AutomatedDeployment.Api", Version = "v1" });
@@ -46,7 +48,8 @@ namespace AutomatedDeployment.Api
             {
                 app.UseDeveloperExceptionPage();
                 app.UseSwagger();
-                app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "AutomatedDeployment.Api v1"));
+                app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json","AutomatedDeployment.Api v1"));
+
             }
 
             app.UseHttpsRedirection();

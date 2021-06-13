@@ -15,19 +15,19 @@ namespace AutomatedDeployment.Api.Controllers
     public class Backup : ControllerBase
     {
 
-        [HttpGet]
-        public IActionResult GetAssemblyFolder(int HubId = 1, int ApplicationID = 1)
-        {
-            var _context = new EfgconfigurationdbContext();
+        //[HttpGet]
+        //public IActionResult GetAssemblyFolder(int HubId = 1, int ApplicationID = 1)
+        //{
+        //    var _context = new EfgconfigurationdbContext();
 
-            var assemblyPath = _context.Configurations.Where(c => c.HubID == HubId && c.AppID == ApplicationID).Select(c => c.AssemblyPath).SingleOrDefault();
-            OpenAssemblyFolder(assemblyPath);
-            return Ok();
+        //    var assemblyPath = _context.Configurations.Where(c => c.HubID == HubId && c.AppID == ApplicationID).Select(c => c.AssemblyPath).SingleOrDefault();
+        //    OpenAssemblyFolder(assemblyPath);
+        //    return Ok();
 
-        }
+        //}
 
 
-       
+       [HttpGet]
         public IActionResult OpenAssemblyFolder(string assemblyPath)
         {    
             if (Directory.Exists(assemblyPath))

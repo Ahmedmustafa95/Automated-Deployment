@@ -1,8 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore.Migrations;
 
-namespace AutomatedDeployment.Api.Migrations
+namespace AutomatedDeployment.Infrastructure.Migrations
 {
-    public partial class initial : Migration
+    public partial class Intial : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -38,7 +38,9 @@ namespace AutomatedDeployment.Api.Migrations
                     AppID = table.Column<int>(type: "int", nullable: false),
                     AssemblyPath = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     ConfigurationPath = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    User = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true),
+                    DeployedBy = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true),
+                    RequestedBy = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true),
+                    ApprovedBy = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true),
                     BackupPath = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>

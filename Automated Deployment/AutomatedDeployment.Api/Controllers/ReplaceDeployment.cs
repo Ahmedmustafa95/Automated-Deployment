@@ -12,13 +12,14 @@ namespace AutomatedDeployment.Api.Controllers
     [ApiController]
     public class ReplaceDeployment : ControllerBase
     {
-        private readonly IReplaceService replaceService;
+        private readonly IReplaceServices replaceService;
         private readonly IPathRepository pathRepository;
-        public ReplaceDeployment(IReplaceService _replaceService, IPathRepository _pathRepository)
+        public ReplaceDeployment(IReplaceServices _replaceService, IPathRepository _pathRepository)
         {
             replaceService = _replaceService;
             pathRepository = _pathRepository;
         }
+
         [HttpGet]
         public IActionResult Get()
         {
