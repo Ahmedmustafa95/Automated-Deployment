@@ -1,3 +1,4 @@
+using AutomatedDeployment.Api.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -27,7 +28,9 @@ namespace AutomatedDeployment.Api
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-
+            services.AddDbContext<EfgconfigurationdbContext>(options => options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
+            services.AddScoped<IPathRepository,PathRepository>();
+            services.AddScoped<IReplaceService, ReplaceService>();
             services.AddControllers();
             services.AddDbContext<EfgconfigurationdbContext>(o => o.UseSqlServer(Configuration.GetConnectionString("MyDataBaseConnection")));
             services.AddSwaggerGen(c =>
