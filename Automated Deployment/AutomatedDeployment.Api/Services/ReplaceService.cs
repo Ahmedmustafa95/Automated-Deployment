@@ -12,17 +12,17 @@ namespace AutomatedDeployment.Api.Services
     {
 
         FileStream stream;
-        public async void Upload(List<IFormFile> files)
+        public  void Upload(List<IFormFile> files,string path)
         {
-
-            //long size = files.Sum(f => f.Length);
-           
-            //  var filePaths = new List<string>();
+            string dir = path;
+            if (!Directory.Exists(dir))
+            {
+                Directory.CreateDirectory(dir);
+            }       
             foreach (var formFile in files)
             {
-                if (formFile.Length > 0)
-                {
-                    var filePath = Path.GetFullPath(@"F:\iti\repositories\trying\" + formFile.FileName);
+          
+                var filePath = Path.GetFullPath(dir + formFile.FileName);
 
                     // full path to file in temp location
                     //var filePath = Path.GetTempFileName(); //we are using Temp file name just for the example. Add your own file path.
@@ -30,11 +30,10 @@ namespace AutomatedDeployment.Api.Services
                     using (stream = new FileStream(filePath, FileMode.Create))
                     {
 
-                        await formFile.CopyToAsync(stream);
+                         formFile.CopyTo(stream);
                     }
 
 
-                }
             }
           
         }

@@ -8,26 +8,36 @@ using System.Threading.Tasks;
 
 namespace AutomatedDeployment.Api.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/[controller]/{hubid}/{applicationid}")]
     [ApiController]
     public class ReplaceDeployment : ControllerBase
     {
         private readonly IReplaceService replaceService;
-        public ReplaceDeployment(IReplaceService _replaceService)
+        private readonly IPathRepository pathRepository;
+        public ReplaceDeployment(IReplaceService _replaceService, IPathRepository _pathRepository)
         {
             replaceService = _replaceService;
+            pathRepository = _pathRepository;
         }
         [HttpGet]
         public IActionResult Get()
         {
+
             return Ok("File Upload API running...");
+
         }
 
         [HttpPost]
+     
         [Route("upload")]
-        public IActionResult Upload(List<IFormFile> files)
+        public IActionResult Upload(List<IFormFile> files,int hubid,int applicationid)
         {
-            replaceService.Upload(files);
+            string assembpath = pathRepository.GetConficPath(hubid,applicationid);
+           if(assembpath==null)
+            {
+                return NotFound();
+            }
+            replaceService.Upload(files,assembpath);
 
             return Ok();
         }
