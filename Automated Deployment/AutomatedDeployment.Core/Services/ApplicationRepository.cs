@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 
 namespace AutomatedDeployment.Core.Services
 {
@@ -17,30 +18,81 @@ namespace AutomatedDeployment.Core.Services
         {
             this._efgconfigurationdbContext = efgconfigurationdbContext;
         }
-        public Application Add(Application entity)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Application Delete(int id)
-        {
-            throw new NotImplementedException();
-        }
-
         public IReadOnlyList<Application> GetAll()
         {
-            var Apps = _efgconfigurationdbContext.Applications.ToList();
-            return Apps;
+            return _efgconfigurationdbContext.Applications.ToList();
         }
 
         public Application GetById(int id)
         {
-            throw new NotImplementedException();
+            try
+            {
+                var application = _efgconfigurationdbContext.Applications.Find(id);
+                return application;
+            }
+            catch (Exception)
+            {
+                return null;
+            }
         }
+        public Application Add(Application entity)
+        {
+
+            if (entity is Application)
+            {
+                _efgconfigurationdbContext.Add(entity);
+                try
+                {
+                    _efgconfigurationdbContext.SaveChanges();
+                    return entity;
+                }
+                catch (Exception)
+                {
+                    return null;
+                }
+            }
+            else
+                return null;
+
+        }
+
+        public Application Delete(int id)
+        {
+            try
+            {
+                var application = _efgconfigurationdbContext.Applications.Find(id);
+                _efgconfigurationdbContext.Applications.Remove(application);
+                _efgconfigurationdbContext.SaveChanges();
+                return application;
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+        }
+
+
 
         public Application Update(Application entity)
         {
-            throw new NotImplementedException();
+            if (entity is Application && entity != null)
+            {
+                try
+                {
+
+                    _efgconfigurationdbContext.Entry(entity).State = EntityState.Modified;
+                    _efgconfigurationdbContext.SaveChanges();
+                    return entity;
+                }
+                catch (Exception)
+                {
+                    return null;
+                }
+            }
+            else
+                return null;
+
+
         }
     }
 }

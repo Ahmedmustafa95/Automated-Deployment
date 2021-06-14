@@ -88,8 +88,11 @@ namespace AutomatedDeployment.Api.Controllers
         {
             try
             {
-                hubRepository.Delete(id);
-                return Ok();
+              var hub = hubRepository.Delete(id);
+                if (hub != null)
+                    return Ok();
+                else
+                    return NotFound();
             }catch(Exception)
             {
                 return NotFound();
