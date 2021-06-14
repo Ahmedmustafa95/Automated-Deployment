@@ -1,3 +1,4 @@
+using AutomatedDeployment.Api.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -28,6 +29,7 @@ namespace AutomatedDeployment.Api
         {
 
             services.AddControllers();
+            services.AddScoped<IReplaceService, ReplaceService>();
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "AutomatedDeployment.Api", Version = "v1" });
