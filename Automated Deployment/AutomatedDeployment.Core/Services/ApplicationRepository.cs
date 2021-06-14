@@ -29,7 +29,8 @@ namespace AutomatedDeployment.Core.Services
 
         public IReadOnlyList<Application> GetAll()
         {
-            throw new NotImplementedException();
+            var Apps = _efgconfigurationdbContext.Applications.ToList();
+            return Apps;
         }
 
         public Application GetById(int id)

@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Web.Http.ModelBinding;
 
 namespace AutomatedDeployment.Core.Services
 {
@@ -20,6 +21,18 @@ namespace AutomatedDeployment.Core.Services
         public Hub Add(Hub entity)
         {
             throw new NotImplementedException();
+            //if (entity is Hub)
+            //{
+            //    _efgconfigurationdbContext.Add(entity);
+            //    try
+            //    {
+            //        _efgconfigurationdbContext.SaveChanges();
+            //    }
+            //    catch (Exception)
+            //    {
+
+            //    }
+            //}
         }
 
         public Hub Delete(int id)
@@ -29,7 +42,7 @@ namespace AutomatedDeployment.Core.Services
 
         public IReadOnlyList<Hub> GetAll()
         {
-            throw new NotImplementedException();
+            return _efgconfigurationdbContext.Hubs.ToList();
         }
 
         public Hub GetById(int id)

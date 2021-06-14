@@ -6,7 +6,7 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Diagnostics;
-
+using AutomatedDeployment.Api.Services;
 
 namespace AutomatedDeployment.Api.Controllers
 {
@@ -14,20 +14,34 @@ namespace AutomatedDeployment.Api.Controllers
     [ApiController]
     public class Backup : ControllerBase
     {
+        private readonly IPathRepository pathRepository;
+        public Backup(IPathRepository _pathRepository)
+        {
+            pathRepository = _pathRepository;
+        }
+        [HttpGet]
+        public IActionResult GetAssemblyFolder(int HubId = 1, int ApplicationID = 1)
+        {
+            //var _context = new EfgconfigurationdbContext();
 
-        //[HttpGet]
-        //public IActionResult GetAssemblyFolder(int HubId = 1, int ApplicationID = 1)
-        //{
-        //    var _context = new EfgconfigurationdbContext();
+            //var assemblyPath = _context.Configurations.Where(c => c.HubID == HubId && c.AppID == ApplicationID).Select(c => c.AssemblyPath).SingleOrDefault();
+            //OpenAssemblyFolder(assemblyPath);
+            //return Ok();
+            try
+            {
+                var assemblyPath = pathRepository.GetAssemblyPath(ApplicationID, HubId);
+                OpenAssemblyFolder(assemblyPath);
+                return Ok();
 
-        //    var assemblyPath = _context.Configurations.Where(c => c.HubID == HubId && c.AppID == ApplicationID).Select(c => c.AssemblyPath).SingleOrDefault();
-        //    OpenAssemblyFolder(assemblyPath);
-        //    return Ok();
+            }catch(Exception)
+            {
+                return NotFound();
+            }
 
-        //}
+        }
 
 
-       [HttpGet]
+       
         public IActionResult OpenAssemblyFolder(string assemblyPath)
         {    
             if (Directory.Exists(assemblyPath))
