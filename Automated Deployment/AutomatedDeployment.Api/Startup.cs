@@ -34,6 +34,10 @@ namespace AutomatedDeployment.Api
             services.AddServices();
             services.AddScoped<IPathRepository,PathRepository>();
             services.AddScoped<IReplaceServices, ReplaceServices>();
+            services.AddCors(options =>
+            {
+                options.AddPolicy("Open", builder => builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
+            });
             services.AddControllers().AddNewtonsoftJson(x => x.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
             services.AddSwaggerGen(c =>
             {
@@ -53,11 +57,10 @@ namespace AutomatedDeployment.Api
             }
 
             app.UseHttpsRedirection();
-
             app.UseRouting();
 
             app.UseAuthorization();
-
+            app.UseCors("Open");
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
