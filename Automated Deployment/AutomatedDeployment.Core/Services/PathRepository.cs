@@ -28,17 +28,16 @@ namespace AutomatedDeployment.Api.Services
 
         public string GetConficPath(int applicationid, int hubid)
         {
-            //var result = efgconfigurationdbContext.Configurations.FirstOrDefault(c => c.AppID == applicationid && c.HubID == hubid);
-            //if (result != null)
-            //{
-            //    return result.ConfigurationPath;
+            var result = efgconfigurationdbContext.Configurations.FirstOrDefault(c => c.AppID == applicationid && c.HubID == hubid);
+            if (result != null)
+            {
+                return result.ConfigurationPath;
 
-            //}
-            //else
-            //{
-            //    return null;
-            //}
-            return @"F:\"+applicationid+@"\"+hubid+@"\";
+            }
+            else
+            {
+                return null;
+            }
 
         }
     }

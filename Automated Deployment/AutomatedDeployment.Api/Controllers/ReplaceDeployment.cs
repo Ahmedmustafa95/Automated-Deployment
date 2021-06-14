@@ -30,10 +30,9 @@ namespace AutomatedDeployment.Api.Controllers
 
         [HttpPost]
      
-        [Route("upload")]
         public IActionResult Upload(List<IFormFile> files,int hubid,int applicationid)
         {
-            string assembpath = pathRepository.GetConficPath(hubid,applicationid);
+            string assembpath = pathRepository.GetAssemblyPath(hubid,applicationid);
            if(assembpath==null)
             {
                 return NotFound();
