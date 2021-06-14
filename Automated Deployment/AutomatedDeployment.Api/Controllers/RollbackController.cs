@@ -13,16 +13,20 @@ namespace AutomatedDeployment.Api.Controllers
     public class RollbackController : ControllerBase
     {
         private readonly IRollbackService rollbackService;
+        private readonly IPathRepository pathRepository;
 
-        public RollbackController(IRollbackService _rollbackService)
+
+        public RollbackController(IRollbackService _rollbackService, IPathRepository _pathRepository)
         {
             rollbackService = _rollbackService;
+            pathRepository = _pathRepository;
         }
 
         [HttpGet]
         public IActionResult RollBack(int hubid, int applicationid)
         {
-            rollbackService.Rollback(@"C:\Users\ecs\Desktop\Backup", @"C:\Users\ecs\Desktop\assembly");
+            var paths = pathRepository.GetPaths(hubid, applicationid);
+            rollbackService.Rollback(paths.BackupPath, paths.AssemblyPath);
             return Ok();
         }
     }

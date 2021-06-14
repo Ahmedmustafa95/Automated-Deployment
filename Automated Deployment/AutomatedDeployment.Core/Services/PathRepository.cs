@@ -1,4 +1,5 @@
-﻿using AutomatedDeployment.Infrastructure.Context;
+﻿using AutomatedDeployment.Domain.Entities;
+using AutomatedDeployment.Infrastructure.Context;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -24,6 +25,12 @@ namespace AutomatedDeployment.Api.Services
             {
                 return null;
             }
+        }
+        public Configuration GetPaths(int applicationid, int hubid)
+        {
+            var result = efgconfigurationdbContext.Configurations.FirstOrDefault(c => c.AppID == applicationid && c.HubID == hubid);
+           
+                return result;
         }
 
         public string GetConficPath(int applicationid, int hubid)

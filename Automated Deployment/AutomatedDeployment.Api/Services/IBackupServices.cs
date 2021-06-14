@@ -8,6 +8,6 @@ namespace AutomatedDeployment.Api.Services
 {
     public interface IBackupServices
     {
-        void MoveTOBackUpFolder(List<IFormFile> formFiles, string path);
+        void MoveTOBackUpFolder(List<string> filesName, string assemblyPath, string backupPath);
     }
 }

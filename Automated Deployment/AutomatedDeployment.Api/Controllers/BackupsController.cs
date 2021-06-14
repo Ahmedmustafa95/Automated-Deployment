@@ -18,19 +18,17 @@ namespace AutomatedDeployment.Api.Controllers
             pathRepository = _pathRepository;
             ibackupService = _ibackupService;
         }
-        // Call from UI & send files & hubid & application id
-        // is valid backup 
-        //update database
+       
         [HttpGet]
         //[Route("BackUp")]
-        public IActionResult MoveTOBackUpFolder(List<IFormFile> files, int hubid = 1, int applicationid = 1)
+        public IActionResult MoveTOBackUpFolder(List<string> filesName, string assemblyPath, string backupPath)
         {
-            string assembpath = pathRepository.GetConficPath(hubid, applicationid);
-            if (assembpath == null)
-            {
-                return NotFound();
-            }
-            ibackupService.MoveTOBackUpFolder(files, assembpath);
+            //List<string> filesName = new List<string>();
+            // //string  assemblyPath = @"C:\Users\Ziad\Desktop\folder1";
+            // //string   backupPath = @"C:\Users\Ziad\Desktop\folder2";
+            //filesName.Add("text1.txt");
+            //filesName.Add("text2.txt");
+            ibackupService.MoveTOBackUpFolder(filesName, assemblyPath, backupPath);
             return Ok();
         }
     }

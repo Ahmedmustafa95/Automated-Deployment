@@ -18,7 +18,7 @@ namespace AutomatedDeployment.Api.Services
             foreach (var file in allfiles)
             {
                 string[] subs = file.Split(@"\"); 
-                File.Move(file, AssemblyPath+ @"\" +subs[subs.Length - 1]);
+                File.Move(file, AssemblyPath+ @"\" +subs[subs.Length - 1],true);
             }
         }
     }

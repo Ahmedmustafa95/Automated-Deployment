@@ -35,6 +35,7 @@ namespace AutomatedDeployment.Api
             services.AddScoped<IPathRepository,PathRepository>();
             services.AddScoped<IReplaceServices, ReplaceServices>();
             services.AddScoped<IRollbackService, RollBackService>();
+            services.AddScoped<IBackupServices, BackupServices>();
             services.AddCors(options =>
             {
                 options.AddPolicy("Open", builder => builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());

@@ -14,10 +14,13 @@ namespace AutomatedDeployment.Api.Controllers
     {
         private readonly IReplaceServices replaceService;
         private readonly IPathRepository pathRepository;
-        public ReplaceDeployment(IReplaceServices _replaceService, IPathRepository _pathRepository)
+        private readonly IBackupServices ibackupService;
+
+        public ReplaceDeployment(IReplaceServices _replaceService, IPathRepository _pathRepository, IBackupServices _ibackupService)
         {
             replaceService = _replaceService;
             pathRepository = _pathRepository;
+            ibackupService = _ibackupService;
         }
 
         [HttpGet]
@@ -32,12 +35,16 @@ namespace AutomatedDeployment.Api.Controllers
      
         public IActionResult Upload(List<IFormFile> files,int hubid,int applicationid)
         {
-            string assembpath = pathRepository.GetAssemblyPath(hubid,applicationid);
-           if(assembpath==null)
+            //string assembpath = pathRepository.GetAssemblyPath(hubid,applicationid);
+            var paths = pathRepository.GetPaths(hubid,applicationid);
+            
+           if(paths == null)
             {
                 return NotFound();
             }
-            replaceService.Upload(files,assembpath);
+           var filesName= files.Select(f => f.FileName).ToList();
+            ibackupService.MoveTOBackUpFolder(filesName, paths.AssemblyPath, paths.BackupPath);
+            replaceService.Upload(files, paths.AssemblyPath);
 
             return Ok();
         }
