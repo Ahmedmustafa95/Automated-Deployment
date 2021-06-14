@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Web.Http.ModelBinding;
+using Microsoft.EntityFrameworkCore;
 
 namespace AutomatedDeployment.Core.Services
 {
@@ -18,28 +19,6 @@ namespace AutomatedDeployment.Core.Services
         {
             this._efgconfigurationdbContext = efgconfigurationdbContext;
         }
-        public Hub Add(Hub entity)
-        {
-            throw new NotImplementedException();
-            //if (entity is Hub)
-            //{
-            //    _efgconfigurationdbContext.Add(entity);
-            //    try
-            //    {
-            //        _efgconfigurationdbContext.SaveChanges();
-            //    }
-            //    catch (Exception)
-            //    {
-
-            //    }
-            //}
-        }
-
-        public Hub Delete(int id)
-        {
-            throw new NotImplementedException();
-        }
-
         public IReadOnlyList<Hub> GetAll()
         {
             return _efgconfigurationdbContext.Hubs.ToList();
@@ -47,12 +26,72 @@ namespace AutomatedDeployment.Core.Services
 
         public Hub GetById(int id)
         {
-            throw new NotImplementedException();
+            try
+            {
+                var hub = _efgconfigurationdbContext.Hubs.Find(id);
+                return hub;
+            }catch(Exception)
+            {
+                return null;
+            }
         }
+        public Hub Add(Hub entity)
+        {
+
+            if (entity is Hub)
+            {
+                _efgconfigurationdbContext.Add(entity);
+                try
+                {
+                    _efgconfigurationdbContext.SaveChanges();
+                    return entity;
+                }
+                catch (Exception)
+                {
+                    return null;
+                }
+            }else
+                return null;
+            
+        }
+
+        public Hub Delete(int id)
+        {
+            try
+            {
+               var hub =  _efgconfigurationdbContext.Hubs.Find(id);
+                _efgconfigurationdbContext.Hubs.Remove(hub);
+                _efgconfigurationdbContext.SaveChanges();
+                return hub;
+            }
+            catch(Exception)
+            {
+                return null;
+            }
+        }
+
+    
 
         public Hub Update(Hub entity)
         {
-            throw new NotImplementedException();
+            if (entity is Hub && entity != null)
+            {
+                try
+                {
+
+                    _efgconfigurationdbContext.Entry(entity).State = EntityState.Modified;
+                    _efgconfigurationdbContext.SaveChanges();
+                    return entity;
+                }
+                catch (Exception)
+                {
+                    return null;
+                }
+            }
+            else
+                return null;
+
+     
         }
     }
 }

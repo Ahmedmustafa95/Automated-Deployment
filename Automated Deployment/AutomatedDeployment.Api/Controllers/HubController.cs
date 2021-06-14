@@ -70,14 +70,30 @@ namespace AutomatedDeployment.Api.Controllers
 
         // PUT api/<HubController>/5
         [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
+        public IActionResult Put(int id, [FromBody] Hub value)
         {
+            try
+            {
+                hubRepository.Update(value);
+                return Ok(value);
+            }catch(Exception)
+            {
+                return NotFound();
+            }
         }
 
         // DELETE api/<HubController>/5
         [HttpDelete("{id}")]
-        public void Delete(int id)
+        public IActionResult Delete(int id)
         {
+            try
+            {
+                hubRepository.Delete(id);
+                return Ok();
+            }catch(Exception)
+            {
+                return NotFound();
+            }
         }
     }
 }
