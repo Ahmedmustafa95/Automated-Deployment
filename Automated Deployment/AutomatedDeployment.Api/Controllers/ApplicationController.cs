@@ -94,8 +94,8 @@ namespace AutomatedDeployment.Api.Controllers
         {
             try
             {
-                
-               var app= applicationRepository.Delete(id);
+
+                var app = applicationRepository.Delete(id);
                 if (app != null)
                     return Ok();
                 else
@@ -106,5 +106,12 @@ namespace AutomatedDeployment.Api.Controllers
                 return NotFound();
             }
         }
+        [HttpPost("{hubID}")]
+       
+        public IActionResult GetAllApps(int hubID)
+        {
+            return Ok(applicationRepository.GetAppsByHubID(hubID));
+        }
+
     }
 }

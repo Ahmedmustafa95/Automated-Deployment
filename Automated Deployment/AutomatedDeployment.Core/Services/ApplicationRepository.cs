@@ -92,7 +92,11 @@ namespace AutomatedDeployment.Core.Services
             else
                 return null;
 
-
+        }
+        public List<Application> GetAppsByHubID(int hubID)
+        {
+            var Apps = _efgconfigurationdbContext.Configurations.Where(h => h.HubID == hubID).Include(a => a.App).Select(a=>new Application { AppID=a.AppID,AppName=a.App.AppName}).ToList();
+            return Apps;
         }
     }
 }

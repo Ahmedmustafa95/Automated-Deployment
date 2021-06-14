@@ -9,6 +9,6 @@ namespace AutomatedDeployment.Core.Interfaces
 {
     public interface IApplicationRepository:IGenericRepository<Application>
     {
-        
+        public List<Application> GetAppsByHubID(int hubID);
     }
 }
