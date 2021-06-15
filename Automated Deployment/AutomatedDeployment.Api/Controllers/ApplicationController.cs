@@ -106,8 +106,7 @@ namespace AutomatedDeployment.Api.Controllers
                 return NotFound();
             }
         }
-        [HttpPost("{hubID}")]
-       
+        [HttpGet("{hubID}")]
         public IActionResult GetAllApps(int hubID)
         {
             return Ok(applicationRepository.GetAppsByHubID(hubID));
