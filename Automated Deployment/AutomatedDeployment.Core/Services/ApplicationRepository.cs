@@ -20,7 +20,7 @@ namespace AutomatedDeployment.Core.Services
         }
         public IReadOnlyList<Application> GetAll()
         {
-            return _efgconfigurationdbContext.Applications.ToList();
+            return _efgconfigurationdbContext.Applications.Include(a=>a.Configurations).ThenInclude(a=>a.Hub).ToList();
         }
 
         public Application GetById(int id)

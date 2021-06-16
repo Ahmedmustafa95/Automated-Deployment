@@ -21,7 +21,7 @@ namespace AutomatedDeployment.Core.Services
         }
         public IReadOnlyList<Hub> GetAll()
         {
-            return _efgconfigurationdbContext.Hubs.ToList();
+            return _efgconfigurationdbContext.Hubs.Include(h=>h.Configurations).ThenInclude(h=>h.App).ToList();
         }
 
         public Hub GetById(int id)
