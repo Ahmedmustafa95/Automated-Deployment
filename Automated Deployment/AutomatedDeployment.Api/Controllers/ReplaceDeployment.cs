@@ -16,12 +16,15 @@ namespace AutomatedDeployment.Api.Controllers
         private readonly IReplaceServices replaceService;
         private readonly IPathRepository pathRepository;
         private readonly IBackupServices ibackupService;
+        private readonly IUnitOfWork unitOfWork;
 
-        public ReplaceDeployment(IReplaceServices _replaceService, IPathRepository _pathRepository, IBackupServices _ibackupService)
+        public ReplaceDeployment(IReplaceServices _replaceService, IPathRepository _pathRepository, 
+            IBackupServices _ibackupService, IUnitOfWork _unitOfWork)
         {
             replaceService = _replaceService;
             pathRepository = _pathRepository;
             ibackupService = _ibackupService;
+            unitOfWork = _unitOfWork;
         }
 
         [HttpGet]
@@ -31,21 +34,39 @@ namespace AutomatedDeployment.Api.Controllers
             return Ok("File Upload API running...");
 
         }
-
+        public bool CheckValidData(int hubid, int applicationid)=>
+         unitOfWork.HubsApplicationsRepository.GetHubsApplicationByID(hubid, applicationid) != null;  
+      
         [HttpPost]
      
         public IActionResult Upload(List<IFormFile> files,int hubid,int applicationid)
         {
-            //string assembpath = pathRepository.GetAssemblyPath(hubid,applicationid);
-            string AssemblyPath = pathRepository.GetAssemblyPath(hubid,applicationid);
-            string BackUpPath = pathRepository.GetBackupPath(hubid, applicationid);
-            if (AssemblyPath == null)
+            if(unitOfWork.DeploymentRepository.GetDeploymentCounts(hubid,applicationid)>1)
             {
-                return NotFound();
+                string AssemblyPath = pathRepository.GetAssemblyPath(hubid, applicationid);
+                string BackUpPath = pathRepository.GetBackupPath(hubid, applicationid);
+                if (AssemblyPath == null)
+                {
+                    return NotFound();
+                }
+                var filesName = files.Select(f => f.FileName).ToList();
+                ibackupService.MoveTOBackUpFolder(filesName, AssemblyPath, BackUpPath);
+                replaceService.Upload(files, AssemblyPath);
             }
-           var filesName= files.Select(f => f.FileName).ToList();
-            ibackupService.MoveTOBackUpFolder(filesName, AssemblyPath, BackUpPath);
-            replaceService.Upload(files, AssemblyPath);
+            else
+            {
+                string AssemblyPath = pathRepository.GetAssemblyPath(hubid, applicationid);
+                string BackUpPath = pathRepository.GetBackupPath(hubid, applicationid);
+                if (AssemblyPath == null)
+                {
+                    return NotFound();
+                }
+                var filesName = files.Select(f => f.FileName).ToList();
+                ibackupService.MoveTOBackUpFolder(filesName, AssemblyPath, BackUpPath);
+                replaceService.Upload(files, AssemblyPath);
+
+            }
+         
 
             return Ok();
         }
