@@ -18,6 +18,7 @@ namespace AutomatedDeployment.Core
             service.AddScoped<IHubsApplicationsRepository, HubsApplicationsRepository>();
             service.AddScoped<IPathRepository, PathRepository>();
             service.AddScoped<IDeploymentRepository, DeploymentRepository>();
+            service.AddScoped<IUnitOfWork,UnitOfWork>();
         }
     }
 }
