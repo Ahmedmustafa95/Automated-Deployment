@@ -13,13 +13,15 @@ namespace AutomatedDeployment.Core.Services
             IApplicationRepository applicationRepository,
             IHubRepository hubRepository,
             IHubsApplicationsRepository configurationRepository,
-            IDeploymentRepository deploymentRepository
+            IDeploymentRepository deploymentRepository,
+            IDeploymentFilesRepository deploymentFilesRepository
             )
         {
             ApplicationRepository = applicationRepository;
             HubRepository = hubRepository;
             HubsApplicationsRepository = configurationRepository;
             DeploymentRepository = deploymentRepository;
+            DeploymentFilesRepository = deploymentFilesRepository;
         }
 
         public IApplicationRepository ApplicationRepository { get; }
@@ -29,5 +31,7 @@ namespace AutomatedDeployment.Core.Services
         public IHubsApplicationsRepository HubsApplicationsRepository { get; }
 
         public IDeploymentRepository DeploymentRepository { get; }
+
+        public IDeploymentFilesRepository DeploymentFilesRepository { get;}
     }
 }

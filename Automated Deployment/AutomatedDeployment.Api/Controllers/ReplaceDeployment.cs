@@ -36,7 +36,6 @@ namespace AutomatedDeployment.Api.Controllers
          unitOfWork.HubsApplicationsRepository.GetHubsApplicationByID(hubid, applicationid) != null;  
       
         [HttpPost]
-     
         public IActionResult Upload(List<IFormFile> files,int hubid,int applicationid)
         {
             if (!CheckValidData(hubid, applicationid)) return BadRequest("Not Valid Data");

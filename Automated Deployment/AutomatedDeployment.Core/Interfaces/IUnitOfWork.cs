@@ -12,6 +12,7 @@ namespace AutomatedDeployment.Core.Interfaces
         IHubRepository HubRepository { get; }
         IHubsApplicationsRepository HubsApplicationsRepository { get; }
         IDeploymentRepository  DeploymentRepository { get; }
+        IDeploymentFilesRepository DeploymentFilesRepository { get; }
         
     }
 }
