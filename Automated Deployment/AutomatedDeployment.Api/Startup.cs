@@ -31,8 +31,7 @@ namespace AutomatedDeployment.Api
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddInfrastructure(Configuration);
-            services.AddServices();
-            services.AddScoped<IPathRepository,PathRepository>();
+            services.AddServices();     
             services.AddScoped<IReplaceServices, ReplaceServices>();
             services.AddScoped<IRollbackService, RollBackService>();
             services.AddScoped<IBackupServices, BackupServices>();

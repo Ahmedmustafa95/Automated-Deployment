@@ -1,4 +1,5 @@
 ﻿using AutomatedDeployment.Api.Services;
+using AutomatedDeployment.Core.Interfaces;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -25,8 +26,9 @@ namespace AutomatedDeployment.Api.Controllers
         [HttpGet]
         public IActionResult RollBack(int hubid, int applicationid)
         {
-            var paths = pathRepository.GetPaths(hubid, applicationid);
-            rollbackService.Rollback(paths.BackupPath, paths.AssemblyPath);
+            string AssemblyPath = pathRepository.GetAssemblyPath(hubid, applicationid);
+            string BackUpPath = pathRepository.GetBackupPath(hubid, applicationid);
+            rollbackService.Rollback(BackUpPath, AssemblyPath);
             return Ok();
         }
     }

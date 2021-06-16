@@ -1,4 +1,5 @@
 ﻿using AutomatedDeployment.Api.Services;
+using AutomatedDeployment.Core.Interfaces;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -36,15 +37,15 @@ namespace AutomatedDeployment.Api.Controllers
         public IActionResult Upload(List<IFormFile> files,int hubid,int applicationid)
         {
             //string assembpath = pathRepository.GetAssemblyPath(hubid,applicationid);
-            var paths = pathRepository.GetPaths(hubid,applicationid);
-            
-           if(paths == null)
+            string AssemblyPath = pathRepository.GetAssemblyPath(hubid,applicationid);
+            string BackUpPath = pathRepository.GetBackupPath(hubid, applicationid);
+            if (AssemblyPath == null)
             {
                 return NotFound();
             }
            var filesName= files.Select(f => f.FileName).ToList();
-            ibackupService.MoveTOBackUpFolder(filesName, paths.AssemblyPath, paths.BackupPath);
-            replaceService.Upload(files, paths.AssemblyPath);
+            ibackupService.MoveTOBackUpFolder(filesName, AssemblyPath, BackUpPath);
+            replaceService.Upload(files, AssemblyPath);
 
             return Ok();
         }

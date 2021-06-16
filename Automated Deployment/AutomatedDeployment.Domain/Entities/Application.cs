@@ -12,7 +12,7 @@ namespace AutomatedDeployment.Domain.Entities
     {
         public Application()
         {
-            Configurations = new HashSet<Configuration>();
+            HubsApplications = new HashSet<HubsApplications>();
         }
 
         [Key]
@@ -21,7 +21,7 @@ namespace AutomatedDeployment.Domain.Entities
         [StringLength(50)]
         public string AppName { get; set; }
 
-        [InverseProperty(nameof(Configuration.App))]
-        public virtual ICollection<Configuration> Configurations { get; set; }
+     
+        public virtual ICollection<HubsApplications> HubsApplications { get; set; }
     }
 }

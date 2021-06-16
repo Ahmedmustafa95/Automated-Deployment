@@ -15,7 +15,8 @@ namespace AutomatedDeployment.Core
         {
             service.AddScoped<IHubRepository, HubRepository>();
             service.AddScoped<IApplicationRepository,ApplicationRepository>();
-            service.AddScoped<IConfigurationRepository, ConfigurationRepository>();
+            service.AddScoped<IHubsApplicationsRepository, HubsApplicationsRepository>();
+            service.AddScoped<IPathRepository, PathRepository>();
         }
     }
 }
