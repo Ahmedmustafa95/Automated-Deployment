@@ -1,5 +1,6 @@
 ﻿using AutomatedDeployment.Api.Services;
 using AutomatedDeployment.Core.Interfaces;
+using AutomatedDeployment.Domain.Entities;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -28,12 +29,9 @@ namespace AutomatedDeployment.Api.Controllers
         }
 
         [HttpGet]
-        public IActionResult Get()
-        {
+        public IActionResult Get()=>  Ok("File Upload API running...");
 
-            return Ok("File Upload API running...");
-
-        }
+   
         public bool CheckValidData(int hubid, int applicationid)=>
          unitOfWork.HubsApplicationsRepository.GetHubsApplicationByID(hubid, applicationid) != null;  
       
@@ -41,6 +39,8 @@ namespace AutomatedDeployment.Api.Controllers
      
         public IActionResult Upload(List<IFormFile> files,int hubid,int applicationid)
         {
+            if (!CheckValidData(hubid, applicationid)) return BadRequest("Not Valid Data");
+
             if(unitOfWork.DeploymentRepository.GetDeploymentCounts(hubid,applicationid)>1)
             {
                 string AssemblyPath = pathRepository.GetAssemblyPath(hubid, applicationid);
@@ -56,14 +56,19 @@ namespace AutomatedDeployment.Api.Controllers
             else
             {
                 string AssemblyPath = pathRepository.GetAssemblyPath(hubid, applicationid);
-                string BackUpPath = pathRepository.GetBackupPath(hubid, applicationid);
-                if (AssemblyPath == null)
-                {
-                    return NotFound();
-                }
-                var filesName = files.Select(f => f.FileName).ToList();
-                ibackupService.MoveTOBackUpFolder(filesName, AssemblyPath, BackUpPath);
+                if (AssemblyPath == null) return NotFound();
+                
                 replaceService.Upload(files, AssemblyPath);
+
+                Deployment deployment = new Deployment()
+                {HubID=hubid,
+                 AppID=applicationid,
+                 DeploymentDate=DateTime.Now,
+                 ApprovedBy="ahmed",
+                 RequestedBy="Mustafa",
+                };
+                if(unitOfWork.DeploymentRepository.AddDeployment(deployment) is null) 
+                    return BadRequest(" Failed to Save Deployment in database");
 
             }
          

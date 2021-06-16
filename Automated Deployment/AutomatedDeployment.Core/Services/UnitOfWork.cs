@@ -12,13 +12,14 @@ namespace AutomatedDeployment.Core.Services
         public UnitOfWork(
             IApplicationRepository applicationRepository,
             IHubRepository hubRepository,
-            IHubsApplicationsRepository configurationRepository
+            IHubsApplicationsRepository configurationRepository,
+            IDeploymentRepository deploymentRepository
             )
         {
             ApplicationRepository = applicationRepository;
             HubRepository = hubRepository;
             HubsApplicationsRepository = configurationRepository;
-
+            DeploymentRepository = deploymentRepository;
         }
 
         public IApplicationRepository ApplicationRepository { get; }
@@ -26,5 +27,7 @@ namespace AutomatedDeployment.Core.Services
         public IHubRepository HubRepository { get; }
 
         public IHubsApplicationsRepository HubsApplicationsRepository { get; }
+
+        public IDeploymentRepository DeploymentRepository { get; }
     }
 }
