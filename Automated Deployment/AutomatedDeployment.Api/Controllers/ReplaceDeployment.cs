@@ -76,7 +76,7 @@ namespace AutomatedDeployment.Api.Controllers
 
                 List<DeploymentFiles> deploymentFiles = new List<DeploymentFiles>();
 
-                //refactor
+                //refactor code
                 foreach (var fileName in filesState["Modified"])
                 {
                     DeploymentFiles deploymentFile = new DeploymentFiles() {DeploymentID= currentDeploymentId, FilesName= fileName, Status=status.Modified };
