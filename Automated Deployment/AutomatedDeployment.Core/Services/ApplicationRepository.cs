@@ -20,14 +20,18 @@ namespace AutomatedDeployment.Core.Services
         }
         public IReadOnlyList<Application> GetAll()
         {
+<<<<<<< HEAD
             return _efgconfigurationdbContext.Applications.Include(a=>a.Configurations).ThenInclude(a=>a.Hub).ToList();
+=======
+            return _efgconfigurationdbContext.Applications.AsNoTracking().ToList();
+>>>>>>> 26ea56ad2940a100a098435abe95ab9188fd0d6c
         }
 
         public Application GetById(int id)
         {
             try
             {
-                var application = _efgconfigurationdbContext.Applications.Find(id);
+                var application = _efgconfigurationdbContext.Applications.AsNoTracking().FirstOrDefault(i => i.AppID == id);
                 return application;
             }
             catch (Exception)
@@ -79,7 +83,6 @@ namespace AutomatedDeployment.Core.Services
             {
                 try
                 {
-
                     _efgconfigurationdbContext.Entry(entity).State = EntityState.Modified;
                     _efgconfigurationdbContext.SaveChanges();
                     return entity;
@@ -95,8 +98,14 @@ namespace AutomatedDeployment.Core.Services
         }
         public List<Application> GetAppsByHubID(int hubID)
         {
-            var Apps = _efgconfigurationdbContext.Configurations.Where(h => h.HubID == hubID).Include(a => a.App).Select(a=>new Application { AppID=a.AppID,AppName=a.App.AppName}).ToList();
+            List<Application> Apps = _efgconfigurationdbContext.HubsApplications.Where(h => h.HubID == hubID)
+                .Include(a => a.Application).Select(a => a.Application).AsNoTracking().ToList();
             return Apps;
         }
+
+
+      
+
+
     }
 }

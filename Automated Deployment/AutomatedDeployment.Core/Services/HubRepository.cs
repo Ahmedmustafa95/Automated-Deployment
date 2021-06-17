@@ -21,16 +21,21 @@ namespace AutomatedDeployment.Core.Services
         }
         public IReadOnlyList<Hub> GetAll()
         {
+<<<<<<< HEAD
             return _efgconfigurationdbContext.Hubs.Include(h=>h.Configurations).ThenInclude(h=>h.App).ToList();
+=======
+            return _efgconfigurationdbContext.Hubs.AsNoTracking().ToList();
+>>>>>>> 26ea56ad2940a100a098435abe95ab9188fd0d6c
         }
 
         public Hub GetById(int id)
         {
             try
             {
-                var hub = _efgconfigurationdbContext.Hubs.Find(id);
+                var hub = _efgconfigurationdbContext.Hubs.AsNoTracking().FirstOrDefault(i => i.HubID == id);
                 return hub;
-            }catch(Exception)
+            }
+            catch(Exception)
             {
                 return null;
             }

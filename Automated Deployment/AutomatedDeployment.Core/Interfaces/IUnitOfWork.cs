@@ -10,7 +10,7 @@ namespace AutomatedDeployment.Core.Interfaces
     {
         IApplicationRepository ApplicationRepository { get; }
         IHubRepository HubRepository { get; }
-        IConfigurationRepository ConfigurationRepository { get; }
+        IHubsApplicationsRepository HubsApplicationsRepository { get; }
         
     }
 }

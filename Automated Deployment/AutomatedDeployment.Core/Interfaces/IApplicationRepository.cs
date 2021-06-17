@@ -7,7 +7,8 @@ using System.Threading.Tasks;
 
 namespace AutomatedDeployment.Core.Interfaces
 {
-    public interface IApplicationRepository:IGenericRepository<Application>
+    public interface IApplicationRepository:IGenericRepository<Application>,IGenericDeleteRepository<Application>,
+                                            IGenericGetByIDRepository<Application>
     {
         public List<Application> GetAppsByHubID(int hubID);
     }

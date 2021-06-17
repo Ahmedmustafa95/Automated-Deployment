@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace AutomatedDeployment.Core.Interfaces
 {
-    public interface IHubRepository:IGenericRepository<Hub>
+    public interface IHubRepository:IGenericRepository<Hub>, IGenericDeleteRepository<Hub>, IGenericGetByIDRepository<Hub>
     {
         
     }

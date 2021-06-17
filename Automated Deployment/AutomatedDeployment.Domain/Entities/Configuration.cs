@@ -27,7 +27,7 @@ namespace AutomatedDeployment.Domain.Entities
         public string BackupPath { get; set; }
 
         [ForeignKey(nameof(AppID))]
-        [InverseProperty(nameof(Application.Configurations))]
+    //    [InverseProperty(nameof(Application.Configurations))]
         public virtual Application App { get; set; }
         [ForeignKey(nameof(HubID))]
         [InverseProperty("Configurations")]

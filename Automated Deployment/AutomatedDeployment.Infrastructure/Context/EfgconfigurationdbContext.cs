@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -20,14 +21,16 @@ namespace AutomatedDeployment.Infrastructure.Context
         }
 
         public virtual DbSet<Application> Applications { get; set; }
-        public virtual DbSet<Configuration> Configurations { get; set; }
+        public virtual DbSet<HubsApplications> HubsApplications { get; set; }
         public virtual DbSet<Hub> Hubs { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             if (!optionsBuilder.IsConfigured)
             {
-                optionsBuilder.UseSqlServer("Data Source=automated-deployment.database.windows.net;Initial Catalog=EfgConfigurationDB;Persist Security Info=True;User ID=EFgTeam;Password=Efg123456789");
+                optionsBuilder.UseSqlServer("Data Source=automated-deployment.database.windows.net;Initial Catalog=EfgConfigurationDB;Persist Security Info=True;User ID=EFgTeam;Password=Efg123456789")
+                    .EnableSensitiveDataLogging().LogTo( i=>Debug.WriteLine(i));
+                    
             }
         }
 
@@ -40,21 +43,45 @@ namespace AutomatedDeployment.Infrastructure.Context
                 entity.Property(e => e.AppID).ValueGeneratedNever();
             });
 
-            modelBuilder.Entity<Configuration>(entity =>
+            //modelBuilder.Entity<Configuration>(entity =>
+            //{
+            //    entity.HasKey(e => new { e.HubID, e.AppID });
+
+            //    entity.HasOne(d => d.App)
+            //        .WithMany(p => p.Configurations)
+            //        .HasForeignKey(d => d.AppID)
+            //        .OnDelete(DeleteBehavior.ClientSetNull)
+            //        .HasConstraintName("FK_Configurations_Applications");
+
+            //    entity.HasOne(d => d.Hub)
+            //        .WithMany(p => p.Configurations)
+            //        .HasForeignKey(d => d.HubID)
+            //        .OnDelete(DeleteBehavior.ClientSetNull)
+            //        .HasConstraintName("FK_Configurations_Hubs");
+            //});
+
+            modelBuilder.Entity<HubsApplications>(entity =>
+           {
+               entity.HasKey(e => new { e.HubID, e.AppID });
+
+
+               entity.HasOne(d => d.Application)
+                   .WithMany(p => p.HubsApplications)
+                   .HasForeignKey(d => d.AppID)
+                   .OnDelete(DeleteBehavior.ClientSetNull);
+                 
+
+           });
+
+            modelBuilder.Entity<HubsApplications>(entity =>
             {
                 entity.HasKey(e => new { e.HubID, e.AppID });
 
-                entity.HasOne(d => d.App)
-                    .WithMany(p => p.Configurations)
-                    .HasForeignKey(d => d.AppID)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_Configurations_Applications");
 
                 entity.HasOne(d => d.Hub)
-                    .WithMany(p => p.Configurations)
+                    .WithMany(p => p.HubsApplications)
                     .HasForeignKey(d => d.HubID)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_Configurations_Hubs");
+                    .OnDelete(DeleteBehavior.ClientSetNull);
             });
 
             modelBuilder.Entity<Hub>(entity =>
