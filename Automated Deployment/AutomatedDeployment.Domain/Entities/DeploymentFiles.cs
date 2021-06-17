@@ -14,7 +14,6 @@ namespace AutomatedDeployment.Domain.Entities
         public int ID { get; set; }
         public int DeploymentID { get; set; }
 
-
         public string FilesName { get; set; }
 
         public status Status { get; set; }

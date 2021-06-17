@@ -1,4 +1,5 @@
 ﻿using AutomatedDeployment.Core.Interfaces;
+using AutomatedDeployment.Core.Interfaces.GenericRepositories;
 using AutomatedDeployment.Domain.Entities;
 using AutomatedDeployment.Infrastructure.Context;
 using System;
@@ -13,12 +14,13 @@ namespace AutomatedDeployment.Core.Services
     {
         private readonly EfgconfigurationdbContext _efgconfigurationdbContext;
 
+
         public DeploymentFilesRepository(EfgconfigurationdbContext efgconfigurationdbContext) =>
             _efgconfigurationdbContext = efgconfigurationdbContext;
 
       
 
-        public List<DeploymentFiles> AddDeploymentFiles(List<DeploymentFiles> deploymentFiles)
+      public List<DeploymentFiles> AddDeploymentFiles(List<DeploymentFiles> deploymentFiles)
         {
             if (deploymentFiles is not null)
             {
@@ -45,6 +47,27 @@ namespace AutomatedDeployment.Core.Services
         public DeploymentFiles Update(DeploymentFiles entity)
         {
             throw new NotImplementedException();
+=======
+        public DeploymentFilesRepository(EfgconfigurationdbContext efgconfigurationdbContext)
+            => this._efgconfigurationdbContext = efgconfigurationdbContext;
+
+        public Dictionary<string,status> GetById(int hubID, int applicationId)
+        {
+            try
+            {
+                var lastDeployemt = _efgconfigurationdbContext.Deployments
+                                                         .Where(D => D.HubID == hubID &&
+                                                                     D.AppID == applicationId)
+                                                         .LastOrDefault();
+                return _efgconfigurationdbContext.DeploymentFiles
+                                          .Where(D => D.DeploymentID == lastDeployemt.DeploymentID)
+                                          .ToDictionary(D => D.FilesName,D => D.Status);
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+
         }
     }
 }

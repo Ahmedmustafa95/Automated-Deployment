@@ -15,12 +15,17 @@ namespace AutomatedDeployment.Api.Controllers
     {
         private readonly IRollbackService rollbackService;
         private readonly IPathRepository pathRepository;
+        private readonly IUnitOfWork _unitOfWork;
 
-
-        public RollbackController(IRollbackService _rollbackService, IPathRepository _pathRepository)
+        public RollbackController(
+            IRollbackService _rollbackService, 
+            IPathRepository _pathRepository,
+            IUnitOfWork unitOfWork
+            )
         {
             rollbackService = _rollbackService;
             pathRepository = _pathRepository;
+            this._unitOfWork = unitOfWork;
         }
 
         [HttpGet]
