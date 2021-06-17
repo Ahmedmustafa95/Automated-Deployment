@@ -9,38 +9,42 @@ using System.Threading.Tasks;
 
 namespace AutomatedDeployment.Core.Services
 {
-    public class DeploymentRepository : IDeploymentRepository
+    public class DeploymentFilesRepository : IDeploymentFilesRepository
     {
         private readonly EfgconfigurationdbContext _efgconfigurationdbContext;
 
-        public DeploymentRepository(EfgconfigurationdbContext efgconfigurationdbContext)=>
+        public DeploymentFilesRepository(EfgconfigurationdbContext efgconfigurationdbContext) =>
             _efgconfigurationdbContext = efgconfigurationdbContext;
 
-        public Deployment AddDeployment(Deployment deployment)
+      
+
+        public List<DeploymentFiles> AddDeploymentFiles(List<DeploymentFiles> deploymentFiles)
         {
-            if (deployment is not null)
+            if (deploymentFiles is not null)
             {
                 try
                 {
-                    _efgconfigurationdbContext.Deployments.Add(deployment);
+                    _efgconfigurationdbContext.DeploymentFiles.AddRange(deploymentFiles);
                     _efgconfigurationdbContext.SaveChanges();
-                    return deployment;
+                    return deploymentFiles;
                 }
                 catch
                 {
                     return null;
                 }
-               
+
             }
             return null;
         }
 
-        public int GetCurrentDeploymentId()=>
-            _efgconfigurationdbContext.Deployments.Max(d=>d.DeploymentID);
-        
+        public IReadOnlyList<DeploymentFiles> GetAll()
+        {
+            throw new NotImplementedException();
+        }
 
-        public int GetDeploymentCounts(int hubID, int applicationId) =>
-         _efgconfigurationdbContext.Deployments.Count(d => d.HubID == hubID && d.AppID == applicationId);
-          
+        public DeploymentFiles Update(DeploymentFiles entity)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

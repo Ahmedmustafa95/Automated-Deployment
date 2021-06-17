@@ -10,5 +10,7 @@ namespace AutomatedDeployment.Api.Services
     public interface IReplaceServices
     {
         void Upload(List<IFormFile> formFiles, string path);
+        Dictionary<string, List<string>> CompareDeployFilesWithAssemblyFiles(List<IFormFile> Uploadedfiles, string assemblyPath);
+
     }
 }

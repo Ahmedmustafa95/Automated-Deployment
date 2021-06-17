@@ -8,6 +8,9 @@ namespace AutomatedDeployment.Domain.Entities
 {
     public class DeploymentFiles
     {
+        
+       
+
         public int ID { get; set; }
         public int DeploymentID { get; set; }
 

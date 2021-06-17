@@ -7,11 +7,9 @@ using System.Threading.Tasks;
 
 namespace AutomatedDeployment.Core.Interfaces
 {
-    public interface IDeploymentRepository
+    public interface IDeploymentFilesRepository
     {
-        int GetDeploymentCounts(int hubID, int applicationId); 
-        Deployment AddDeployment(Deployment  deployment);
+        List<DeploymentFiles> AddDeploymentFiles(List<DeploymentFiles> deploymentFiles);
 
-        int GetCurrentDeploymentId();
     }
 }

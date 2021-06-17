@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -19,7 +20,7 @@ namespace AutomatedDeployment.Api.Controllers
         private readonly IBackupServices ibackupService;
         private readonly IUnitOfWork unitOfWork;
 
-        public ReplaceDeployment(IReplaceServices _replaceService, IPathRepository _pathRepository, 
+        public ReplaceDeployment(IReplaceServices _replaceService, IPathRepository _pathRepository,
             IBackupServices _ibackupService, IUnitOfWork _unitOfWork)
         {
             replaceService = _replaceService;
@@ -29,49 +30,90 @@ namespace AutomatedDeployment.Api.Controllers
         }
 
         [HttpGet]
-        public IActionResult Get()=>  Ok("File Upload API running...");
+        public IActionResult Get() => Ok("File Upload API running...");
 
-   
-        public bool CheckValidData(int hubid, int applicationid)=>
-         unitOfWork.HubsApplicationsRepository.GetHubsApplicationByID(hubid, applicationid) != null;  
-      
+
+        public bool CheckValidData(int hubid, int applicationid) =>
+         unitOfWork.HubsApplicationsRepository.GetHubsApplicationByID(hubid, applicationid) != null;
+
         [HttpPost]
-     
-        public IActionResult Upload(List<IFormFile> files,int hubid,int applicationid)
+
+        public IActionResult Upload(List<IFormFile> files, int hubid, int applicationid)
         {
             if (!CheckValidData(hubid, applicationid)) return BadRequest("Not Valid Data");
+            string AssemblyPath = pathRepository.GetAssemblyPath(hubid, applicationid);
+            if (AssemblyPath == null) { return NotFound(); }
 
-            if(unitOfWork.DeploymentRepository.GetDeploymentCounts(hubid,applicationid)>1)
+            if (unitOfWork.DeploymentRepository.GetDeploymentCounts(hubid, applicationid) > 0)
             {
-                string AssemblyPath = pathRepository.GetAssemblyPath(hubid, applicationid);
                 string BackUpPath = pathRepository.GetBackupPath(hubid, applicationid);
-                if (AssemblyPath == null)
-                {
-                    return NotFound();
-                }
-                var filesName = files.Select(f => f.FileName).ToList();
-                ibackupService.MoveTOBackUpFolder(filesName, AssemblyPath, BackUpPath);
+
+                //if (!Directory.Exists(BackUpPath))
+                //    Directory.CreateDirectory(BackUpPath);
+                string NewBackupPath = $"{BackUpPath} \\ BK_{DateTime.Now.ToString("yyyy-MM-dd-hh-mm-ss")}";
+                Directory.CreateDirectory(NewBackupPath);
+
+                // Dictionary has Files Name as key and Files state as value
+                Dictionary<string, List<string>> filesState = replaceService.CompareDeployFilesWithAssemblyFiles(files, AssemblyPath);
+
+                //var filesName = files.Select(f => f.FileName).ToList();
+                //ibackupService.MoveTOBackUpFolder(filesName, AssemblyPath, BackUpPath);
+
+                ibackupService.MoveTOBackUpFolder(filesState["Modified"], AssemblyPath, NewBackupPath);
                 replaceService.Upload(files, AssemblyPath);
+                Deployment deployment = new Deployment()
+                {
+                    HubID = hubid,
+                    AppID = applicationid,
+                    DeploymentDate = DateTime.Now,
+                    ApprovedBy = "ahmed",
+                    RequestedBy = "Mustafa",
+                };
+                if (unitOfWork.DeploymentRepository.AddDeployment(deployment) is null)
+                    return BadRequest(" Failed to Save Deployment in database");
+
+                int currentDeploymentId=unitOfWork.DeploymentRepository.GetCurrentDeploymentId();
+
+                List<DeploymentFiles> deploymentFiles = new List<DeploymentFiles>();
+
+                //refactor
+                foreach (var fileName in filesState["Modified"])
+                {
+                    DeploymentFiles deploymentFile = new DeploymentFiles() {DeploymentID= currentDeploymentId, FilesName= fileName, Status=status.Modified };
+                    deploymentFiles.Add(deploymentFile);
+                }
+
+                foreach (var fileName in filesState["Added"])
+                {
+                    DeploymentFiles deploymentFile = new DeploymentFiles() { DeploymentID = currentDeploymentId, FilesName = fileName, Status = status.Added };
+                    deploymentFiles.Add(deploymentFile);
+                }
+
+                if (unitOfWork.DeploymentFilesRepository.AddDeploymentFiles(deploymentFiles) is null)
+                    return BadRequest(" Failed to Save Deployment Files in database");
+
+
+
+
             }
             else
             {
-                string AssemblyPath = pathRepository.GetAssemblyPath(hubid, applicationid);
-                if (AssemblyPath == null) return NotFound();
-                
+
                 replaceService.Upload(files, AssemblyPath);
 
                 Deployment deployment = new Deployment()
-                {HubID=hubid,
-                 AppID=applicationid,
-                 DeploymentDate=DateTime.Now,
-                 ApprovedBy="ahmed",
-                 RequestedBy="Mustafa",
+                {
+                    HubID = hubid,
+                    AppID = applicationid,
+                    DeploymentDate = DateTime.Now,
+                    ApprovedBy = "ahmed",
+                    RequestedBy = "Mustafa",
                 };
-                if(unitOfWork.DeploymentRepository.AddDeployment(deployment) is null) 
+                if (unitOfWork.DeploymentRepository.AddDeployment(deployment) is null)
                     return BadRequest(" Failed to Save Deployment in database");
 
             }
-         
+
 
             return Ok();
         }
