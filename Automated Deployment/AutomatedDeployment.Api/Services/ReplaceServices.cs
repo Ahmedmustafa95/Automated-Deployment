@@ -38,6 +38,29 @@ namespace AutomatedDeployment.Api.Services
         }
 
 
+        public Dictionary<string, List<string>> CompareDeployFilesWithAssemblyFiles(List<IFormFile> Uploadedfiles, string assemblyPath)
+        {
+            Dictionary<string, List<string>> filesState = new Dictionary<string, List<string>>();
+
+            string[] assemblyFiles = Directory.GetFiles(assemblyPath);
+           
+            List<string> ModifiedFiles = new List<string>();
+            List<string> AddedFiles = new List<string>();
+            foreach (var item in Uploadedfiles)
+            {
+                if (assemblyFiles.Contains($"{assemblyPath}{item.FileName}"))
+                    ModifiedFiles.Add(item.FileName);
+                else
+                    AddedFiles.Add(item.FileName);
+            }
+            filesState.Add("Added", AddedFiles);
+            filesState.Add("Modified", ModifiedFiles);
+            return filesState;
+
+
+        }
+
+
 
         //public async void Upload(IFormFile file)
         //{

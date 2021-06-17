@@ -14,6 +14,40 @@ namespace AutomatedDeployment.Core.Services
     {
         private readonly EfgconfigurationdbContext _efgconfigurationdbContext;
 
+
+        public DeploymentFilesRepository(EfgconfigurationdbContext efgconfigurationdbContext) =>
+            _efgconfigurationdbContext = efgconfigurationdbContext;
+
+      
+
+      public List<DeploymentFiles> AddDeploymentFiles(List<DeploymentFiles> deploymentFiles)
+        {
+            if (deploymentFiles is not null)
+            {
+                try
+                {
+                    _efgconfigurationdbContext.DeploymentFiles.AddRange(deploymentFiles);
+                    _efgconfigurationdbContext.SaveChanges();
+                    return deploymentFiles;
+                }
+                catch
+                {
+                    return null;
+                }
+
+            }
+            return null;
+        }
+
+        public IReadOnlyList<DeploymentFiles> GetAll()
+        {
+            throw new NotImplementedException();
+        }
+
+        public DeploymentFiles Update(DeploymentFiles entity)
+        {
+            throw new NotImplementedException();
+=======
         public DeploymentFilesRepository(EfgconfigurationdbContext efgconfigurationdbContext)
             => this._efgconfigurationdbContext = efgconfigurationdbContext;
 
@@ -33,6 +67,7 @@ namespace AutomatedDeployment.Core.Services
             {
                 return null;
             }
+
         }
     }
 }

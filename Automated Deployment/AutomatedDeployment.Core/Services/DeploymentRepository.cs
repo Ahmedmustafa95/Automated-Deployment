@@ -20,12 +20,24 @@ namespace AutomatedDeployment.Core.Services
         {
             if (deployment is not null)
             {
-                _efgconfigurationdbContext.Deployments.Add(deployment);
-                _efgconfigurationdbContext.SaveChanges();
-                return deployment;
+                try
+                {
+                    _efgconfigurationdbContext.Deployments.Add(deployment);
+                    _efgconfigurationdbContext.SaveChanges();
+                    return deployment;
+                }
+                catch
+                {
+                    return null;
+                }
+               
             }
-            return deployment;
+            return null;
         }
+
+        public int GetCurrentDeploymentId()=>
+            _efgconfigurationdbContext.Deployments.Max(d=>d.DeploymentID);
+        
 
         public int GetDeploymentCounts(int hubID, int applicationId) =>
          _efgconfigurationdbContext.Deployments.Count(d => d.HubID == hubID && d.AppID == applicationId);

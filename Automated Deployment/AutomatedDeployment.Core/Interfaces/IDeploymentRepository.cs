@@ -11,5 +11,7 @@ namespace AutomatedDeployment.Core.Interfaces
     {
         int GetDeploymentCounts(int hubID, int applicationId); 
         Deployment AddDeployment(Deployment  deployment);
+
+        int GetCurrentDeploymentId();
     }
 }
