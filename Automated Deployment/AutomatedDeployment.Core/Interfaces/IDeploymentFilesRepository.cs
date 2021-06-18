@@ -14,7 +14,9 @@ namespace AutomatedDeployment.Core.Interfaces
     public interface IDeploymentFilesRepository:IGenericGetDictionaryByIDRepository<DeploymentFiles>
     {
         List<DeploymentFiles> AddDeploymentFiles(List<DeploymentFiles> deploymentFiles);
+        DeploymentFiles AddDeploymentFile(DeploymentFiles deploymentFiles);
 
-    
+
+
 }
 }

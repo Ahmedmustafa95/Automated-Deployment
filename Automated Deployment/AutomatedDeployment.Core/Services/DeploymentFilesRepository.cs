@@ -38,6 +38,24 @@ namespace AutomatedDeployment.Core.Services
             }
             return null;
         }
+        public DeploymentFiles AddDeploymentFile(DeploymentFiles deploymentFile)
+        {
+            if (deploymentFile is not null)
+            {
+                try
+                {
+                    _efgconfigurationdbContext.DeploymentFiles.Add(deploymentFile);
+                    _efgconfigurationdbContext.SaveChanges();
+                    return deploymentFile;
+                }
+                catch
+                {
+                    return null;
+                }
+
+            }
+            return null;
+        }
 
         public IReadOnlyList<DeploymentFiles> GetAll()
         {
@@ -68,5 +86,6 @@ namespace AutomatedDeployment.Core.Services
             }
 
         }
+        
     }
 }

@@ -24,7 +24,8 @@ namespace AutomatedDeployment.Domain.Entities
         [Required(ErrorMessage = "You must enter your name")]
         public string RequestedBy { get; set; }
         public string ApprovedBy { get; set; }
-
+      
+       
         public virtual ICollection<DeploymentFiles> DeploymentFiles { get; set; } = new HashSet<DeploymentFiles>();
 
     }

@@ -33,7 +33,7 @@ namespace AutomatedDeployment.Api.Controllers
         {
             string AssemblyPath = pathRepository.GetAssemblyPath(hubid, applicationid);
             string BackUpPath = pathRepository.GetBackupPath(hubid, applicationid);
-            rollbackService.Rollback(BackUpPath, AssemblyPath,unitOfWork.DeploymentFilesRepository.GetById(hubid,applicationid));
+            rollbackService.Rollback(hubid,applicationid,BackUpPath, AssemblyPath,unitOfWork.DeploymentFilesRepository.GetById(hubid,applicationid));
             return Ok();
         }
     }

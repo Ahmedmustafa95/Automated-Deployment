@@ -1,5 +1,6 @@
 ﻿using AutomatedDeployment.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -9,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace AutomatedDeployment.Infrastructure.Context
 {
-    public partial class EfgconfigurationdbContext:DbContext
+    public partial class EfgconfigurationdbContext : DbContext
     {
         public EfgconfigurationdbContext()
         {
@@ -25,14 +26,17 @@ namespace AutomatedDeployment.Infrastructure.Context
         public virtual DbSet<Hub> Hubs { get; set; }
         public virtual DbSet<Deployment> Deployments { get; set; }
         public virtual DbSet<DeploymentFiles> DeploymentFiles { get; set; }
+        public virtual DbSet<Rollback> Rollbacks { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             if (!optionsBuilder.IsConfigured)
             {
                 optionsBuilder.UseSqlServer("Data Source=automated-deployment.database.windows.net;Initial Catalog=EfgConfigurationDB;Persist Security Info=True;User ID=EFgTeam;Password=Efg123456789")
-                    .EnableSensitiveDataLogging().LogTo( i=>Debug.WriteLine(i));
-                    
+                    .LogTo(Console.WriteLine, new[] { DbLoggerCategory.Database.Command.Name },
+                        LogLevel.Information)
+                        .EnableSensitiveDataLogging();
+
             }
         }
 
@@ -71,7 +75,7 @@ namespace AutomatedDeployment.Infrastructure.Context
                    .WithMany(p => p.HubsApplications)
                    .HasForeignKey(d => d.AppID)
                    .OnDelete(DeleteBehavior.ClientSetNull);
-                 
+
 
            });
 
@@ -85,6 +89,9 @@ namespace AutomatedDeployment.Infrastructure.Context
                     .HasForeignKey(d => d.HubID)
                     .OnDelete(DeleteBehavior.ClientSetNull);
             });
+
+
+
 
             //modelBuilder.Entity<Hub>(entity =>
             //{
