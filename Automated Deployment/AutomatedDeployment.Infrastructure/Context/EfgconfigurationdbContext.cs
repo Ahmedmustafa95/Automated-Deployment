@@ -23,6 +23,8 @@ namespace AutomatedDeployment.Infrastructure.Context
         public virtual DbSet<Application> Applications { get; set; }
         public virtual DbSet<HubsApplications> HubsApplications { get; set; }
         public virtual DbSet<Hub> Hubs { get; set; }
+        public virtual DbSet<Deployment> Deployments { get; set; }
+        public virtual DbSet<DeploymentFiles> DeploymentFiles { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
