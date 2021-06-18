@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 namespace AutomatedDeployment.Core.Interfaces
 {
 
-    public interface IDeploymentFilesRepository
+    public interface IDeploymentFilesRepository:IGenericGetDictionaryByIDRepository<DeploymentFiles>
     {
         List<DeploymentFiles> AddDeploymentFiles(List<DeploymentFiles> deploymentFiles);
 

@@ -27,7 +27,7 @@ namespace AutomatedDeployment.Core.Services
                 IDeploymentFilesRepository deploymentFilesRepository
                 )
 
-         
+
         {
             ApplicationRepository = applicationRepository;
             HubRepository = hubRepository;
@@ -36,4 +36,5 @@ namespace AutomatedDeployment.Core.Services
             DeploymentFilesRepository = deploymentFilesRepository;
         }
 
+    }
 }
