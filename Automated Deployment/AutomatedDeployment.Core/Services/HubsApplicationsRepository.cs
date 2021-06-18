@@ -56,7 +56,8 @@ namespace AutomatedDeployment.Core.Services
         public HubsApplications GetHubsApplicationByID(int HubID, int AppID)
         {
             return _efgconfigurationdbContext.HubsApplications.AsNoTracking()
-                                             .FirstOrDefault(i => i.AppID == AppID && i.HubID == HubID);
+                                             .FirstOrDefault(i => i.AppID == AppID 
+                                                               && i.HubID == HubID);
         }
 
         public HubsApplications Update(HubsApplications entity)

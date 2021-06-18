@@ -33,8 +33,9 @@ namespace AutomatedDeployment.Api.Controllers
         public IActionResult Get() => Ok("File Upload API running...");
 
 
-        public bool CheckValidData(int hubid, int applicationid) =>
-         unitOfWork.HubsApplicationsRepository.GetHubsApplicationByID(hubid, applicationid) != null;
+        private bool CheckValidData(int hubid, int applicationid) =>
+         unitOfWork.HubsApplicationsRepository
+                   .GetHubsApplicationByID(hubid, applicationid) != null;
 
         [HttpPost]
 
@@ -70,6 +71,7 @@ namespace AutomatedDeployment.Api.Controllers
                     ApprovedBy = "ahmed",
                     RequestedBy = "Mustafa",
                 };
+
                 if (unitOfWork.DeploymentRepository.AddDeployment(deployment) is null)
                     return BadRequest(" Failed to Save Deployment in database");
 
@@ -92,9 +94,6 @@ namespace AutomatedDeployment.Api.Controllers
 
                 if (unitOfWork.DeploymentFilesRepository.AddDeploymentFiles(deploymentFiles) is null)
                     return BadRequest(" Failed to Save Deployment Files in database");
-
-
-
 
             }
             else
