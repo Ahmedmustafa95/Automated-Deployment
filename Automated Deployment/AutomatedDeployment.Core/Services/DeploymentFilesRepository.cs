@@ -47,9 +47,8 @@ namespace AutomatedDeployment.Core.Services
         public DeploymentFiles Update(DeploymentFiles entity)
         {
             throw new NotImplementedException();
-=======
-        public DeploymentFilesRepository(EfgconfigurationdbContext efgconfigurationdbContext)
-            => this._efgconfigurationdbContext = efgconfigurationdbContext;
+        }
+       
 
         public Dictionary<string,status> GetById(int hubID, int applicationId)
         {
