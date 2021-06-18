@@ -15,17 +15,17 @@ namespace AutomatedDeployment.Api.Controllers
     {
         private readonly IRollbackService rollbackService;
         private readonly IPathRepository pathRepository;
-        private readonly IUnitOfWork _unitOfWork;
+        private readonly IUnitOfWork unitOfWork;
 
         public RollbackController(
             IRollbackService _rollbackService, 
             IPathRepository _pathRepository,
-            IUnitOfWork unitOfWork
+            IUnitOfWork _unitOfWork
             )
         {
             rollbackService = _rollbackService;
             pathRepository = _pathRepository;
-            this._unitOfWork = unitOfWork;
+            unitOfWork = _unitOfWork;
         }
 
         [HttpGet]
@@ -33,7 +33,7 @@ namespace AutomatedDeployment.Api.Controllers
         {
             string AssemblyPath = pathRepository.GetAssemblyPath(hubid, applicationid);
             string BackUpPath = pathRepository.GetBackupPath(hubid, applicationid);
-            rollbackService.Rollback(BackUpPath, AssemblyPath);
+            rollbackService.Rollback(BackUpPath, AssemblyPath,unitOfWork.DeploymentFilesRepository.GetById(hubid,applicationid));
             return Ok();
         }
     }
