@@ -20,6 +20,7 @@ namespace AutomatedDeployment.Core
             service.AddScoped<IDeploymentRepository, DeploymentRepository>();
             service.AddScoped<IDeploymentFilesRepository, DeploymentFilesRepository>();
             service.AddScoped<IUnitOfWork,UnitOfWork>();
+            service.AddScoped<StringManipulationRepository>();
         }
     }
 }
