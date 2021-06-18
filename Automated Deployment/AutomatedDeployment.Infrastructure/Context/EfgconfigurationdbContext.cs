@@ -40,10 +40,10 @@ namespace AutomatedDeployment.Infrastructure.Context
         {
             modelBuilder.HasAnnotation("Relational:Collation", "SQL_Latin1_General_CP1_CI_AS");
 
-            modelBuilder.Entity<Application>(entity =>
-            {
-                entity.Property(e => e.AppID).ValueGeneratedNever();
-            });
+            //modelBuilder.Entity<Application>(entity =>
+            //{
+            //    entity.Property(e => e.AppID).ValueGeneratedNever();
+            //});
 
             //modelBuilder.Entity<Configuration>(entity =>
             //{
@@ -86,10 +86,10 @@ namespace AutomatedDeployment.Infrastructure.Context
                     .OnDelete(DeleteBehavior.ClientSetNull);
             });
 
-            modelBuilder.Entity<Hub>(entity =>
-            {
-                entity.Property(e => e.HubID).ValueGeneratedNever();
-            });
+            //modelBuilder.Entity<Hub>(entity =>
+            //{
+            //    entity.Property(e => e.HubID).ValueGeneratedNever();
+            //});
 
             OnModelCreatingPartial(modelBuilder);
         }
