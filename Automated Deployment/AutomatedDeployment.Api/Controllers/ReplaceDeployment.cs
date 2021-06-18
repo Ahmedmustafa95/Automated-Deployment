@@ -44,7 +44,7 @@ namespace AutomatedDeployment.Api.Controllers
         {
             if (!CheckValidData(hubid, applicationid)) return BadRequest("Not Valid Data");
             string AssemblyPath = pathRepository.GetAssemblyPath(hubid, applicationid);
-            if (AssemblyPath == null) { return NotFound(); }
+            if (AssemblyPath is null) { return NotFound(); }
 
             if (unitOfWork.DeploymentRepository.GetDeploymentCounts(hubid, applicationid) > 0)
             {

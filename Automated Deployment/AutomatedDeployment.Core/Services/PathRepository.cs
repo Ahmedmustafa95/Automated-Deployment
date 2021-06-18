@@ -19,7 +19,7 @@ namespace AutomatedDeployment.Core.Services
         public string GetAssemblyPath(int applicationid, int hubid)
         {
           HubsApplications result=  efgconfigurationdbContext.HubsApplications.AsNoTracking().FirstOrDefault(c => c.AppID == applicationid && c.HubID == hubid);
-            if (result!=null)
+            if (result is not null)
             {
                 return result.AssemblyPath;
 
