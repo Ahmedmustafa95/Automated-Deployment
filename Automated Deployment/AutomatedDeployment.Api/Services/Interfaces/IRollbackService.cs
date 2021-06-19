@@ -8,7 +8,7 @@ namespace AutomatedDeployment.Api.Services
 {
    public interface IRollbackService
     {
-        public void Rollback(string backuppath,string assemblypath,Dictionary<string, status> deploymentFiles);
+        public void Rollback(int hubID, int ApplicationID,string backuppath,string assemblypath,Dictionary<string, status> deploymentFiles);
     }
 
 }
