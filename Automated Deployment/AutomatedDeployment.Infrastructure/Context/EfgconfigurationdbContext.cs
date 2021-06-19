@@ -34,8 +34,8 @@ namespace AutomatedDeployment.Infrastructure.Context
             {
                 optionsBuilder.UseSqlServer("Data Source=automated-deployment.database.windows.net;Initial Catalog=EfgConfigurationDB;Persist Security Info=True;User ID=EFgTeam;Password=Efg123456789")
                     .LogTo(Console.WriteLine, new[] { DbLoggerCategory.Database.Command.Name },
-                        LogLevel.Information)
-                        .EnableSensitiveDataLogging();
+                     LogLevel.Information)
+                    .EnableSensitiveDataLogging();
 
             }
         }
