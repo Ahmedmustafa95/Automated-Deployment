@@ -33,8 +33,9 @@ namespace AutomatedDeployment.Api.Controllers
         public IActionResult Get() => Ok("File Upload API running...");
 
 
-        public bool CheckValidData(int hubid, int applicationid) =>
-         unitOfWork.HubsApplicationsRepository.GetHubsApplicationByID(hubid, applicationid) != null;
+        private bool CheckValidData(int hubid, int applicationid) =>
+         unitOfWork.HubsApplicationsRepository
+                   .GetHubsApplicationByID(hubid, applicationid) != null;
 
         [HttpPost]
 
@@ -43,7 +44,7 @@ namespace AutomatedDeployment.Api.Controllers
         {
             if (!CheckValidData(hubid, applicationid)) return BadRequest("Not Valid Data");
             string AssemblyPath = pathRepository.GetAssemblyPath(hubid, applicationid);
-            if (AssemblyPath == null) { return NotFound(); }
+            if (AssemblyPath is null) { return NotFound(); }
 
             if (unitOfWork.DeploymentRepository.GetDeploymentCounts(hubid, applicationid) > 0)
             {
@@ -70,6 +71,7 @@ namespace AutomatedDeployment.Api.Controllers
                     ApprovedBy = "ahmed",
                     RequestedBy = "Mustafa",
                 };
+
                 if (unitOfWork.DeploymentRepository.AddDeployment(deployment) is null)
                     return BadRequest(" Failed to Save Deployment in database");
 
@@ -77,7 +79,7 @@ namespace AutomatedDeployment.Api.Controllers
 
                 List<DeploymentFiles> deploymentFiles = new List<DeploymentFiles>();
 
-                //refactor
+                //refactor code
                 foreach (var fileName in filesState["Modified"])
                 {
                     DeploymentFiles deploymentFile = new DeploymentFiles() {DeploymentID= currentDeploymentId, FilesName= fileName, Status=status.Modified };
@@ -92,9 +94,6 @@ namespace AutomatedDeployment.Api.Controllers
 
                 if (unitOfWork.DeploymentFilesRepository.AddDeploymentFiles(deploymentFiles) is null)
                     return BadRequest(" Failed to Save Deployment Files in database");
-
-
-
 
             }
             else
