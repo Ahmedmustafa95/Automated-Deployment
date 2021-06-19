@@ -21,6 +21,7 @@ namespace AutomatedDeployment.Core.Services
         }
         public IReadOnlyList<Hub> GetAll()
         {
+
             return _efgconfigurationdbContext.Hubs.AsNoTracking().ToList();
         }
 

@@ -20,6 +20,7 @@ namespace AutomatedDeployment.Core.Services
         }
         public IReadOnlyList<Application> GetAll()
         {
+
             return _efgconfigurationdbContext.Applications.AsNoTracking().ToList();
         }
 

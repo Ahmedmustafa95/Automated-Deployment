@@ -12,6 +12,7 @@ namespace AutomatedDeployment.Core.Interfaces
       
         T Add(T entity);
         T Update(T entity);
+
        
     }
 
