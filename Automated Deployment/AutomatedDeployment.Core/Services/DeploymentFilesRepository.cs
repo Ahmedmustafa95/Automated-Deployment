@@ -18,9 +18,9 @@ namespace AutomatedDeployment.Core.Services
         public DeploymentFilesRepository(EfgconfigurationdbContext efgconfigurationdbContext) =>
             _efgconfigurationdbContext = efgconfigurationdbContext;
 
-      
 
-      public List<DeploymentFiles> AddDeploymentFiles(List<DeploymentFiles> deploymentFiles)
+
+        public List<DeploymentFiles> AddDeploymentFiles(List<DeploymentFiles> deploymentFiles)
         {
             if (deploymentFiles is not null)
             {
@@ -66,26 +66,42 @@ namespace AutomatedDeployment.Core.Services
         {
             throw new NotImplementedException();
         }
-       
 
-        public Dictionary<string,status> GetById(int hubID, int applicationId)
+
+        public Dictionary<string, status> GetById(int hubID, int applicationId)
         {
             try
             {
-                var lastDeployemt = _efgconfigurationdbContext.Deployments
-                                                         .Where(D => D.HubID == hubID &&
-                                                                     D.AppID == applicationId)
-                                                         .LastOrDefault();
+
                 return _efgconfigurationdbContext.DeploymentFiles
-                                          .Where(D => D.DeploymentID == lastDeployemt.DeploymentID)
-                                          .ToDictionary(D => D.FilesName,D => D.Status);
+                                          .Where(D => D.DeploymentID == GetLastDepolyment(hubID,applicationId).DeploymentID)
+                                          .ToDictionary(D => D.FilesName, D => D.Status);
             }
-            catch (Exception)
+            catch (Exception e)
             {
                 return null;
             }
 
         }
-        
+
+        public Deployment GetLastDepolyment(int hubId, int applicationId)
+        {
+            try
+            {
+                return _efgconfigurationdbContext.Deployments
+                                                        .Where(D => D.HubID == hubId &&
+                                                                    D.AppID == applicationId)
+                                                        .OrderBy(D => D.DeploymentID)
+                                                        .LastOrDefault();
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
+
+
     }
 }

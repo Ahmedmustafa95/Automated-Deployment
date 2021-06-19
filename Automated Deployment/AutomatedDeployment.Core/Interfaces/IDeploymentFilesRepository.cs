@@ -15,8 +15,8 @@ namespace AutomatedDeployment.Core.Interfaces
     {
         List<DeploymentFiles> AddDeploymentFiles(List<DeploymentFiles> deploymentFiles);
         DeploymentFiles AddDeploymentFile(DeploymentFiles deploymentFiles);
+        Deployment GetLastDepolyment(int hubId, int applicationId);
 
 
-
-}
+    }
 }

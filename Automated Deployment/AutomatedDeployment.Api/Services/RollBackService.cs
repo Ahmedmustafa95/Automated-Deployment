@@ -35,9 +35,7 @@ namespace AutomatedDeployment.Api.Services
             //ibackupService.MoveTOBackUpFolder(filesName, AssemblyPath, BackUpPath);
             //List<string> files = new List<string>();
             
-
-           
-         
+            var lastDeploymentFolderDate = $"BK_{unitOfWork.DeploymentFilesRepository.GetLastDepolyment(hubid,applicationid).DeploymentDate.ToString("yyyy-MM-dd-hh-mm-ss")}";
             Deployment deployment = new Deployment()
             {
                 HubID = hubid,
@@ -46,8 +44,8 @@ namespace AutomatedDeployment.Api.Services
                 ApprovedBy = "Shawky",
                 RequestedBy = "Mustafa",
             };
-            int addedID = unitOfWork.DeploymentRepository.AddDeployment(deployment).DeploymentID; 
-           
+            int addedID = unitOfWork.DeploymentRepository.AddDeployment(deployment).DeploymentID;
+
 
             //read all files 
             //string[] allfiles = Directory.GetFiles(BackupPath);
@@ -67,7 +65,7 @@ namespace AutomatedDeployment.Api.Services
                     };
                     unitOfWork.DeploymentFilesRepository.AddDeploymentFile(deploymentfile);
                     File.Move(AssemblyPath+@"\"+file.Key, NewBackupPath + @"\" + file.Key);
-                    File.Copy(BackupPath + @"\" + file.Key, AssemblyPath + @"\" + file.Key);
+                    File.Copy(BackupPath +@" \ "+lastDeploymentFolderDate+@"\"+file.Key, AssemblyPath + @"\" + file.Key);
 
                 }
                 else if (file.Value==status.Added)
@@ -93,7 +91,7 @@ namespace AutomatedDeployment.Api.Services
                         Status = status.Added
                     };
                     unitOfWork.DeploymentFilesRepository.AddDeploymentFile(deploymentfile);
-                    File.Copy(BackupPath + @"\" + file.Key, AssemblyPath + @"\" + file.Key);
+                    File.Copy(BackupPath + @" \ "+lastDeploymentFolderDate+@"\"+ file.Key, AssemblyPath + @"\" + file.Key);
                 }
             }
           //  ibackupService.MoveTOBackUpFolder(files, AssemblyPath, NewBackupPath);

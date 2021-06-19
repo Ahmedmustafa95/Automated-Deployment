@@ -16,7 +16,7 @@ namespace AutomatedDeployment.Core.Services
         {
             efgconfigurationdbContext = _efgconfigurationdbContext;
         }
-        public string GetAssemblyPath(int applicationid, int hubid)
+        public string GetAssemblyPath(int hubid,int applicationid)
         {
           HubsApplications result=  efgconfigurationdbContext.HubsApplications.AsNoTracking().FirstOrDefault(c => c.AppID == applicationid && c.HubID == hubid);
             if (result is not null)
@@ -29,7 +29,7 @@ namespace AutomatedDeployment.Core.Services
             }
         }
  
-        public string GetBackupPath(int applicationid, int hubid)
+        public string GetBackupPath(int hubid ,int applicationid)
         {
             HubsApplications result = efgconfigurationdbContext.HubsApplications.AsNoTracking().FirstOrDefault(c => c.AppID == applicationid && c.HubID == hubid);
             if (result != null)

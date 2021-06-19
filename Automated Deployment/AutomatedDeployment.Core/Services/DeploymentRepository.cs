@@ -26,8 +26,9 @@ namespace AutomatedDeployment.Core.Services
                     _efgconfigurationdbContext.SaveChanges();
                     return deployment;
                 }
-                catch
+                catch(Exception e)
                 {
+
                     return null;
                 }
                
@@ -41,6 +42,7 @@ namespace AutomatedDeployment.Core.Services
 
         public int GetDeploymentCounts(int hubID, int applicationId) =>
          _efgconfigurationdbContext.Deployments.Count(d => d.HubID == hubID && d.AppID == applicationId);
-          
+
+       
     }
 }
