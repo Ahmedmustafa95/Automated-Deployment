@@ -26,8 +26,9 @@ namespace AutomatedDeployment.Core.Services
                     _efgconfigurationdbContext.SaveChanges();
                     return deployment;
                 }
-                catch
+                catch(Exception e)
                 {
+
                     return null;
                 }
                

@@ -26,7 +26,6 @@ namespace AutomatedDeployment.Infrastructure.Context
         public virtual DbSet<Hub> Hubs { get; set; }
         public virtual DbSet<Deployment> Deployments { get; set; }
         public virtual DbSet<DeploymentFiles> DeploymentFiles { get; set; }
-        public virtual DbSet<Rollback> Rollbacks { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
