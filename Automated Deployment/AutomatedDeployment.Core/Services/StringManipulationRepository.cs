@@ -15,26 +15,54 @@ namespace AutomatedDeployment.Core.Services
     {
         private readonly EfgconfigurationdbContext efgconfigurationdbContext;
         private readonly IPathRepository PathRepository;
+        private readonly IHubsApplicationsRepository hubsApplicationsRepository;
         public StringManipulationRepository(EfgconfigurationdbContext _efgconfigurationdbContext,
-                                             IPathRepository _pathRepository)
+                                             IPathRepository _pathRepository,
+                                             IHubsApplicationsRepository _hubsApplicationsRepository)
         {
             efgconfigurationdbContext = _efgconfigurationdbContext;
             PathRepository = _pathRepository;
+            hubsApplicationsRepository = _hubsApplicationsRepository;
         }
         private string GetAppAssemblyPath(int HubID, int AppID) =>
             PathRepository.GetAssemblyPath(HubID, AppID);
-        //private string[] GetAllXmlFilesNames(int HubID, int AppID)
-        //{
-            
+        public List<ConfigSearchResult> FindConfigSetting(string ConfigName)
+        {
+            List<ConfigSearchResult> configSearches = new List<ConfigSearchResult>();
 
+            List<HubsApplications> hubsApplications = hubsApplicationsRepository.GetAll().ToList();
+            //looping over all the apps in the hubsApplications List
+            foreach (var App in hubsApplications)
+            {
+                Dictionary<string, List<XmlConfigObj>> AppConfigData = this.GetAppConfigFilesData(App.HubID, App.AppID);
+                //looping in every list from AppConfigData
+                foreach (var KeyValue in AppConfigData.Values)
+                {
+                    //foundItems is the ones that match the condition
+                    List<XmlConfigObj> foundItems= KeyValue.FindAll(i =>i.ElementKey.ToLower() == ConfigName.ToLower());
+                    //looping ovet foundItems to fill the array with the found result
+                    for (int i = 0; i < foundItems.Count; i++)
+                    {
+                        ConfigSearchResult searchResult = new ConfigSearchResult() 
+                        {
+                            AppID=App.AppID, HubID=App.HubID,
+                            ConfigurationSectionName= foundItems[i].SectionName,
+                            ConfigurationName= foundItems[i].ElementKey,
+                            ConfigurationValue=foundItems[i].ElementValue
+                        };
+                        configSearches.Add(searchResult);
+                    }
+                }
+            }
+            return configSearches;
+        }
 
-        //}
         public Dictionary<string, List<XmlConfigObj>> GetAppConfigFilesData(int HubID,int AppID)
         {
             //1- get assemply path for the appid and hub id
             //2- get all the .XML files
             //3- if exists then get all the key-value pairs in all of them and return them else return null
-            // Key =file Name     value=array of object
+            // Key =file Name, value=array of object
             Dictionary<string, List<XmlConfigObj>> ConfigFilesKeysValues = new Dictionary<string, List<XmlConfigObj>>();
            
             string AppAssemblyPath = GetAppAssemblyPath(HubID, AppID);
