@@ -60,13 +60,20 @@ namespace AutomatedDeployment.Core.Services
                                                                && i.HubID == HubID);
         }
 
-        public HubsApplications Update(HubsApplications entity)
+        public HubsApplications Update(HubsApplications entity,int id)
         {
             if (entity is HubsApplications && entity != null)
             {
                 try
                 {
-                    _efgconfigurationdbContext.Entry(entity).State = EntityState.Modified;
+                    var obj = GetHubsApplicationByID(entity.HubID, id);
+                    _efgconfigurationdbContext.Remove(obj);
+                    _efgconfigurationdbContext.SaveChanges();
+
+                    obj.AppID = entity.AppID;
+
+                    _efgconfigurationdbContext.Add(obj);
+                   // _efgconfigurationdbContext.Entry(entity).State = EntityState.Modified;
                     _efgconfigurationdbContext.SaveChanges();
                     return entity;
                 }
@@ -77,6 +84,11 @@ namespace AutomatedDeployment.Core.Services
             }
             else
                 return null;
+        }
+
+        public HubsApplications Update(HubsApplications entity)
+        {
+            throw new NotImplementedException();
         }
     }
 }

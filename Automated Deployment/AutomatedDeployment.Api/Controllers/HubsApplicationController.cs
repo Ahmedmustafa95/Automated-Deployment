@@ -61,11 +61,12 @@ namespace AutomatedDeployment.Api.Controllers
         }
 
         [HttpPut]
-        public IActionResult UpdateHubsApplication (HubsApplications _hubsApplications)
+        public IActionResult UpdateHubsApplication (HubsApplications _hubsApplications,[FromRoute] int ApplicationId)
         {
             try
             {
-                var hubsapplication = hubsApplicationsRepository.Update(_hubsApplications);
+
+                var hubsapplication = hubsApplicationsRepository.Update(_hubsApplications,ApplicationId);
                 return Ok();
             }catch
             {
