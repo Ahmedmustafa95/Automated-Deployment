@@ -29,20 +29,47 @@ namespace AutomatedDeployment.Core.Services
 
 
         //}
-        public Dictionary<string,XmlConfigObj[]> GetAllConfigFiles(int HubID,int AppID)
+        public Dictionary<string, List<XmlConfigObj>> GetAppConfigFilesData(int HubID,int AppID)
         {
             //1- get assemply path for the appid and hub id
             //2- get all the .XML files
             //3- if exists then get all the key-value pairs in all of them and return them else return null
+            // Key =file Name     value=array of object
+            Dictionary<string, List<XmlConfigObj>> ConfigFilesKeysValues = new Dictionary<string, List<XmlConfigObj>>();
+           
             string AppAssemblyPath = GetAppAssemblyPath(HubID, AppID);
             string[] XMLFilesNames = Directory.GetFiles(AppAssemblyPath, "*.xml", SearchOption.TopDirectoryOnly);
+        
             foreach (string fileName in XMLFilesNames)
             {
                 XDocument doc = XDocument.Load(fileName);
-                var result = doc.Descendants("YearsPlayed").Any(yearsplayed => Convert.ToInt32(yearsplayed.Value) > 15);
-                // Copy file.
+                List<XElement> XmlAppSettings = doc?.Descendants("appSettings")?.ToList()?.Elements()?.ToList() ?? new List<XElement>();
+                List<XElement> XmlConnectionStrings = doc?.Descendants("connectionStrings")?.ToList().Elements()?.ToList() ?? new List<XElement>();
+                List<XmlConfigObj> ConfigFileElements = new List<XmlConfigObj>();
+        
+                for (int i = 0; i < XmlAppSettings.Count; i++)
+                {
+                    var Key = XmlAppSettings[i]?.Attribute("key").Value;
+                    var Value = XmlAppSettings[i]?.Attribute("value").Value;
+                    XmlConfigObj xmlConfigObj = new XmlConfigObj() 
+                    { SectionName = "appSettings", ElementKey = Key, ElementValue = Value };
+                    ConfigFileElements.Add(xmlConfigObj);
+                 }
+
+
+                for (int i = 0; i < XmlConnectionStrings.Count; i++)
+                {
+                    var Name = XmlConnectionStrings[i]?.Attribute("name").Value;
+                    var ConnectionString = XmlConnectionStrings[i]?.Attribute("connectionString").Value;
+                    XmlConfigObj xmlConfigObj = new XmlConfigObj()
+                    { SectionName = "connectionStrings", ElementKey = Name, ElementValue = ConnectionString };
+
+                    ConfigFileElements.Add(xmlConfigObj);
+                }
+                ConfigFilesKeysValues.Add(fileName, ConfigFileElements);
             }
-            return new Dictionary<string, XmlConfigObj[]>();
+        
+            return ConfigFilesKeysValues;
         }
     }
 }
