@@ -21,7 +21,7 @@ namespace AutomatedDeployment.Api.Services
             foreach (var formFile in files)
             {
 
-                var filePath = Path.GetFullPath(dir +"\\"+ formFile.FileName);
+                var filePath = Path.GetFullPath(dir +formFile.FileName);
 
                 // full path to file in temp location
                 //var filePath = Path.GetTempFileName(); //we are using Temp file name just for the example. Add your own file path.

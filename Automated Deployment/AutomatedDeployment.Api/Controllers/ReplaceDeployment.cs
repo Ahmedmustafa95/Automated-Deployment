@@ -43,7 +43,7 @@ namespace AutomatedDeployment.Api.Controllers
 
         {
             if (!CheckValidData(hubid, applicationid)) return BadRequest("Not Valid Data");
-            string AssemblyPath = pathRepository.GetAssemblyPath(hubid, applicationid);
+            string AssemblyPath = $"{pathRepository.GetAssemblyPath(hubid, applicationid)}{@"\"}";
             if (AssemblyPath is null) { return NotFound(); }
 
             if (unitOfWork.DeploymentRepository.GetDeploymentCounts(hubid, applicationid) > 0)
@@ -56,7 +56,7 @@ namespace AutomatedDeployment.Api.Controllers
                 Directory.CreateDirectory(NewBackupPath);
 
                 // Dictionary has Files Name as key and Files state as value
-                Dictionary<string, List<string>> filesState = replaceService.CompareDeployFilesWithAssemblyFiles(files, AssemblyPath);
+                Dictionary<string,List<string>> filesState = replaceService.CompareDeployFilesWithAssemblyFiles(files, AssemblyPath);
 
                 //var filesName = files.Select(f => f.FileName).ToList();
                 //ibackupService.MoveTOBackUpFolder(filesName, AssemblyPath, BackUpPath);
@@ -82,13 +82,15 @@ namespace AutomatedDeployment.Api.Controllers
                 //refactor code
                 foreach (var fileName in filesState["Modified"])
                 {
-                    DeploymentFiles deploymentFile = new DeploymentFiles() {DeploymentID= currentDeploymentId, FilesName= fileName, Status=status.Modified };
+                    DeploymentFiles deploymentFile = new DeploymentFiles() 
+                    {DeploymentID= currentDeploymentId, FilesName= fileName, Status=status.Modified };
                     deploymentFiles.Add(deploymentFile);
                 }
 
                 foreach (var fileName in filesState["Added"])
                 {
-                    DeploymentFiles deploymentFile = new DeploymentFiles() { DeploymentID = currentDeploymentId, FilesName = fileName, Status = status.Added };
+                    DeploymentFiles deploymentFile = new DeploymentFiles() 
+                    { DeploymentID = currentDeploymentId, FilesName = fileName, Status = status.Added };
                     deploymentFiles.Add(deploymentFile);
                 }
 

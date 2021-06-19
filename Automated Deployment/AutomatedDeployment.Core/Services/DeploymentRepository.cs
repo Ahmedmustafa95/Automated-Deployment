@@ -42,6 +42,7 @@ namespace AutomatedDeployment.Core.Services
 
         public int GetDeploymentCounts(int hubID, int applicationId) =>
          _efgconfigurationdbContext.Deployments.Count(d => d.HubID == hubID && d.AppID == applicationId);
-          
+
+       
     }
 }
