@@ -22,7 +22,7 @@ namespace AutomatedDeployment.Api.Controllers
         {
             try
             {
-                return Ok(stringManipulationRepo.GetAllConfigFiles(1,1));
+                return Ok(stringManipulationRepo.GetAppConfigFilesData(1,1));
             }
             catch (Exception)
             {
