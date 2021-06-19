@@ -50,7 +50,7 @@ namespace AutomatedDeployment.Core.Services
 
         public IReadOnlyList<HubsApplications> GetAll()
         {
-            return _efgconfigurationdbContext.HubsApplications.AsNoTracking().ToList();
+            return _efgconfigurationdbContext.HubsApplications.Include(h=>h.Application).Include(h=>h.Hub).AsNoTracking().ToList();
         }
 
         public HubsApplications GetHubsApplicationByID(int HubID, int AppID)

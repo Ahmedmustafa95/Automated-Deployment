@@ -39,7 +39,7 @@ namespace AutomatedDeployment.Core.Services
                 foreach (var KeyValue in AppConfigData.Values)
                 {
                     //foundItems is the ones that match the condition
-                    List<XmlConfigObj> foundItems= KeyValue.FindAll(i =>i.ElementKey.ToLower() == ConfigName.ToLower());
+                    List<XmlConfigObj> foundItems= KeyValue.FindAll(i =>i.ElementKey.ToLower().Contains(ConfigName.ToLower())|| i.SectionName.ToLower().Contains(ConfigName.ToLower()));
                     //looping ovet foundItems to fill the array with the found result
                     for (int i = 0; i < foundItems.Count; i++)
                     {
@@ -66,6 +66,7 @@ namespace AutomatedDeployment.Core.Services
             Dictionary<string, List<XmlConfigObj>> ConfigFilesKeysValues = new Dictionary<string, List<XmlConfigObj>>();
            
             string AppAssemblyPath = GetAppAssemblyPath(HubID, AppID);
+            if (AppAssemblyPath is null) return new Dictionary<string, List<XmlConfigObj>>();
             string[] XMLFilesNames = Directory.GetFiles(AppAssemblyPath, "*.xml", SearchOption.TopDirectoryOnly);
         
             foreach (string fileName in XMLFilesNames)
