@@ -50,44 +50,38 @@ namespace AutomatedDeployment.Core.Services
 
         public IReadOnlyList<HubsApplications> GetAll()
         {
-            return _efgconfigurationdbContext.HubsApplications.Include(h=>h.Application).Include(h=>h.Hub).AsNoTracking().ToList();
+            return _efgconfigurationdbContext.HubsApplications.Include(h => h.Application).Include(h => h.Hub).AsNoTracking().ToList();
         }
 
         public HubsApplications GetHubsApplicationByID(int HubID, int AppID)
         {
             return _efgconfigurationdbContext.HubsApplications.AsNoTracking()
-                                             .FirstOrDefault(i => i.AppID == AppID 
+                                             .FirstOrDefault(i => i.AppID == AppID
                                                                && i.HubID == HubID);
         }
 
         public HubsApplications Update(HubsApplications entity)
         {
-            if (entity is HubsApplications && entity != null)
-            {
-                try
-                {
-                   var hubApplication= _efgconfigurationdbContext.HubsApplications.AsNoTracking().SingleOrDefault(H => H.AppID == entity.AppID
-                                                                                 && H.HubID == entity.HubID);
-
-                    _efgconfigurationdbContext.Entry(entity).State = EntityState.Modified;
-                    //var obj = GetHubsApplicationByID(entity.HubID, id);
-                    //_efgconfigurationdbContext.Remove(obj);
-                    _efgconfigurationdbContext.SaveChanges();
-
-                   // obj.AppID = entity.AppID;
-
-                   // _efgconfigurationdbContext.Add(obj);
-                   //// _efgconfigurationdbContext.Entry(entity).State = EntityState.Modified;
-                   // _efgconfigurationdbContext.SaveChanges();
-                    return entity;
-                }
-                catch (Exception)
-                {
-                    return null;
-                }
-            }
-            else
+            if (entity is not HubsApplications || entity == null)
                 return null;
+            try
+            {
+                var hubApplication = _efgconfigurationdbContext.HubsApplications
+                                                              .AsNoTracking()
+                                                              .SingleOrDefault
+                                                              (H => H.AppID == entity.AppID
+                                                                 && H.HubID == entity.HubID);
+                if (hubApplication is null)
+                    return null;
+
+                _efgconfigurationdbContext.Entry(entity).State = EntityState.Modified;
+                _efgconfigurationdbContext.SaveChanges();
+                return entity;
+            }
+            catch (Exception e)
+            {
+                return null;
+            }
         }
 
         //public HubsApplications Update(HubsApplications entity)
