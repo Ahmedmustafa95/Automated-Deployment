@@ -15,7 +15,7 @@ namespace AutomatedDeployment.Core.Interfaces
         IReadOnlyList<HubsApplications> GetAll();
 
         HubsApplications Add(HubsApplications entity);
-        HubsApplications Update(HubsApplications entity,int id);
+        HubsApplications Update(HubsApplications entity);
 
     }
 }
