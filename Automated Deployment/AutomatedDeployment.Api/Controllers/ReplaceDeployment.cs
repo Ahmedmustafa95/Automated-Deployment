@@ -50,10 +50,6 @@ namespace AutomatedDeployment.Api.Controllers
             {
                 string BackUpPath = pathRepository.GetBackupPath(hubid, applicationid);
 
-                //if (!Directory.Exists(BackUpPath))
-                //    Directory.CreateDirectory(BackUpPath);
-                string NewBackupPath = $"{BackUpPath} \\ BK_{DateTime.Now.ToString("yyyy-MM-dd-hh-mm-ss")}";
-                Directory.CreateDirectory(NewBackupPath);
 
                 // Dictionary has Files Name as key and Files state as value
                 Dictionary<string, List<string>> filesState = replaceService.CompareDeployFilesWithAssemblyFiles(files, AssemblyPath);
@@ -61,7 +57,16 @@ namespace AutomatedDeployment.Api.Controllers
                 //var filesName = files.Select(f => f.FileName).ToList();
                 //ibackupService.MoveTOBackUpFolder(filesName, AssemblyPath, BackUpPath);
 
-                ibackupService.MoveTOBackUpFolder(filesState["Modified"], AssemblyPath, NewBackupPath);
+               
+                if(filesState["Modified"].Count>0)
+                {
+                    //if (!Directory.Exists(BackUpPath))
+                    //    Directory.CreateDirectory(BackUpPath);
+                    string NewBackupPath = $"{BackUpPath} \\ BK_{DateTime.Now.ToString("yyyy-MM-dd-hh-mm-ss")}";
+                    Directory.CreateDirectory(NewBackupPath);
+                    ibackupService.MoveTOBackUpFolder(filesState["Modified"], AssemblyPath, NewBackupPath);
+                }
+               
                 replaceService.Upload(files, AssemblyPath);
                 Deployment deployment = new Deployment()
                 {
