@@ -88,11 +88,12 @@ namespace AutomatedDeployment.Core.Services
         {
             try
             {
-                return _efgconfigurationdbContext.Deployments
+              var deployment =  _efgconfigurationdbContext.Deployments
                                                         .Where(D => D.HubID == hubId &&
                                                                     D.AppID == applicationId)
                                                         .OrderBy(D => D.DeploymentID)
                                                         .LastOrDefault();
+                return deployment;
             }
             catch (Exception)
             {
