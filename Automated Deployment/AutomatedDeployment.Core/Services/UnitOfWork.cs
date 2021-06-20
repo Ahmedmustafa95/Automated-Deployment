@@ -25,6 +25,8 @@ namespace AutomatedDeployment.Core.Services
                 IHubsApplicationsRepository configurationRepository,
                 IDeploymentRepository deploymentRepository,
                 IDeploymentFilesRepository deploymentFilesRepository
+
+
                 )
 
 

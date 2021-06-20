@@ -10,6 +10,6 @@ namespace AutomatedDeployment.Core.Interfaces
     public interface IApplicationRepository:IGenericRepository<Application>,IGenericDeleteRepository<Application>,
                                             IGenericGetByIDRepository<Application>
     {
-        public List<Application> GetAppsByHubID(int hubID);
+        public List<HubsApplications> GetAppsByHubID(int hubID);
     }
 }
