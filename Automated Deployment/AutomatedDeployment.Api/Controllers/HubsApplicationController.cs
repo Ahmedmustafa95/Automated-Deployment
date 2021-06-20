@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace AutomatedDeployment.Api.Controllers
 {
-    [Route("api/[controller]/{hubid}/{applicationid}")]
+    [Route("api/[controller]/{hubId}/{applicationId}")]
     [ApiController]
     public class HubsApplicationController : ControllerBase
     {
@@ -21,11 +21,11 @@ namespace AutomatedDeployment.Api.Controllers
             hubsApplicationsRepository = _hubsApplicationsRepository;
         }
         [HttpGet]
-        public IActionResult GetGubApplicationByID (int hubid , int applicationid)
+        public IActionResult GetGubApplicationByID (int hubId , int applicationId)
         {
             try
             {
-                var hubapplication = hubsApplicationsRepository.GetHubsApplicationByID(hubid, applicationid);
+                var hubapplication = hubsApplicationsRepository.GetHubsApplicationByID(hubId, applicationId);
                 return Ok(hubapplication);
             }catch
             {
@@ -61,12 +61,17 @@ namespace AutomatedDeployment.Api.Controllers
         }
 
         [HttpPut]
-        public IActionResult UpdateHubsApplication (HubsApplications _hubsApplications,[FromRoute] int ApplicationId)
+        public IActionResult UpdateHubsApplication (HubsApplications _hubsApplications,
+                                                    [FromRoute] int hubId,
+                                                    [FromRoute] int applicationId
+                                                   )
         {
+            if (hubId != _hubsApplications.HubID || applicationId != _hubsApplications.AppID)
+                return NotFound();
             try
             {
 
-                var hubsapplication = hubsApplicationsRepository.Update(_hubsApplications,ApplicationId);
+                var hubsapplication = hubsApplicationsRepository.Update(_hubsApplications);
                 return Ok();
             }catch
             {
@@ -75,11 +80,11 @@ namespace AutomatedDeployment.Api.Controllers
         }
 
         [HttpDelete]
-        public IActionResult DeleteHubsApplication (int hubid,int applicationid)
+        public IActionResult DeleteHubsApplication (int hubId,int applicationId)
         {
             try
             {
-                var hubsapplication = hubsApplicationsRepository.DeleteHubApplication(hubid, applicationid);
+                var hubsapplication = hubsApplicationsRepository.DeleteHubApplication(hubId, applicationId);
                 return Ok(hubsapplication);
             }
             catch

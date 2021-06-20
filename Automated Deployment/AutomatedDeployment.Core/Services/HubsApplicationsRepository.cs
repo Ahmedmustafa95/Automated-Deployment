@@ -60,21 +60,25 @@ namespace AutomatedDeployment.Core.Services
                                                                && i.HubID == HubID);
         }
 
-        public HubsApplications Update(HubsApplications entity,int id)
+        public HubsApplications Update(HubsApplications entity)
         {
             if (entity is HubsApplications && entity != null)
             {
                 try
                 {
-                    var obj = GetHubsApplicationByID(entity.HubID, id);
-                    _efgconfigurationdbContext.Remove(obj);
+                   var hubApplication= _efgconfigurationdbContext.HubsApplications.AsNoTracking().SingleOrDefault(H => H.AppID == entity.AppID
+                                                                                 && H.HubID == entity.HubID);
+
+                    _efgconfigurationdbContext.Entry(entity).State = EntityState.Modified;
+                    //var obj = GetHubsApplicationByID(entity.HubID, id);
+                    //_efgconfigurationdbContext.Remove(obj);
                     _efgconfigurationdbContext.SaveChanges();
 
-                    obj.AppID = entity.AppID;
+                   // obj.AppID = entity.AppID;
 
-                    _efgconfigurationdbContext.Add(obj);
-                   // _efgconfigurationdbContext.Entry(entity).State = EntityState.Modified;
-                    _efgconfigurationdbContext.SaveChanges();
+                   // _efgconfigurationdbContext.Add(obj);
+                   //// _efgconfigurationdbContext.Entry(entity).State = EntityState.Modified;
+                   // _efgconfigurationdbContext.SaveChanges();
                     return entity;
                 }
                 catch (Exception)
@@ -86,9 +90,9 @@ namespace AutomatedDeployment.Core.Services
                 return null;
         }
 
-        public HubsApplications Update(HubsApplications entity)
-        {
-            throw new NotImplementedException();
-        }
+        //public HubsApplications Update(HubsApplications entity)
+        //{
+        //    throw new NotImplementedException();
+        //}
     }
 }
