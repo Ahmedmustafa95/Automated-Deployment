@@ -39,7 +39,7 @@ namespace AutomatedDeployment.Api.Controllers
 
         [HttpPost]
 
-        public IActionResult Upload(List<IFormFile> files, int hubid, int applicationid)
+        public IActionResult Upload(List<IFormFile> files, int hubid, int applicationid,List<string> Deletedfiles)
 
         {
             if (!CheckValidData(hubid, applicationid)) return BadRequest("Not Valid Data");
@@ -50,24 +50,34 @@ namespace AutomatedDeployment.Api.Controllers
             {
                 string BackUpPath = pathRepository.GetBackupPath(hubid, applicationid);
 
-                //if (!Directory.Exists(BackUpPath))
-                //    Directory.CreateDirectory(BackUpPath);
-                string NewBackupPath = $"{BackUpPath} \\ BK_{DateTime.Now.ToString("yyyy-MM-dd-hh-mm-ss")}";
-                Directory.CreateDirectory(NewBackupPath);
 
                 // Dictionary has Files Name as key and Files state as value
                 Dictionary<string,List<string>> filesState = replaceService.CompareDeployFilesWithAssemblyFiles(files, AssemblyPath);
 
                 //var filesName = files.Select(f => f.FileName).ToList();
                 //ibackupService.MoveTOBackUpFolder(filesName, AssemblyPath, BackUpPath);
+                var currentDate = DateTime.Now;
 
-                ibackupService.MoveTOBackUpFolder(filesState["Modified"], AssemblyPath, NewBackupPath);
+                if (filesState["Modified"].Count > 0 || Deletedfiles.Count > 0)
+                {
+                    //if (!Directory.Exists(BackUpPath))
+                    //    Directory.CreateDirectory(BackUpPath);
+                    List<string> backupFiles = new List<string>();
+                    backupFiles.AddRange(filesState["Modified"]);
+                    backupFiles.AddRange(Deletedfiles);
+                  
+                    string NewBackupPath = $"{BackUpPath} \\ BK_{currentDate.ToString("yyyy-MM-dd-hh-mm-ss")}";
+                    Directory.CreateDirectory(NewBackupPath);
+                    ibackupService.MoveTOBackUpFolder(filesState["Modified"], AssemblyPath, NewBackupPath);
+                    ibackupService.MoveTOBackUpFolder(backupFiles, AssemblyPath, NewBackupPath);
+
+                }
                 replaceService.Upload(files, AssemblyPath);
                 Deployment deployment = new Deployment()
                 {
                     HubID = hubid,
                     AppID = applicationid,
-                    DeploymentDate = DateTime.Now,
+                    DeploymentDate = currentDate,
                     ApprovedBy = "ahmed",
                     RequestedBy = "Mustafa",
                 };

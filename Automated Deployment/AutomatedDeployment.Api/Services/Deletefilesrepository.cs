@@ -21,7 +21,7 @@ namespace AutomatedDeployment.Api.Services
             unitOfWork = _unitOfWork;
         }
         public void Deletefiles(int hubid, int appid, List<IFormFile> files)
-        {
+            {
             try
             {
 
@@ -30,7 +30,8 @@ namespace AutomatedDeployment.Api.Services
 
                 var AssemblyPath = hubappobject.AssemblyPath;
                 var BackUpPath = hubappobject.BackupPath;
-                string NewBackupPath = $"{BackUpPath} \\ BK_{DateTime.Now.ToString("yyyy-MM-dd-hh-mm-ss")}";
+                var currentDate = DateTime.Now;
+                string NewBackupPath = $"{BackUpPath} \\ BK_{currentDate.ToString("yyyy-MM-dd-hh-mm-ss")}";
                 Directory.CreateDirectory(NewBackupPath);
                 // Dictionary has Files Name as key and Files state as value
 
@@ -38,7 +39,7 @@ namespace AutomatedDeployment.Api.Services
                 {
                     HubID = hubid,
                     AppID = appid,
-                    DeploymentDate = DateTime.Now,
+                    DeploymentDate = currentDate,
                     ApprovedBy = "chris",
                     RequestedBy = "belal",
                 };
@@ -53,6 +54,7 @@ namespace AutomatedDeployment.Api.Services
                     };
                     unitOfWork.DeploymentFilesRepository.AddDeploymentFile(deploymentfile);
                     File.Move(AssemblyPath + @"\" + file.FileName, NewBackupPath + @"\" + file.FileName);
+                    
                 }
             
 
