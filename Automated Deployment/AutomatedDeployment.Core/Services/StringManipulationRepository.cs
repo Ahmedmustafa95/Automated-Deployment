@@ -8,6 +8,7 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Xml.Linq;
+using System.Xml;
 
 namespace AutomatedDeployment.Core.Services
 {
@@ -36,10 +37,10 @@ namespace AutomatedDeployment.Core.Services
             {
                 Dictionary<string, List<XmlConfigObj>> AppConfigData = this.GetAppConfigFilesData(App.HubID, App.AppID);
                 //looping in every list from AppConfigData
-                foreach (var KeyValue in AppConfigData.Values)
+                foreach (var KeyValue in AppConfigData)
                 {
                     //foundItems is the ones that match the condition
-                    List<XmlConfigObj> foundItems= KeyValue.FindAll(i =>i.ElementKey.ToLower().Contains(ConfigName.ToLower())|| i.SectionName.ToLower().Contains(ConfigName.ToLower()));
+                    List<XmlConfigObj> foundItems= KeyValue.Value.FindAll(i =>i.ElementKey.ToLower().Contains(ConfigName.ToLower())|| i.SectionName.ToLower().Contains(ConfigName.ToLower()));
                     //looping ovet foundItems to fill the array with the found result
                     for (int i = 0; i < foundItems.Count; i++)
                     {
@@ -48,6 +49,7 @@ namespace AutomatedDeployment.Core.Services
                             AppID=App.AppID, HubID=App.HubID,
                             ConfigurationSectionName= foundItems[i].SectionName,
                             ConfigurationName= foundItems[i].ElementKey,
+                            FileName=KeyValue.Key,
                             ConfigurationValue=foundItems[i].ElementValue
                         };
                         configSearches.Add(searchResult);
@@ -100,5 +102,115 @@ namespace AutomatedDeployment.Core.Services
         
             return ConfigFilesKeysValues;
         }
+
+
+        public bool UpdateAppConfigData(Dictionary<string, List<XmlConfigObj>> UpdatedXml, int HubID, int AppID)
+        {
+            //1-check if objects in config file exist
+            //2-if exist update if not exist insert
+
+            Dictionary<string, List<XmlConfigObj>> OldXml = GetAppConfigFilesData(HubID, AppID);
+
+            List<XmlConfigObj> OldList = new List<XmlConfigObj>();
+            List<XmlConfigObj> UpdatedList = new List<XmlConfigObj>();
+
+            //bool XmlFileFlag = false;
+            //bool SectionNameFlag = false;
+            
+            XDocument doc = new XDocument();
+            if (OldXml is not null && UpdatedXml is not null)
+            {
+                //getting the List<xmlConfigObj> of the Old XML using the key(xml file name)
+                //check if Updated file exist 
+                //if exist >> get the Old list (old xml), Updated list(updated xml)
+                foreach (var fileName in UpdatedXml.Keys)
+                {
+                    //backupFile
+
+                    try
+                    {
+                        if (OldXml.ContainsKey(fileName))
+                        {
+                            // XmlFileFlag = true;
+                            OldList = OldXml[fileName];
+                            UpdatedList = UpdatedXml[fileName];
+                            doc = XDocument.Load(fileName);
+
+                            // xml file exist
+                            // start comparing the updated xml file details with the old one
+                            //>> Comparing OldList and UpdatedList
+
+                            for (int i = 0; i < UpdatedList.Count; i++)
+                            {
+                                XmlConfigObj FoundElemnt = OldList.Find(j => j.SectionName == UpdatedList[i].SectionName &&
+                                  j.ElementKey == UpdatedList[i].ElementKey);
+
+                                //backup the whole xml file first
+                                //update the old value with the new value
+                                if (FoundElemnt is not null)
+                                {
+
+                                    var updatedElement = doc.Descendants(UpdatedList[i].SectionName).Elements()
+                                           .Where(x => x.Attribute(UpdatedList[i].SectionName == "appSettings" ? "key" : "name").Value == UpdatedList[i].ElementKey)
+                                           .FirstOrDefault();
+                                    if (updatedElement is not null)
+                                        updatedElement.SetValue(UpdatedList[i].ElementValue);
+
+                                }
+                                else
+                                {
+                                    //insert
+                                    XElement newElement;
+                                    if (UpdatedList[i].SectionName == "appSettings")
+                                    {
+                                        newElement = new XElement("add", new XAttribute("key", UpdatedList[i].ElementKey),
+                                            new XAttribute("value", UpdatedList[i].ElementValue));
+
+                                    }
+                                    else
+                                    {
+                                        newElement = new XElement("add", new XAttribute("name", UpdatedList[i].ElementKey),
+                                           new XAttribute("connectionString", UpdatedList[i].ElementValue));
+                                    }
+                                    doc.Descendants(UpdatedList[i].SectionName).Elements().Append(newElement);
+
+                                }
+
+
+                            }
+
+                            doc.Save(fileName);
+
+                        }
+                    }
+                    catch (Exception)
+                    {
+
+                        return false;
+                    }
+                }
+                return true;
+            }
+            else
+            {
+                //Assembly path doesn't exist 
+                return false;
+            }
+        }
+
+
+        public void UpdateSingleConfigData(string Configkey)
+        {
+            FindConfigSetting(Configkey);
+        }
+
+        //key >> Clinet Validation
+        //app1 - true
+        //app2 - false
+
+        //Key >> WebPages
+        //app1 - index.html
+        //app2 - app.html
+    
     }
 }
