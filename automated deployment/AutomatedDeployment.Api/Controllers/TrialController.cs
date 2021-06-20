@@ -22,9 +22,10 @@ namespace AutomatedDeployment.Api.Controllers
         {
             try
             {
-                return Ok(stringManipulationRepo.GetAppConfigFilesData(1,1));
+                return Ok(stringManipulationRepo.FindConfigSetting("connectionStrings"));
+                //return Ok(stringManipulationRepo.GetAppConfigFilesData(1,1));
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                 return NotFound();
             }
