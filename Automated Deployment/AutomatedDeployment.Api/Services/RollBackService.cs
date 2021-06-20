@@ -78,10 +78,13 @@ namespace AutomatedDeployment.Api.Services
                         Status = status.Deleted
                     };
                     unitOfWork.DeploymentFilesRepository.AddDeploymentFile(deploymentfile);
-                    File.Move(AssemblyPath + @"\" + file.Key, NewBackupPath + @"\" + file.Key);
-                    
+                    // File.Move(AssemblyPath + @"\" + file.Key, NewBackupPath + @"\" + file.Key);
+                    File.Copy(BackupPath + @" \ " + lastDeploymentFolderDate + @"\" + file.Key, AssemblyPath + @"\" + file.Key);
 
-                }else if (file.Value==status.Deleted)
+
+
+                }
+                else if (file.Value==status.Deleted)
                 {
                    // files.Add(file.Key);
                     DeploymentFiles deploymentfile = new DeploymentFiles()
