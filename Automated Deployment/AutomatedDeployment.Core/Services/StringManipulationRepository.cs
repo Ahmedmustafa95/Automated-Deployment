@@ -116,27 +116,28 @@ namespace AutomatedDeployment.Core.Services
             {
                 Dictionary<string, List<XmlConfigObj>> AppConfigData = this.GetAppConfigFilesData(App.HubID, App.AppID);
                 //looping in every list from AppConfigData
-                foreach (var KeyValue in AppConfigData.Values)
+                foreach (var KeyValue in AppConfigData)
                 {
                     //foundItems is the ones that match the condition
-                    List<XmlConfigObj> foundItems = KeyValue.FindAll(i => i.ElementKey.ToLower().Contains(ConfigName.ToLower()) || i.SectionName.ToLower().Contains(ConfigName.ToLower()));
+                    List<XmlConfigObj> foundItems = KeyValue.Value.FindAll(i => i.ElementKey.ToLower().Contains(ConfigName.ToLower()) || i.SectionName.ToLower().Contains(ConfigName.ToLower()));
                     //looping ovet foundItems to fill the array with the found result
-            
 
-                      for (int i = 0; i < foundItems.Count; i++)
+
+                    for (int i = 0; i < foundItems.Count; i++)
+                    {
+                        ConfigSearchResult searchResult = new ConfigSearchResult()
                         {
-                            ConfigSearchResult searchResult = new ConfigSearchResult()
-                            {
-                                AppID = App.AppID,
-                                HubID = App.HubID,
-                                AppName = App.Application.AppName,
-                                HubName = App.Hub.HubName,
-                                ConfigurationSectionName = foundItems[i].SectionName,
-                                ConfigurationName = foundItems[i].ElementKey,
-                                ConfigurationValue = foundItems[i].ElementValue
-                            };
-                            configSearches.Add(searchResult);
-                        }
+                            AppID = App.AppID,
+                            HubID = App.HubID,
+                            AppName = App.Application.AppName,
+                            HubName = App.Hub.HubName,
+                            ConfigurationSectionName = foundItems[i].SectionName,
+                            ConfigurationName = foundItems[i].ElementKey,
+                            ConfigurationValue = foundItems[i].ElementValue,
+                            FileName = KeyValue.Key
+                        };
+                        configSearches.Add(searchResult);
+                    }
                 }
             }
             return configSearches;
@@ -196,7 +197,7 @@ namespace AutomatedDeployment.Core.Services
 
             //bool XmlFileFlag = false;
             //bool SectionNameFlag = false;
-            
+
             XDocument doc = new XDocument();
             if (OldXml is not null && UpdatedXml is not null)
             {
@@ -279,18 +280,48 @@ namespace AutomatedDeployment.Core.Services
         }
 
 
-        public void UpdateSingleConfigData(string Configkey)
+        public bool UpdateSingleConfigData(ConfigSearchResult UpdatedConfig)
         {
-            FindConfigSetting(Configkey);
+            try
+            {
+                string AppAssemblyPath = GetAppAssemblyPath(UpdatedConfig.HubID, UpdatedConfig.AppID);
+                if (AppAssemblyPath is not null)
+                {
+                    XDocument doc = XDocument.Load($"{AppAssemblyPath}\\{UpdatedConfig.FileName}");
+
+                    var updatedElement = doc.Descendants(UpdatedConfig.ConfigurationSectionName).Elements()
+                           .Where(x => x.Attribute(UpdatedConfig.ConfigurationSectionName == "appSettings" ? "key" : "name").Value == UpdatedConfig.ConfigurationName)
+                           .FirstOrDefault();
+                    if (updatedElement is not null)
+                        updatedElement.SetValue(UpdatedConfig.ConfigurationValue);
+
+                }
+                return true;
+            }
+            catch (Exception)
+            {
+
+                return false;
+            }
+
+          
+
         }
 
-        //key >> Clinet Validation
-        //app1 - true
-        //app2 - false
-
-        //Key >> WebPages
-        //app1 - index.html
-        //app2 - app.html
-    
     }
+              
+
+
+
+                
+
+                //key >> Clinet Validation
+                //app1 - true
+                //app2 - false
+
+                //Key >> WebPages
+                //app1 - index.html
+                //app2 - app.html
+
+            
 }
