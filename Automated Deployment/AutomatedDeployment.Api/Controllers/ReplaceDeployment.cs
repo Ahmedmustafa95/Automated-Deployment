@@ -52,7 +52,8 @@ namespace AutomatedDeployment.Api.Controllers
 
                 //if (!Directory.Exists(BackUpPath))
                 //    Directory.CreateDirectory(BackUpPath);
-                string NewBackupPath = $"{BackUpPath} \\ BK_{DateTime.Now.ToString("yyyy-MM-dd-hh-mm-ss")}";
+                var currentDate = DateTime.Now;
+                string NewBackupPath = $"{BackUpPath} \\ BK_{currentDate.ToString("yyyy-MM-dd-hh-mm-ss")}";
                 Directory.CreateDirectory(NewBackupPath);
 
                 // Dictionary has Files Name as key and Files state as value
@@ -67,7 +68,7 @@ namespace AutomatedDeployment.Api.Controllers
                 {
                     HubID = hubid,
                     AppID = applicationid,
-                    DeploymentDate = DateTime.Now,
+                    DeploymentDate = currentDate,
                     ApprovedBy = "ahmed",
                     RequestedBy = "Mustafa",
                 };
