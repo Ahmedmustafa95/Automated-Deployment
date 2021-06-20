@@ -39,7 +39,7 @@ namespace AutomatedDeployment.Api.Controllers
 
         [HttpPost]
 
-        public IActionResult Upload(List<IFormFile> files, int hubid, int applicationid)
+        public IActionResult Upload(List<IFormFile> files, int hubid, int applicationid, List<string> Deletedfiles)
 
         {
             if (!CheckValidData(hubid, applicationid)) return BadRequest("Not Valid Data");
@@ -58,13 +58,18 @@ namespace AutomatedDeployment.Api.Controllers
                 //ibackupService.MoveTOBackUpFolder(filesName, AssemblyPath, BackUpPath);
 
                
-                if(filesState["Modified"].Count>0)
+                if(filesState["Modified"].Count>0|| Deletedfiles.Count>0)
                 {
                     //if (!Directory.Exists(BackUpPath))
                     //    Directory.CreateDirectory(BackUpPath);
+                    List<string> backupFiles = new List<string>();
+                    backupFiles.AddRange(filesState["Modified"]);
+                    backupFiles.AddRange(Deletedfiles);
+
                     string NewBackupPath = $"{BackUpPath} \\ BK_{DateTime.Now.ToString("yyyy-MM-dd-hh-mm-ss")}";
                     Directory.CreateDirectory(NewBackupPath);
-                    ibackupService.MoveTOBackUpFolder(filesState["Modified"], AssemblyPath, NewBackupPath);
+                    ibackupService.MoveTOBackUpFolder(backupFiles, AssemblyPath, NewBackupPath);
+                 
                 }
                
                 replaceService.Upload(files, AssemblyPath);
