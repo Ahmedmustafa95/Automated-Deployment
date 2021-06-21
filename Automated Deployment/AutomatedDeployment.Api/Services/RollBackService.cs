@@ -24,92 +24,92 @@ namespace AutomatedDeployment.Api.Services
             //if (!Directory.Exists(BackUpPath))
             //    Directory.CreateDirectory(BackUpPath);
             try
-
-
-            var currentDate = DateTime.Now;
-
-            string NewBackupPath = $"{BackupPath}\\BK_{currentDate.ToString("yyyy-MM-dd-hh-mm-ss")}".Trim();
-            Directory.CreateDirectory(NewBackupPath);
-
-            // Dictionary has Files Name as key and Files state as value
-
-            //var filesName = files.Select(f => f.FileName).ToList();
-            //ibackupService.MoveTOBackUpFolder(filesName, AssemblyPath, BackUpPath);
-            //List<string> files = new List<string>();
-
-            var lastDeploymentFolderDate = $"BK_{unitOfWork.DeploymentFilesRepository.GetLastDepolyment(hubid, applicationid).DeploymentDate.ToString("yyyy-MM-dd-hh-mm-ss")}".Trim();
-            Deployment deployment = new Deployment()
             {
-                HubID = hubid,
-                AppID = applicationid,
-                DeploymentDate = currentDate,
-                ApprovedBy = "Shawky",
-                RequestedBy = "Mustafa",
-            };
-            int addedID = unitOfWork.DeploymentRepository.AddDeployment(deployment).DeploymentID;
 
+                var currentDate = DateTime.Now;
 
-            //read all files 
-            //string[] allfiles = Directory.GetFiles(BackupPath);
-            //string[] subs;
-            //put files in new path
+                string NewBackupPath = $"{BackupPath}\\BK_{currentDate.ToString("yyyy-MM-dd-hh-mm-ss")}".Trim();
+                Directory.CreateDirectory(NewBackupPath);
 
-            foreach (var file in deploymentFiles)
-            {
-                if (file.Value == status.Modified)
+                // Dictionary has Files Name as key and Files state as value
+
+                //var filesName = files.Select(f => f.FileName).ToList();
+                //ibackupService.MoveTOBackUpFolder(filesName, AssemblyPath, BackUpPath);
+                //List<string> files = new List<string>();
+
+                var lastDeploymentFolderDate = $"BK_{unitOfWork.DeploymentFilesRepository.GetLastDepolyment(hubid, applicationid).DeploymentDate.ToString("yyyy-MM-dd-hh-mm-ss")}".Trim();
+                Deployment deployment = new Deployment()
                 {
-                    //files.Add(file.Key);
-                    DeploymentFiles deploymentfile = new DeploymentFiles()
-                    {
-                        DeploymentID = addedID,
-                        FilesName = file.Key,
-                        Status = status.Modified
-                    };
-                    unitOfWork.DeploymentFilesRepository.AddDeploymentFile(deploymentfile);
+                    HubID = hubid,
+                    AppID = applicationid,
+                    DeploymentDate = currentDate,
+                    ApprovedBy = "Shawky",
+                    RequestedBy = "Mustafa",
+                };
+                int addedID = unitOfWork.DeploymentRepository.AddDeployment(deployment).DeploymentID;
 
-                    MoveFiles(AssemblyPath, NewBackupPath, file.Key);
-                    //File.Move($"{AssemblyPath}{@"\"}{file.Key}".Trim(),
-                    //          $"{NewBackupPath}{@"\"}{file.Key}".Trim());
 
-                    CopyFiles(AssemblyPath, BackupPath, file.Key, lastDeploymentFolderDate);
+                //read all files 
+                //string[] allfiles = Directory.GetFiles(BackupPath);
+                //string[] subs;
+                //put files in new path
 
-                    //File.Copy($"{BackupPath}{@"\"}{lastDeploymentFolderDate}{@"\"}{file.Key}"
-                    //                                           .Trim()
-                    //         ,$"{AssemblyPath}{@"\"}{file.Key}".Trim());
-
-                }
-                else if (file.Value == status.Added)
+                foreach (var file in deploymentFiles)
                 {
-                    // files.Add(file.Key);
-                    DeploymentFiles deploymentfile = new DeploymentFiles()
+                    if (file.Value == status.Modified)
                     {
-                        DeploymentID = addedID,
-                        FilesName = file.Key,
-                        Status = status.Deleted
-                    };
-                    unitOfWork.DeploymentFilesRepository.AddDeploymentFile(deploymentfile);
-                    MoveFiles(AssemblyPath, NewBackupPath, file.Key);
+                        //files.Add(file.Key);
+                        DeploymentFiles deploymentfile = new DeploymentFiles()
+                        {
+                            DeploymentID = addedID,
+                            FilesName = file.Key,
+                            Status = status.Modified
+                        };
+                        unitOfWork.DeploymentFilesRepository.AddDeploymentFile(deploymentfile);
 
-                    //File.Copy(BackupPath + @" \ " + lastDeploymentFolderDate + @"\" + file.Key, AssemblyPath + @"\" + file.Key);
-                }
-                else if (file.Value == status.Deleted)
-                {
-                    // files.Add(file.Key);
-                    DeploymentFiles deploymentfile = new DeploymentFiles()
+                        MoveFiles(AssemblyPath, NewBackupPath, file.Key);
+                        //File.Move($"{AssemblyPath}{@"\"}{file.Key}".Trim(),
+                        //          $"{NewBackupPath}{@"\"}{file.Key}".Trim());
+
+                        CopyFiles(AssemblyPath, BackupPath, file.Key, lastDeploymentFolderDate);
+
+                        //File.Copy($"{BackupPath}{@"\"}{lastDeploymentFolderDate}{@"\"}{file.Key}"
+                        //                                           .Trim()
+                        //         ,$"{AssemblyPath}{@"\"}{file.Key}".Trim());
+
+                    }
+                    else if (file.Value == status.Added)
                     {
-                        DeploymentID = addedID,
-                        FilesName = file.Key,
-                        Status = status.Added
-                    };
-                    unitOfWork.DeploymentFilesRepository.AddDeploymentFile(deploymentfile);
-                    CopyFiles(AssemblyPath, BackupPath, file.Key, lastDeploymentFolderDate);
+                        // files.Add(file.Key);
+                        DeploymentFiles deploymentfile = new DeploymentFiles()
+                        {
+                            DeploymentID = addedID,
+                            FilesName = file.Key,
+                            Status = status.Deleted
+                        };
+                        unitOfWork.DeploymentFilesRepository.AddDeploymentFile(deploymentfile);
+                        MoveFiles(AssemblyPath, NewBackupPath, file.Key);
+
+                        //File.Copy(BackupPath + @" \ " + lastDeploymentFolderDate + @"\" + file.Key, AssemblyPath + @"\" + file.Key);
+                    }
+                    else if (file.Value == status.Deleted)
+                    {
+                        // files.Add(file.Key);
+                        DeploymentFiles deploymentfile = new DeploymentFiles()
+                        {
+                            DeploymentID = addedID,
+                            FilesName = file.Key,
+                            Status = status.Added
+                        };
+                        unitOfWork.DeploymentFilesRepository.AddDeploymentFile(deploymentfile);
+                        CopyFiles(AssemblyPath, BackupPath, file.Key, lastDeploymentFolderDate);
+                    }
                 }
             }
-            }catch(Exception e)
+            catch(Exception e)
             {
                 Console.WriteLine(e.Message);
             }
-
         }
 
         public void MoveFiles(string assemblyPath,string newBackupPath,string fileName)
