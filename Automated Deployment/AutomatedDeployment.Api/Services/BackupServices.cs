@@ -24,8 +24,10 @@ namespace AutomatedDeployment.Api.Services
             //}
             foreach (var item in filesName)
             {
-                if(File.Exists(assemblyPath + '\\' + item))
-                File.Move(assemblyPath+'\\'+item, backupPath + '\\' + item);
+                if(File.Exists(assemblyPath +'\\'+ item))
+                    File.Move($"{assemblyPath}{@"\"}{item}".Trim(),$"{backupPath}{@"\"}{item}".Trim());
+                    //File.Move(assemblyPath + '\\' + item, backupPath + '\\' + item);
+
             }
            
         }

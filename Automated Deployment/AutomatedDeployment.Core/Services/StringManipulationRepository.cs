@@ -90,8 +90,8 @@ namespace AutomatedDeployment.Core.Services
 
                 for (int i = 0; i < XmlAppSettings.Count; i++)
                 {
-                    var Key = XmlAppSettings[i]?.Attribute("key").Value;
-                    var Value = XmlAppSettings[i]?.Attribute("value").Value;
+                    var Key = XmlAppSettings[i]?.Attribute("key")?.Value??"Na";
+                    var Value = XmlAppSettings[i]?.Attribute("value")?.Value??"Na";
                     XmlConfigObj xmlConfigObj = new XmlConfigObj()
                     { SectionName = "appSettings", ElementKey = Key, ElementValue = Value };
                     ConfigFileElements.Add(xmlConfigObj);

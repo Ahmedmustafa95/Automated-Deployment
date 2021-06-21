@@ -43,7 +43,7 @@ namespace AutomatedDeployment.Api.Controllers
 
         {
             if (!CheckValidData(hubid, applicationid)) return BadRequest("Not Valid Data");
-            string AssemblyPath = $"{pathRepository.GetAssemblyPath(hubid, applicationid)}{@"\"}";
+            string AssemblyPath = $"{pathRepository.GetAssemblyPath(hubid, applicationid)}{@"\"}".Trim();
             if (AssemblyPath is null) { return NotFound(); }
 
             if (unitOfWork.DeploymentRepository.GetDeploymentCounts(hubid, applicationid) > 0)
@@ -66,7 +66,7 @@ namespace AutomatedDeployment.Api.Controllers
                     backupFiles.AddRange(filesState["Modified"]);
                     backupFiles.AddRange(Deletedfiles);
                   
-                    string NewBackupPath = $"{BackUpPath} \\ BK_{currentDate.ToString("yyyy-MM-dd-hh-mm-ss")}";
+                    string NewBackupPath = $"{BackUpPath} \\ BK_{currentDate.ToString("yyyy-MM-dd-hh-mm-ss")}".Trim();
                     Directory.CreateDirectory(NewBackupPath);
                     ibackupService.MoveTOBackUpFolder(backupFiles, AssemblyPath, NewBackupPath);
 
