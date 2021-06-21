@@ -23,6 +23,9 @@ namespace AutomatedDeployment.Api.Services
 
             //if (!Directory.Exists(BackUpPath))
             //    Directory.CreateDirectory(BackUpPath);
+            try
+
+
             var currentDate = DateTime.Now;
 
             string NewBackupPath = $"{BackupPath}\\BK_{currentDate.ToString("yyyy-MM-dd-hh-mm-ss")}".Trim();
@@ -102,22 +105,37 @@ namespace AutomatedDeployment.Api.Services
                     CopyFiles(AssemblyPath, BackupPath, file.Key, lastDeploymentFolderDate);
                 }
             }
+            }catch(Exception e)
+            {
+                Console.WriteLine(e.Message);
+            }
 
         }
 
         public void MoveFiles(string assemblyPath,string newBackupPath,string fileName)
         {
-            File.Move($"{assemblyPath}{@"\"}{fileName}".Trim(),
-                      $"{newBackupPath}{@"\"}{fileName}".Trim());
-
+            try
+            {
+                File.Move($"{assemblyPath}{@"\"}{fileName}".Trim(),
+                          $"{newBackupPath}{@"\"}{fileName}".Trim());
+            }catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+            }
         }
 
         public void CopyFiles(string assemblyPath, string backupPath, 
                               string fileName,string lastDeploymentDate)
         {
-            File.Copy($"{backupPath}{@"\"}{lastDeploymentDate}{@"\"}{fileName}"
-                                                       .Trim()
-                     ,$"{assemblyPath}{@"\"}{fileName}".Trim());
+            try
+            {
+                File.Copy($"{backupPath}{@"\"}{lastDeploymentDate}{@"\"}{fileName}"
+                                                           .Trim()
+                         , $"{assemblyPath}{@"\"}{fileName}".Trim());
+            }catch(Exception e)
+            {
+                Console.WriteLine(e.Message);
+            }
 
         }
 
