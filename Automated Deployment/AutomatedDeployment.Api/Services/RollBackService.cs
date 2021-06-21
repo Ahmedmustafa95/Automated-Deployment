@@ -43,6 +43,7 @@ namespace AutomatedDeployment.Api.Services
                     HubID = hubid,
                     AppID = applicationid,
                     DeploymentDate = currentDate,
+                    DeployedBy="belal",
                     ApprovedBy = "Shawky",
                     RequestedBy = "Mustafa",
                 };

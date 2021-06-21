@@ -22,9 +22,9 @@ namespace AutomatedDeployment.Core.Services
             {
                 try
                 {
-                    _efgconfigurationdbContext.Deployments.Add(deployment);
+                   var deployment1= _efgconfigurationdbContext.Deployments.Add(deployment);
                     _efgconfigurationdbContext.SaveChanges();
-                    return deployment;
+                    return deployment1.Entity;
                 }
                 catch(Exception e)
                 {

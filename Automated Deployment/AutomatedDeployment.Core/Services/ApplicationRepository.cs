@@ -41,11 +41,11 @@ namespace AutomatedDeployment.Core.Services
 
             if (entity is Application)
             {
-                _efgconfigurationdbContext.Add(entity);
+                var app =_efgconfigurationdbContext.Add(entity);
                 try
                 {
                     _efgconfigurationdbContext.SaveChanges();
-                    return entity;
+                    return app.Entity;
                 }
                 catch (Exception)
                 {

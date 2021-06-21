@@ -21,11 +21,11 @@ namespace AutomatedDeployment.Core.Services
 
         public HubsApplications Add(HubsApplications entity)
         {
-            _efgconfigurationdbContext.HubsApplications.Add(entity);
+           var ha =  _efgconfigurationdbContext.HubsApplications.Add(entity);
             try
             {
                 _efgconfigurationdbContext.SaveChanges();
-                return entity;
+                return ha.Entity;
             }
             catch (Exception)
             {
@@ -55,9 +55,12 @@ namespace AutomatedDeployment.Core.Services
 
         public HubsApplications GetHubsApplicationByID(int HubID, int AppID)
         {
-            return _efgconfigurationdbContext.HubsApplications.AsNoTracking()
-                                             .FirstOrDefault(i => i.AppID == AppID
-                                                               && i.HubID == HubID);
+           
+                return _efgconfigurationdbContext.HubsApplications.AsNoTracking()
+                                                 .FirstOrDefault(i => i.AppID == AppID
+                                                                   && i.HubID == HubID);
+            
+
         }
 
         public HubsApplications Update(HubsApplications entity)

@@ -39,9 +39,15 @@ namespace AutomatedDeployment.Api.Controllers
 
         [HttpPost]
 
-        public IActionResult Upload(List<IFormFile> files, int hubid, int applicationid,List<string> Deletedfiles)
+        public IActionResult Upload(List<IFormFile> files, int hubid, int applicationid,List<IFormFile> Deleted)
 
         {
+
+            List<string> Deletedfiles = new List<string>();
+            foreach (var file in Deleted)
+            {
+                Deletedfiles.Add(file.FileName);
+            }
             if (!CheckValidData(hubid, applicationid)) return BadRequest("Not Valid Data");
             string AssemblyPath = $"{pathRepository.GetAssemblyPath(hubid, applicationid)}{@"\"}".Trim();
             if (AssemblyPath is null) { return NotFound(); }
@@ -55,7 +61,7 @@ namespace AutomatedDeployment.Api.Controllers
                 Dictionary<string,List<string>> filesState = replaceService.CompareDeployFilesWithAssemblyFiles(files, AssemblyPath);
 
                 //var filesName = files.Select(f => f.FileName).ToList();
-                //ibackupService.MoveTOBackUpFolder(filesName, AssemblyPath, BackUpPath);
+                //ibackupService.MoveTOBackUpFolder(filesName, AssemblyPat/h, BackUpPath);
                 var currentDate = DateTime.Now;
 
                 if (filesState["Modified"].Count > 0 || Deletedfiles.Count > 0)
@@ -66,7 +72,7 @@ namespace AutomatedDeployment.Api.Controllers
                     backupFiles.AddRange(filesState["Modified"]);
                     backupFiles.AddRange(Deletedfiles);
                   
-                    string NewBackupPath = $"{BackUpPath} \\ BK_{currentDate.ToString("yyyy-MM-dd-hh-mm-ss")}".Trim();
+                    string NewBackupPath = $"{BackUpPath}\\BK_{currentDate.ToString("yyyy-MM-dd-hh-mm-ss")}".Trim();
                     Directory.CreateDirectory(NewBackupPath);
                     ibackupService.MoveTOBackUpFolder(backupFiles, AssemblyPath, NewBackupPath);
 
@@ -78,6 +84,7 @@ namespace AutomatedDeployment.Api.Controllers
                     HubID = hubid,
                     AppID = applicationid,
                     DeploymentDate = currentDate,
+                    DeployedBy="shawky",
                     ApprovedBy = "ahmed",
                     RequestedBy = "Mustafa",
                 };

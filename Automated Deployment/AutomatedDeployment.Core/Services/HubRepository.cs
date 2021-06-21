@@ -42,11 +42,11 @@ namespace AutomatedDeployment.Core.Services
 
             if (entity is Hub)
             {
-                _efgconfigurationdbContext.Add(entity);
+                var hub = _efgconfigurationdbContext.Add(entity);
                 try
                 {
                     _efgconfigurationdbContext.SaveChanges();
-                    return entity;
+                    return hub.Entity;
                 }
                 catch (Exception)
                 {

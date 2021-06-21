@@ -44,9 +44,9 @@ namespace AutomatedDeployment.Core.Services
             {
                 try
                 {
-                    _efgconfigurationdbContext.DeploymentFiles.Add(deploymentFile);
+                   var df = _efgconfigurationdbContext.DeploymentFiles.Add(deploymentFile);
                     _efgconfigurationdbContext.SaveChanges();
-                    return deploymentFile;
+                    return df.Entity;
                 }
                 catch
                 {
