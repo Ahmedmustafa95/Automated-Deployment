@@ -29,7 +29,7 @@ namespace AutomatedDeployment.Core.Services
             PathRepository.GetAssemblyPath(HubID, AppID);
      
 
-
+        //  get all applications in all hubs containing that key
         public List<ConfigSearchResult> FindConfigSetting(string ConfigName)
         {
             List<ConfigSearchResult> configSearches = new List<ConfigSearchResult>();
@@ -67,13 +67,14 @@ namespace AutomatedDeployment.Core.Services
             return configSearches;
         }
 
+        // Get All Keys_Values Pair For application in specified Hub
         public Dictionary<string, List<XmlConfigObj>> GetAppConfigFilesData(int HubID, int AppID)
         {
             //[{"1.xml":[{sectioname="AppSetting",Key=LastName,Value="ahmed"}]}]
             //1- get assemply path for the appid and hub id
             //2- get all the .XML files
             //3- if exists then get all the key-value pairs in all of them and return them else return null
-            // Key = file Name, value=array of object
+            // Key = fileName, value=array of XmlConfigObj object
             Dictionary<string, List<XmlConfigObj>> ConfigFilesKeysValues = new Dictionary<string, List<XmlConfigObj>>();
 
             string AppAssemblyPath = GetAppAssemblyPath(HubID, AppID);
@@ -203,7 +204,7 @@ namespace AutomatedDeployment.Core.Services
             }
         }
 
-
+        //update only one key in single xml file
         public bool UpdateSingleConfigData(ConfigSearchResult UpdatedConfig)
         {
             try
@@ -230,6 +231,27 @@ namespace AutomatedDeployment.Core.Services
 
           
 
+        }
+
+
+        public bool UpdateKeyInMultiApplication(string ConfigName)
+        {
+            try
+            {
+                List<ConfigSearchResult> ConfigSearchResultList = new List<ConfigSearchResult>();
+                ConfigSearchResultList = FindConfigSetting(ConfigName);
+                foreach (var item in ConfigSearchResultList)
+                {
+                    UpdateSingleConfigData(item);
+                }
+                return true;
+            }
+            catch (Exception)
+            {
+
+                return false;
+            }
+           
         }
 
     }
