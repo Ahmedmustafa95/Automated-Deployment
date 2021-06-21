@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AutomatedDeployment.Infrastructure.Migrations
 {
     [DbContext(typeof(EfgconfigurationdbContext))]
-    [Migration("20210619103002_RemoveRolBack")]
-    partial class RemoveRolBack
+    [Migration("20210621111803_addDeployedBy")]
+    partial class addDeployedBy
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -52,6 +52,10 @@ namespace AutomatedDeployment.Infrastructure.Migrations
                     b.Property<string>("ApprovedBy")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("DeployedBy")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<DateTime>("DeploymentDate")
                         .HasColumnType("datetime2");
 
@@ -59,7 +63,6 @@ namespace AutomatedDeployment.Infrastructure.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("RequestedBy")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("DeploymentID");

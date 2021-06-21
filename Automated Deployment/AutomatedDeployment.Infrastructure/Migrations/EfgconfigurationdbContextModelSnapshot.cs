@@ -50,6 +50,10 @@ namespace AutomatedDeployment.Infrastructure.Migrations
                     b.Property<string>("ApprovedBy")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("DeployedBy")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<DateTime>("DeploymentDate")
                         .HasColumnType("datetime2");
 
@@ -57,7 +61,6 @@ namespace AutomatedDeployment.Infrastructure.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("RequestedBy")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("DeploymentID");
