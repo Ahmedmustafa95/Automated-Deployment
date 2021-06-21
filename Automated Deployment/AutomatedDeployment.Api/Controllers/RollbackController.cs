@@ -31,10 +31,16 @@ namespace AutomatedDeployment.Api.Controllers
         [HttpGet]
         public IActionResult RollBack(int hubid, int applicationid)
         {
-            string AssemblyPath = pathRepository.GetAssemblyPath(hubid, applicationid);
-            string BackUpPath = pathRepository.GetBackupPath(hubid, applicationid);
-            rollbackService.Rollback(hubid,applicationid,BackUpPath, AssemblyPath,unitOfWork.DeploymentFilesRepository.GetById(hubid,applicationid));
-            return Ok();
+            try
+            {
+                string AssemblyPath = pathRepository.GetAssemblyPath(hubid, applicationid);
+                string BackUpPath = pathRepository.GetBackupPath(hubid, applicationid);
+                rollbackService.Rollback(hubid, applicationid, BackUpPath, AssemblyPath, unitOfWork.DeploymentFilesRepository.GetById(hubid, applicationid));
+                return Ok();
+            }catch (Exception e)
+            {
+                return NotFound(e);
+            }
         }
     }
 }
