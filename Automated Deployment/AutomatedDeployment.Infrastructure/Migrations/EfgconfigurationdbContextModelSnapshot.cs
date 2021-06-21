@@ -23,9 +23,7 @@ namespace AutomatedDeployment.Infrastructure.Migrations
             modelBuilder.Entity("AutomatedDeployment.Domain.Entities.Application", b =>
                 {
                     b.Property<int>("AppID")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                        .HasColumnType("int");
 
                     b.Property<string>("AppName")
                         .IsRequired()
@@ -98,9 +96,7 @@ namespace AutomatedDeployment.Infrastructure.Migrations
             modelBuilder.Entity("AutomatedDeployment.Domain.Entities.Hub", b =>
                 {
                     b.Property<int>("HubID")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                        .HasColumnType("int");
 
                     b.Property<string>("HubName")
                         .IsRequired()

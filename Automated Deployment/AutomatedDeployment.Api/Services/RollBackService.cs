@@ -10,8 +10,6 @@ namespace AutomatedDeployment.Api.Services
 {
     public class RollBackService : IRollbackService
     {
-
-        
         private readonly IUnitOfWork unitOfWork;
 
         public RollBackService( IUnitOfWork _unitOfWork)
@@ -80,10 +78,7 @@ namespace AutomatedDeployment.Api.Services
                     };
                     unitOfWork.DeploymentFilesRepository.AddDeploymentFile(deploymentfile);
                     File.Move(AssemblyPath + @"\" + file.Key, NewBackupPath + @"\" + file.Key);
-                 // File.Copy(BackupPath + @" \ " + lastDeploymentFolderDate + @"\" + file.Key, AssemblyPath + @"\" + file.Key);
-
-
-
+                  //File.Copy(BackupPath + @" \ " + lastDeploymentFolderDate + @"\" + file.Key, AssemblyPath + @"\" + file.Key);
                 }
                 else if (file.Value==status.Deleted)
                 {
