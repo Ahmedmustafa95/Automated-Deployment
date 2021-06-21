@@ -4,14 +4,16 @@ using AutomatedDeployment.Infrastructure.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace AutomatedDeployment.Infrastructure.Migrations
 {
     [DbContext(typeof(EfgconfigurationdbContext))]
-    partial class EfgconfigurationdbContextModelSnapshot : ModelSnapshot
+    [Migration("20210621111803_addDeployedBy")]
+    partial class addDeployedBy
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -23,7 +25,9 @@ namespace AutomatedDeployment.Infrastructure.Migrations
             modelBuilder.Entity("AutomatedDeployment.Domain.Entities.Application", b =>
                 {
                     b.Property<int>("AppID")
-                        .HasColumnType("int");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                     b.Property<string>("AppName")
                         .IsRequired()
@@ -96,7 +100,9 @@ namespace AutomatedDeployment.Infrastructure.Migrations
             modelBuilder.Entity("AutomatedDeployment.Domain.Entities.Hub", b =>
                 {
                     b.Property<int>("HubID")
-                        .HasColumnType("int");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                     b.Property<string>("HubName")
                         .IsRequired()

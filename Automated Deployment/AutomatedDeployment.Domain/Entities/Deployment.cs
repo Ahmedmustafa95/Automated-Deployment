@@ -22,6 +22,8 @@ namespace AutomatedDeployment.Domain.Entities
         public DateTime DeploymentDate { get; set; }
 
         [Required(ErrorMessage = "You must enter your name")]
+
+        public string DeployedBy { get; set; }
         public string RequestedBy { get; set; }
         public string ApprovedBy { get; set; }
       

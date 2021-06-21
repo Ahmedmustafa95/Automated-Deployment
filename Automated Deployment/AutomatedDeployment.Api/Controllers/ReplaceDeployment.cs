@@ -68,11 +68,11 @@ namespace AutomatedDeployment.Api.Controllers
                   
                     string NewBackupPath = $"{BackUpPath} \\ BK_{currentDate.ToString("yyyy-MM-dd-hh-mm-ss")}";
                     Directory.CreateDirectory(NewBackupPath);
-                    ibackupService.MoveTOBackUpFolder(filesState["Modified"], AssemblyPath, NewBackupPath);
                     ibackupService.MoveTOBackUpFolder(backupFiles, AssemblyPath, NewBackupPath);
 
                 }
                 replaceService.Upload(files, AssemblyPath);
+
                 Deployment deployment = new Deployment()
                 {
                     HubID = hubid,
@@ -83,8 +83,9 @@ namespace AutomatedDeployment.Api.Controllers
                 };
 
                 if (unitOfWork.DeploymentRepository.AddDeployment(deployment) is null)
-                    return BadRequest(" Failed to Save Deployment in database");
-
+                    return StatusCode(StatusCodes.Status500InternalServerError, " Failed to Save Deployment in database");  
+                 
+                
                 int currentDeploymentId=unitOfWork.DeploymentRepository.GetCurrentDeploymentId();
 
                 List<DeploymentFiles> deploymentFiles = new List<DeploymentFiles>();
@@ -97,6 +98,7 @@ namespace AutomatedDeployment.Api.Controllers
                     deploymentFiles.Add(deploymentFile);
                 }
 
+
                 foreach (var fileName in filesState["Added"])
                 {
                     DeploymentFiles deploymentFile = new DeploymentFiles() 
@@ -104,8 +106,16 @@ namespace AutomatedDeployment.Api.Controllers
                     deploymentFiles.Add(deploymentFile);
                 }
 
+                foreach (var fileName in Deletedfiles)
+                {
+                    DeploymentFiles deploymentFile = new DeploymentFiles()
+                    { DeploymentID = currentDeploymentId, FilesName = fileName, Status = status.Deleted };
+                    deploymentFiles.Add(deploymentFile);
+                }
+
                 if (unitOfWork.DeploymentFilesRepository.AddDeploymentFiles(deploymentFiles) is null)
-                    return BadRequest(" Failed to Save Deployment Files in database");
+                return StatusCode(StatusCodes.Status500InternalServerError, " Failed to Save Deployment Files in database");
+
 
             }
             else
@@ -122,7 +132,8 @@ namespace AutomatedDeployment.Api.Controllers
                     RequestedBy = "Mustafa",
                 };
                 if (unitOfWork.DeploymentRepository.AddDeployment(deployment) is null)
-                    return BadRequest(" Failed to Save Deployment in database");
+                return StatusCode(StatusCodes.Status500InternalServerError, " Failed to Save Deployment in database");
+
 
             }
 
