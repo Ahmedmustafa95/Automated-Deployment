@@ -14,7 +14,6 @@ namespace AutomatedDeployment.Api.Services
 
         public RollBackService(IUnitOfWork _unitOfWork)
         {
-
             unitOfWork = _unitOfWork;
         }
         public void Rollback(int hubid, int applicationid, string BackupPath, string AssemblyPath, Dictionary<string, status> deploymentFiles)
