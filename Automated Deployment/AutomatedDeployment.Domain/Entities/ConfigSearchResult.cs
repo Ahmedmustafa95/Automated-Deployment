@@ -16,5 +16,6 @@ namespace AutomatedDeployment.Domain.Entities
         public string ConfigurationName { get; set; }
         public string ConfigurationValue { get; set; }
         public string FileName { get; set; }
+        public string ConfigurationResult { get; set; }
     }
 }
