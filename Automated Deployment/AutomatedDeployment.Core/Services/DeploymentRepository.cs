@@ -3,6 +3,7 @@ using AutomatedDeployment.Domain.Entities;
 using AutomatedDeployment.Infrastructure.Context;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -43,6 +44,27 @@ namespace AutomatedDeployment.Core.Services
         public int GetDeploymentCounts(int hubID, int applicationId) =>
          _efgconfigurationdbContext.Deployments.Count(d => d.HubID == hubID && d.AppID == applicationId);
 
-       
+        public string[] GetAllfiles(int hubid, int appid)
+        {
+            try
+            {
+                var assembly = _efgconfigurationdbContext.HubsApplications.Where(h => h.HubID == hubid && h.AppID == appid).FirstOrDefault();
+                string[] filePaths = Directory.GetFiles(assembly.AssemblyPath);
+                string[] filanames = new string [filePaths.Length];
+   
+                string[] subs; 
+               for(int i=0 ; i< filePaths.Length; i++)
+                {
+                    subs = filePaths[i].Split(@"\");
+                    filanames[i] = subs[subs.Length - 1];
+                }
+                return filanames;
+            }
+            catch
+            {
+                return null;
+            }
+
+        }
     }
 }

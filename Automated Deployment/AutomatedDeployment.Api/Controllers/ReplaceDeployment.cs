@@ -30,7 +30,26 @@ namespace AutomatedDeployment.Api.Controllers
         }
 
         [HttpGet]
-        public IActionResult Get() => Ok("File Upload API running...");
+        public IActionResult GetallFiles(int hubid, int applicationid)
+        {
+            try
+            {
+                var result = unitOfWork.DeploymentRepository.GetAllfiles(hubid, applicationid);
+                if (result != null)
+                {
+                    return Ok(result);
+                }
+                else
+                {
+                    return NoContent();
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                return NotFound();
+            }
+        }
 
 
         private bool CheckValidData(int hubid, int applicationid) =>
