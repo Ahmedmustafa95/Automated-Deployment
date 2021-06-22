@@ -246,6 +246,7 @@ namespace AutomatedDeployment.Api.Services
                 ConfigSearchResultList = FindConfigSetting(ConfigName);
                 foreach (var item in ConfigSearchResultList)
                 {
+                    
                     item.ConfigurationValue = NewValue;
                     UpdateSingleConfigData(item);
                 }
