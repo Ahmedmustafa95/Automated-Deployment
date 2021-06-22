@@ -11,24 +11,14 @@ namespace AutomatedDeployment.Domain.Entities
     public class Deployment
     {
         public int DeploymentID { get; set; }
-        [ForeignKey("Hub")]
-        public int HubID { get; set; }
-        [ForeignKey("Application")]
-        public int AppID { get; set; }
-        public virtual Hub Hub { get; set; }
-
-        public virtual Application Application { get; set; }
-
         public DateTime DeploymentDate { get; set; }
-
-        [Required(ErrorMessage = "You must enter your name")]
-
+        public DeploymentType DeploymentType { get; set; }
+        public int OriginalDeployment { get; set; }
         public string DeployedBy { get; set; }
         public string RequestedBy { get; set; }
         public string ApprovedBy { get; set; }
-      
-       
-        public virtual ICollection<DeploymentFiles> DeploymentFiles { get; set; } = new HashSet<DeploymentFiles>();
+        public ICollection<DeploymentDetails> DeploymentDetails { get; set;} 
+            = new HashSet<DeploymentDetails>();
 
     }
 }

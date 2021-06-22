@@ -101,27 +101,29 @@ namespace AutomatedDeployment.Core.Services
         
         public bool UpdateSingleConfigData(ConfigSearchResult UpdatedConfig)
         {
-            try
-            {
-                string AppConfigFilePath = PathRepository.GetConfigFilePath(HubID, AppID);
-                if (AppConfigFilePath is not null)
-                {
-                    XDocument doc = XDocument.Load($"{AppAssemblyPath}\\{UpdatedConfig.FileName}");
+            //try
+            //{
+            //    string AppConfigFilePath = PathRepository.GetConfigFilePath(HubID, AppID);
+            //    if (AppConfigFilePath is not null)
+            //    {
+            //        XDocument doc = XDocument.Load($"{AppAssemblyPath}\\{UpdatedConfig.FileName}");
 
-                    var updatedElement = doc.Descendants(UpdatedConfig.ConfigurationSectionName).Elements()
-                           .Where(x => x.Attribute(UpdatedConfig.ConfigurationSectionName == "appSettings" ? "key" : "name").Value == UpdatedConfig.ConfigurationName)
-                           .FirstOrDefault();
-                    if (updatedElement is not null)
-                        updatedElement.SetValue(UpdatedConfig.ConfigurationValue);
+            //        var updatedElement = doc.Descendants(UpdatedConfig.ConfigurationSectionName).Elements()
+            //               .Where(x => x.Attribute(UpdatedConfig.ConfigurationSectionName == "appSettings" ? "key" : "name").Value == UpdatedConfig.ConfigurationName)
+            //               .FirstOrDefault();
+            //        if (updatedElement is not null)
+            //            updatedElement.SetValue(UpdatedConfig.ConfigurationValue);
 
-                }
-                return true;
-            }
-            catch (Exception)
-            {
+            //    }
+            //    return true;
+            //}
+            //catch (Exception)
+            //{
 
-                return false;
-            }
+            //    return false;
+            //}
+
+            return false;
 
 
 

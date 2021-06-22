@@ -103,46 +103,54 @@ namespace AutomatedDeployment.Api.Controllers
                 }
                 replaceService.Upload(files, AssemblyPath);
 
-                Deployment deployment = new Deployment()
-                {
-                    HubID = hubid,
-                    AppID = applicationid,
-                    DeploymentDate = currentDate,
-                    DeployedBy="shawky",
-                    ApprovedBy = "ahmed",
-                    RequestedBy = "Mustafa",
-                };
 
-                if (unitOfWork.DeploymentRepository.AddDeployment(deployment) is null)
-                    return StatusCode(StatusCodes.Status500InternalServerError, " Failed to Save Deployment in database");  
-                 
-                
-                int currentDeploymentId=unitOfWork.DeploymentRepository.GetCurrentDeploymentId();
+                // Error By change Database
+                //Deployment deployment = new Deployment()
+                //{
+                //    HubID = hubid,
+                //    AppID = applicationid,
+                //    DeploymentDate = currentDate,
+                //    DeployedBy="shawky",
+                //    ApprovedBy = "ahmed",
+                //    RequestedBy = "Mustafa",
+                //};
+
+                // Error By change Database
+                //if (unitOfWork.DeploymentRepository.AddDeployment(deployment) is null)
+                //    return StatusCode(StatusCodes.Status500InternalServerError, " Failed to Save Deployment in database");  
+
+
+                int currentDeploymentId =unitOfWork.DeploymentRepository.GetCurrentDeploymentId();
 
                 List<DeploymentFiles> deploymentFiles = new List<DeploymentFiles>();
 
                 //refactor code
-                foreach (var fileName in filesState["Modified"])
-                {
-                    DeploymentFiles deploymentFile = new DeploymentFiles() 
-                    {DeploymentID= currentDeploymentId, FilesName= fileName, Status=status.Modified };
-                    deploymentFiles.Add(deploymentFile);
-                }
+
+                // Error By change Database
+                //foreach (var fileName in filesState["Modified"])
+                //{
+                //    DeploymentFiles deploymentFile = new DeploymentFiles() 
+                //    {DeploymentID= currentDeploymentId, FilesName= fileName, Status=status.Modified };
+                //    deploymentFiles.Add(deploymentFile);
+                //}
+
+                // Error By change Database
+                //foreach (var fileName in filesState["Added"])
+                //{
+                //    DeploymentFiles deploymentFile = new DeploymentFiles() 
+                //    { DeploymentID = currentDeploymentId, FilesName = fileName, Status = status.Added };
+                //    deploymentFiles.Add(deploymentFile);
+                //}
 
 
-                foreach (var fileName in filesState["Added"])
-                {
-                    DeploymentFiles deploymentFile = new DeploymentFiles() 
-                    { DeploymentID = currentDeploymentId, FilesName = fileName, Status = status.Added };
-                    deploymentFiles.Add(deploymentFile);
-                }
 
-                foreach (var fileName in Deletedfiles)
-                {
-                    DeploymentFiles deploymentFile = new DeploymentFiles()
-                    { DeploymentID = currentDeploymentId, FilesName = fileName, Status = status.Deleted };
-                    deploymentFiles.Add(deploymentFile);
-                }
+                // Error By change Database
+                //foreach (var fileName in Deletedfiles)
+                //{
+                //    DeploymentFiles deploymentFile = new DeploymentFiles()
+                //    { DeploymentID = currentDeploymentId, FilesName = fileName, Status = status.Deleted };
+                //    deploymentFiles.Add(deploymentFile);
+                //}
 
                 if (unitOfWork.DeploymentFilesRepository.AddDeploymentFiles(deploymentFiles) is null)
                 return StatusCode(StatusCodes.Status500InternalServerError, " Failed to Save Deployment Files in database");
@@ -154,16 +162,19 @@ namespace AutomatedDeployment.Api.Controllers
 
                 replaceService.Upload(files, AssemblyPath);
 
-                Deployment deployment = new Deployment()
-                {
-                    HubID = hubid,
-                    AppID = applicationid,
-                    DeploymentDate = DateTime.Now,
-                    ApprovedBy = "ahmed",
-                    RequestedBy = "Mustafa",
-                    DeployedBy = "belal"
-                };
-                if (unitOfWork.DeploymentRepository.AddDeployment(deployment) is null)
+                // Error By change Database
+                //Deployment deployment = new Deployment()
+                //{
+                //    HubID = hubid,
+                //    AppID = applicationid,
+                //    DeploymentDate = DateTime.Now,
+                //    ApprovedBy = "ahmed",
+                //    RequestedBy = "Mustafa",
+                //    DeployedBy = "belal"
+                //};
+
+                // Error By change Database
+                //if (unitOfWork.DeploymentRepository.AddDeployment(deployment) is null)
                 return StatusCode(StatusCodes.Status500InternalServerError, " Failed to Save Deployment in database");
 
 
