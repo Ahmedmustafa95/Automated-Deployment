@@ -11,15 +11,16 @@ namespace AutomatedDeployment.Core
 {
     public static class ServiceRegistration
     {
-        public static void AddServices(this IServiceCollection service)
+        public static void AddServices(this IServiceCollection services)
         {
-            service.AddScoped<IHubRepository, HubRepository>();
-            service.AddScoped<IApplicationRepository,ApplicationRepository>();
-            service.AddScoped<IHubsApplicationsRepository, HubsApplicationsRepository>();
-            service.AddScoped<IPathRepository, PathRepository>();
-            service.AddScoped<IDeploymentRepository, DeploymentRepository>();
-            service.AddScoped<IDeploymentFilesRepository, DeploymentFilesRepository>();
-            service.AddScoped<IUnitOfWork,UnitOfWork>();
+            services.AddScoped<IHubRepository, HubRepository>();
+            services.AddScoped<IApplicationRepository,ApplicationRepository>();
+            services.AddScoped<IHubsApplicationsRepository, HubsApplicationsRepository>();
+            services.AddScoped<IPathRepository, PathRepository>();
+            services.AddScoped<IDeploymentRepository, DeploymentRepository>();
+            services.AddScoped<IDeploymentFilesRepository, DeploymentFilesRepository>();
+            services.AddScoped<IUnitOfWork,UnitOfWork>();
+            services.AddScoped<IStringManipulationRepository, StringManipulationRepository>();
 
         }
     }

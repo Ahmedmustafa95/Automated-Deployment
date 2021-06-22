@@ -4,9 +4,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace AutomatedDeployment.Api.Services
+namespace AutomatedDeployment.Core.Interfaces
 {
-    public interface IStringManipulationServices
+    public interface IStringManipulationRepository
     {
         List<ConfigSearchResult> FindConfigSetting(string ConfigName);
         Dictionary<string, List<XmlConfigObj>> GetAppConfigFilesData(int HubID, int AppID);
