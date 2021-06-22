@@ -38,16 +38,21 @@ namespace AutomatedDeployment.Api.Controllers
                    .GetHubsApplicationByID(hubid, applicationid) != null;
 
         [HttpPost]
-
-        public IActionResult Upload(List<IFormFile> files, int hubid, int applicationid,List<IFormFile> Deleted)
+        public IActionResult Upload([FromBody] UploadingModel uploadingModel,int hubid,int applicationid)
 
         {
+            //public IActionResult Upload(List<IFormFile> files, int hubid, int applicationid,List<string> Deleted)
 
-            List<string> Deletedfiles = new List<string>();
-            foreach (var file in Deleted)
-            {
-                Deletedfiles.Add(file.FileName);
-            }
+            //{
+
+            //List<string> Deletedfiles = new List<string>();
+            //foreach (var file in Deleted)
+            //{
+            //    Deletedfiles.Add(file.FileName);
+            //}
+            var files = uploadingModel.files;
+            var Deletedfiles = uploadingModel.Deleted;
+
             if (!CheckValidData(hubid, applicationid)) return BadRequest("Not Valid Data");
             string AssemblyPath = $"{pathRepository.GetAssemblyPath(hubid, applicationid)}{@"\"}".Trim();
             if (AssemblyPath is null) { return NotFound(); }
@@ -137,6 +142,7 @@ namespace AutomatedDeployment.Api.Controllers
                     DeploymentDate = DateTime.Now,
                     ApprovedBy = "ahmed",
                     RequestedBy = "Mustafa",
+                    DeployedBy = "belal"
                 };
                 if (unitOfWork.DeploymentRepository.AddDeployment(deployment) is null)
                 return StatusCode(StatusCodes.Status500InternalServerError, " Failed to Save Deployment in database");
