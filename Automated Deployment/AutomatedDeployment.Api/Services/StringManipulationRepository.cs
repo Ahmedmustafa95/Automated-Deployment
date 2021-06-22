@@ -12,7 +12,7 @@ using System.Xml;
 
 namespace AutomatedDeployment.Api.Services
 {
-    public class StringManipulationRepository: IStringManipulationServices
+    public class StringManipulationRepository : IStringManipulationServices
     {
         private readonly EfgconfigurationdbContext efgconfigurationdbContext;
         private readonly IPathRepository PathRepository;
@@ -27,44 +27,54 @@ namespace AutomatedDeployment.Api.Services
         }
         private string GetAppAssemblyPath(int HubID, int AppID) =>
             PathRepository.GetAssemblyPath(HubID, AppID);
-     
+
 
         //  get all applications in all hubs containing that key
         public List<ConfigSearchResult> FindConfigSetting(string ConfigName)
         {
-            List<ConfigSearchResult> configSearches = new List<ConfigSearchResult>();
-            // Add Same Paths In DB
-            List<HubsApplications> hubsApplications = hubsApplicationsRepository.GetAll().Where(h=>h.AppID==4 || h.AppID==6|| h.AppID == 1|| h.AppID == 2).ToList();
-            //looping over all the apps in the hubsApplications List
-            foreach (var App in hubsApplications)
+            try
             {
-                Dictionary<string, List<XmlConfigObj>> AppConfigData = this.GetAppConfigFilesData(App.HubID, App.AppID);
-                //looping in every list from AppConfigData
-                foreach (var KeyValue in AppConfigData)
+
+                List<ConfigSearchResult> configSearches = new List<ConfigSearchResult>();
+                // Add Same Paths In DB
+                List<HubsApplications> hubsApplications = hubsApplicationsRepository.GetAll().Where(h => h.AppID == 4 || h.AppID == 6 || h.AppID == 1 || h.AppID == 2).ToList();
+                //looping over all the apps in the hubsApplications List
+                foreach (var App in hubsApplications)
                 {
-                    //foundItems is the ones that match the condition
-                    List<XmlConfigObj> foundItems = KeyValue.Value.FindAll(i => i.ElementKey.ToLower().Contains(ConfigName.ToLower()) || i.SectionName.ToLower().Contains(ConfigName.ToLower()));
-                    //looping ovet foundItems to fill the array with the found result
-
-
-                    for (int i = 0; i < foundItems.Count; i++)
+                    Dictionary<string, List<XmlConfigObj>> AppConfigData = this.GetAppConfigFilesData(App.HubID, App.AppID);
+                    //looping in every list from AppConfigData
+                    foreach (var KeyValue in AppConfigData)
                     {
-                        ConfigSearchResult searchResult = new ConfigSearchResult()
+                        //foundItems is the ones that match the condition
+                        List<XmlConfigObj> foundItems = KeyValue.Value.FindAll(i => i.ElementKey.ToLower().Contains(ConfigName.ToLower()) || i.SectionName.ToLower().Contains(ConfigName.ToLower()));
+                        //looping ovet foundItems to fill the array with the found result
+
+
+                        for (int i = 0; i < foundItems.Count; i++)
                         {
-                            AppID = App.AppID,
-                            HubID = App.HubID,
-                            AppName = App.Application.AppName,
-                            HubName = App.Hub.HubName,
-                            ConfigurationSectionName = foundItems[i].SectionName,
-                            ConfigurationName = foundItems[i].ElementKey,
-                            ConfigurationValue = foundItems[i].ElementValue,
-                            FileName = KeyValue.Key
-                        };
-                        configSearches.Add(searchResult);
+                            ConfigSearchResult searchResult = new ConfigSearchResult()
+                            {
+                                AppID = App.AppID,
+                                HubID = App.HubID,
+                                AppName = App.Application.AppName,
+                                HubName = App.Hub.HubName,
+                                ConfigurationSectionName = foundItems[i].SectionName,
+                                ConfigurationName = foundItems[i].ElementKey,
+                                ConfigurationValue = foundItems[i].ElementValue,
+                                FileName = KeyValue.Key
+                            };
+                            configSearches.Add(searchResult);
+                        }
                     }
                 }
+                return configSearches;
             }
-            return configSearches;
+            catch (Exception)
+            {
+
+                return null;
+            }
+
         }
 
         // Get All Keys_Values Pair For application in specified Hub
@@ -75,39 +85,49 @@ namespace AutomatedDeployment.Api.Services
             //2- get all the .XML files
             //3- if exists then get all the key-value pairs in all of them and return them else return null
             // Key = fileName, value=array of XmlConfigObj object
-            Dictionary<string, List<XmlConfigObj>> ConfigFilesKeysValues = new Dictionary<string, List<XmlConfigObj>>();
-
-            string AppAssemblyPath = GetAppAssemblyPath(HubID, AppID);
-            if (AppAssemblyPath is null) return new Dictionary<string, List<XmlConfigObj>>();
-            string[] XMLFilesNames = Directory.GetFiles(AppAssemblyPath, "*.xml", SearchOption.TopDirectoryOnly);
-
-            foreach (string fileName in XMLFilesNames)
+            try
             {
-                XDocument doc = XDocument.Load(fileName);
-                List<XElement> XmlAppSettings = doc?.Descendants("appSettings")?.ToList()?.Elements()?.ToList() ?? new List<XElement>();
-                List<XElement> XmlConnectionStrings = doc?.Descendants("connectionStrings")?.ToList().Elements()?.ToList() ?? new List<XElement>();
-                List<XmlConfigObj> ConfigFileElements = new List<XmlConfigObj>();
 
-                for (int i = 0; i < XmlAppSettings.Count; i++)
+
+                Dictionary<string, List<XmlConfigObj>> ConfigFilesKeysValues = new Dictionary<string, List<XmlConfigObj>>();
+
+                string AppAssemblyPath = GetAppAssemblyPath(HubID, AppID);
+                if (AppAssemblyPath is null) return null;
+                string[] XMLFilesNames = Directory.GetFiles(AppAssemblyPath, "*.xml", SearchOption.TopDirectoryOnly);
+
+                foreach (string fileName in XMLFilesNames)
                 {
-                    var Key = XmlAppSettings[i]?.Attribute("key").Value;
-                    var Value = XmlAppSettings[i]?.Attribute("value").Value;
-                    XmlConfigObj xmlConfigObj = new XmlConfigObj()
-                    { SectionName = "appSettings", ElementKey = Key, ElementValue = Value };
-                    ConfigFileElements.Add(xmlConfigObj);
+                    XDocument doc = XDocument.Load(fileName);
+                    List<XElement> XmlAppSettings = doc?.Descendants("appSettings")?.ToList()?.Elements()?.ToList() ?? new List<XElement>();
+                    List<XElement> XmlConnectionStrings = doc?.Descendants("connectionStrings")?.ToList().Elements()?.ToList() ?? new List<XElement>();
+                    List<XmlConfigObj> ConfigFileElements = new List<XmlConfigObj>();
+
+                    for (int i = 0; i < XmlAppSettings.Count; i++)
+                    {
+                        var Key = XmlAppSettings[i]?.Attribute("key").Value;
+                        var Value = XmlAppSettings[i]?.Attribute("value").Value;
+                        XmlConfigObj xmlConfigObj = new XmlConfigObj()
+                        { SectionName = "appSettings", ElementKey = Key, ElementValue = Value };
+                        ConfigFileElements.Add(xmlConfigObj);
+                    }
+                    for (int i = 0; i < XmlConnectionStrings.Count; i++)
+                    {
+                        var Name = XmlConnectionStrings[i]?.Attribute("name").Value;
+                        var ConnectionString = XmlConnectionStrings[i]?.Attribute("connectionString").Value;
+                        XmlConfigObj xmlConfigObj = new XmlConfigObj()
+                        { SectionName = "connectionStrings", ElementKey = Name, ElementValue = ConnectionString };
+                        ConfigFileElements.Add(xmlConfigObj);
+                    }
+                    ConfigFilesKeysValues.Add(fileName, ConfigFileElements);
                 }
-                for (int i = 0; i < XmlConnectionStrings.Count; i++)
-                {
-                    var Name = XmlConnectionStrings[i]?.Attribute("name").Value;
-                    var ConnectionString = XmlConnectionStrings[i]?.Attribute("connectionString").Value;
-                    XmlConfigObj xmlConfigObj = new XmlConfigObj()
-                    { SectionName = "connectionStrings", ElementKey = Name, ElementValue = ConnectionString };
-                    ConfigFileElements.Add(xmlConfigObj);
-                }
-                ConfigFilesKeysValues.Add(fileName, ConfigFileElements);
+
+                return ConfigFilesKeysValues;
             }
+            catch (Exception)
+            {
 
-            return ConfigFilesKeysValues;
+                return null;
+            }
         }
 
         public bool UpdateAppConfigData(Dictionary<string, List<XmlConfigObj>> UpdatedXml, int HubID, int AppID)
@@ -210,7 +230,7 @@ namespace AutomatedDeployment.Api.Services
             try
             {
                 string AppAssemblyPath = GetAppAssemblyPath(UpdatedConfig.HubID, UpdatedConfig.AppID);
-               
+
                 if (AppAssemblyPath is not null)
                 {
                     XDocument doc = XDocument.Load($"{UpdatedConfig.FileName}");
@@ -220,7 +240,8 @@ namespace AutomatedDeployment.Api.Services
                            .Where(x => x.Attribute(UpdatedConfig.ConfigurationSectionName == "appSettings" ? "key" : "name").Value == UpdatedConfig.ConfigurationName)
                            .FirstOrDefault();
                     if (updatedElement is not null)
-                        updatedElement.Attribute("value").Value=(UpdatedConfig.ConfigurationValue);
+                        updatedElement.Attribute("value").Value = (UpdatedConfig.ConfigurationValue);
+                    else return false;
                     //doc.Save($"{AppAssemblyPath}\\{UpdatedConfig.FileName}");
                     doc.Save($"{UpdatedConfig.FileName}");
 
@@ -233,22 +254,22 @@ namespace AutomatedDeployment.Api.Services
                 return false;
             }
 
-          
+
 
         }
 
 
-        public bool UpdateKeyInMultiApplication(string ConfigName,string NewValue)
+        public bool UpdateKeyInMultiApplication(string ConfigName, string NewValue)
         {
             try
             {
                 List<ConfigSearchResult> ConfigSearchResultList = new List<ConfigSearchResult>();
                 ConfigSearchResultList = FindConfigSetting(ConfigName);
+                if (ConfigSearchResultList.Count==0) return false;
                 foreach (var item in ConfigSearchResultList)
                 {
-                    
                     item.ConfigurationValue = NewValue;
-                    UpdateSingleConfigData(item);
+                    if (UpdateSingleConfigData(item) == false) return false;
                 }
                 return true;
             }
@@ -257,7 +278,7 @@ namespace AutomatedDeployment.Api.Services
 
                 return false;
             }
-           
+
         }
 
     }

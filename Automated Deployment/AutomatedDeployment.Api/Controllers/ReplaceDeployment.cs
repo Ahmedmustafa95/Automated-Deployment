@@ -38,10 +38,17 @@ namespace AutomatedDeployment.Api.Controllers
                    .GetHubsApplicationByID(hubid, applicationid) != null;
 
         [HttpPost]
-
-        public IActionResult Upload(List<IFormFile> files, int hubid, int applicationid,List<string> Deletedfiles)
+       
+        public IActionResult Upload(List<IFormFile> files, int hubid, int applicationid, List<IFormFile> Deleted)
 
         {
+            List<string> Deletedfiles = new List<string>();
+            foreach (var file in Deleted)
+            {
+                Deletedfiles.Add(file.FileName);
+            }
+
+               
             if (!CheckValidData(hubid, applicationid)) return BadRequest("Not Valid Data");
             string AssemblyPath = $"{pathRepository.GetAssemblyPath(hubid, applicationid)}{@"\"}";
             if (AssemblyPath is null) { return NotFound(); }
