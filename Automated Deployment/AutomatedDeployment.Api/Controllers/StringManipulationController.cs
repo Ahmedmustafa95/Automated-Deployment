@@ -14,8 +14,8 @@ namespace AutomatedDeployment.Core.Services
     [ApiController]
     public class StringManipulationController : ControllerBase
     {
-        private readonly IStringManipulationRepository _stringManipulationServices;
-        public StringManipulationController(IStringManipulationRepository stringManipulationServices)
+        private readonly StringManipulationRepository _stringManipulationServices;
+        public StringManipulationController(StringManipulationRepository stringManipulationServices)
         {
             _stringManipulationServices = stringManipulationServices;
         }
@@ -34,10 +34,11 @@ namespace AutomatedDeployment.Core.Services
         [Route("/{hubid:int}/{applicationid:int}")]
         public IActionResult GetAppConfiguration([FromRoute] int hubid, [FromRoute] int applicationid)
         {
-            Dictionary<string, List<XmlConfigObj>> AppConfigurtions = _stringManipulationServices.GetAppConfigFilesData(hubid, applicationid);
+            //Dictionary<string, List<XmlConfigObj>> AppConfigurtions = _stringManipulationServices.GetAppConfigFilesData(hubid, applicationid);
 
-            if (AppConfigurtions is null) return StatusCode(StatusCodes.Status500InternalServerError);
-            return Ok(AppConfigurtions);
+            //if (AppConfigurtions is null) return StatusCode(StatusCodes.Status500InternalServerError);
+            //return Ok(AppConfigurtions);
+            return (Ok());
         }
 
         [HttpPut("/ChangeElementValue")]

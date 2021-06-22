@@ -43,6 +43,20 @@ namespace AutomatedDeployment.Core.Services
             }
         }
 
+        public string GetConfigFilePath(int hubid, int applicationid)
+        {
+            HubsApplications result = efgconfigurationdbContext.HubsApplications.AsNoTracking().FirstOrDefault(c => c.AppID == applicationid && c.HubID == hubid);
+            if (result != null)
+            {
+                return result.ConfigFilepPath;
+
+            }
+            else
+            {
+                return null;
+            }
+        }
+
         public HubsApplications GetHubApplication(int applicationid, int hubid)
         {
 
