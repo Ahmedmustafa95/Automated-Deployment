@@ -21,7 +21,7 @@ namespace AutomatedDeployment.Domain.Entities
 
         public string BackupPath { get; set; }
 
-
+        public string ConfigFilepPath { get; set; }
 
 
     }
