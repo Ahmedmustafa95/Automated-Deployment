@@ -9,35 +9,48 @@ using System.Threading.Tasks;
 
 namespace AutomatedDeployment.Core.Services
 {
-    class DeploymentDetailsRepository : IDeploymentDetailsRepository
+
+    public class DeploymentDetailsRepository : IDeploymentDetailsRepository
     {
         private readonly EfgconfigurationdbContext _efgconfigurationdbContext;
-      //  private readonly UnitOfWork _unitOfWork;
 
-        public DeploymentDetailsRepository(EfgconfigurationdbContext efgconfigurationdbContext)
-        {
+
+        public DeploymentDetailsRepository(EfgconfigurationdbContext efgconfigurationdbContext) =>
             _efgconfigurationdbContext = efgconfigurationdbContext;
-          //  _unitOfWork = unitOfWork;
-        }
-
-           public DeploymentDetails AddDeploymentDetails(DeploymentDetails deploymentDetails)
+        public List<DeploymentDetails> AddDeploymentDetails(List<DeploymentDetails> deploymentDetails)
         {
             if (deploymentDetails is not null)
             {
                 try
                 {
-                   var deployment1= _efgconfigurationdbContext.DeploymentDetails.Add(deploymentDetails);
+                    _efgconfigurationdbContext.DeploymentDetails.AddRange(deploymentDetails);
                     _efgconfigurationdbContext.SaveChanges();
-                    return deployment1.Entity;
+                    return deploymentDetails;
                 }
-                catch(Exception e)
+                catch
                 {
-
                     return null;
                 }
-               
+
             }
             return null;
+        }
+
+        public int GetCurrentDeploymentDetailsId() =>
+            _efgconfigurationdbContext.DeploymentDetails.Max(d => d.DeploymentDetailsId)+1;
+            
+        public DeploymentDetails AddDeploymentDetails(DeploymentDetails deploymentDetails)
+        {
+          try
+          {
+              var deployment1= _efgconfigurationdbContext.DeploymentDetails.Add(deploymentDetails);
+               _efgconfigurationdbContext.SaveChanges();
+                return deployment1.Entity;
+          }
+           catch(Exception e)
+                {
+                    return null;
+                }
         }
         public DeploymentDetails GetLastDepolymentDetails(int hubId, int applicationId)
         {
@@ -56,5 +69,6 @@ namespace AutomatedDeployment.Core.Services
                 throw;
             }
         }
+
     }
 }

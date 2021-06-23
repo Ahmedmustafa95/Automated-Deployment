@@ -38,14 +38,12 @@ namespace AutomatedDeployment.Core.Services
         }
 
         public int GetCurrentDeploymentId()=>
-            _efgconfigurationdbContext.Deployments.Max(d=>d.DeploymentID);
+            _efgconfigurationdbContext.Deployments.Max(d=>d.DeploymentID)+1;
+
+        public int GetDeploymentCounts(int hubID, int applicationId) =>
+                _efgconfigurationdbContext.DeploymentDetails.Count(d => d.HubId == hubID && d.AppId == applicationId);
 
 
-
-        public int GetDeploymentCounts(int hubID, int applicationId) => 0;
-
-        // Error By change Database
-        // _efgconfigurationdbContext.Deployments.Count(d => d.HubID == hubID && d.AppID == applicationId);
 
         public string[] GetAllfiles(int hubid, int appid)
         {

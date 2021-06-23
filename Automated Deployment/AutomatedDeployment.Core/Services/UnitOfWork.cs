@@ -19,6 +19,8 @@ namespace AutomatedDeployment.Core.Services
         public IDeploymentFilesRepository DeploymentFilesRepository { get; }
         public IDeploymentDetailsRepository DeploymentDetailsRepository { get; }
 
+        public IDeploymentDetailsRepository DeploymentDetailsRepository { get; }
+
         public UnitOfWork(
 
                 IApplicationRepository applicationRepository,
