@@ -30,7 +30,7 @@ namespace AutomatedDeployment.Core.Services
         [HttpGet("/api/[controller]/{key}")]
         public IActionResult GetAppsContainKey([FromRoute] string key)
         {
-
+            if (!ModelState.IsValid) return BadRequest();
             var AppsContianKeyList = _stringManipulationServices.FindConfigSetting(key);
             if (AppsContianKeyList is null) return StatusCode(StatusCodes.Status500InternalServerError);
             return Ok(AppsContianKeyList);
@@ -40,6 +40,7 @@ namespace AutomatedDeployment.Core.Services
         [HttpPut]
         public IActionResult UpdateAllAppsConfigFiles([FromBody] List<ConfigSearchResult> UpdatedConfig)
         {
+            List<ConfigSearchResult> SuccessededResults = new List<ConfigSearchResult>();
             if (!ModelState.IsValid) return BadRequest();
 
             foreach (ConfigSearchResult SingleConfig in UpdatedConfig)
@@ -48,14 +49,16 @@ namespace AutomatedDeployment.Core.Services
                 {
                     _backupServices.MoveTOBackUpFolder(SingleConfig.FileName, _pathRepository.GetBackupPath(SingleConfig.HubID, SingleConfig.AppID));
                     bool HasSuccedded = _stringManipulationServices.UpdateSingleConfigData(SingleConfig);
-                    if (!HasSuccedded) return StatusCode(StatusCodes.Status500InternalServerError);
+                    if (!HasSuccedded) continue;
+                    SuccessededResults.Add(SingleConfig);
                 }
                 catch (Exception)
                 {
-                    return StatusCode(StatusCodes.Status500InternalServerError);
+                    continue;
                 }
             }
-            return Ok();
+            if(SuccessededResults.Count==0)return StatusCode(StatusCodes.Status500InternalServerError);
+            return Ok(SuccessededResults);
         }
         //[HttpGet]
         //[Route("/{hubid:int}/{applicationid:int}")]

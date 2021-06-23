@@ -1,5 +1,6 @@
 ﻿using AutomatedDeployment.Core.Interfaces;
 using AutomatedDeployment.Domain.Entities;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -29,7 +30,7 @@ namespace AutomatedDeployment.Api.Controllers
                 return Ok(hubRepository.GetAll());
             }catch(Exception)
             {
-                return NotFound();
+                return StatusCode(StatusCodes.Status500InternalServerError);
             }
         }
 
@@ -39,31 +40,37 @@ namespace AutomatedDeployment.Api.Controllers
         {
             try
             {
-                var Hub = hubRepository.GetById(id);
+                if (!ModelState.IsValid) return BadRequest();
+                Hub Hub = hubRepository.GetById(id);
+                if (Hub is null) return NotFound();
                 return Ok(Hub);
-            }catch(Exception)
+            }
+            catch (Exception)
             {
-                return NotFound();
+                return StatusCode(StatusCodes.Status500InternalServerError);
             }
         }
 
         // POST api/<HubController>
         [HttpPost]
         public IActionResult Post([FromBody] Hub value)
-        {   if (TryValidateModel(value, nameof(Hub)))
+        {  
+            if (TryValidateModel(value, nameof(Hub)))
             {
                 try
                 {
-                    hubRepository.Add(value);
-                    return Ok();
+                    Hub NewHub = hubRepository.Add(value);
+                    if (NewHub is null) return BadRequest();
+                    return Ok(NewHub);
                 }
                 catch
                 {
-                    return NotFound();
+                    return StatusCode(StatusCodes.Status500InternalServerError);
                 }
-            }else
+            }
+            else
             {
-                return NotFound();
+                return BadRequest();
             }
 
         }
@@ -72,13 +79,16 @@ namespace AutomatedDeployment.Api.Controllers
         [HttpPut("{id}")]
         public IActionResult Put(int id, [FromBody] Hub value)
         {
+            if (!ModelState.IsValid) return BadRequest();
             try
             {
-                hubRepository.Update(value);
-                return Ok(value);
-            }catch(Exception)
+                Hub UpdatedHub = hubRepository.Update(value);
+                if (UpdatedHub is null) return BadRequest();
+                return Ok(UpdatedHub);
+            }
+            catch (Exception)
             {
-                return NotFound();
+                return StatusCode(StatusCodes.Status500InternalServerError);
             }
         }
 
@@ -86,20 +96,17 @@ namespace AutomatedDeployment.Api.Controllers
         [HttpDelete("{id}")]
         public IActionResult Delete(int id)
         {
+            if (!ModelState.IsValid) return BadRequest();
             try
             {
-              var hub = hubRepository.Delete(id);
-                if (hub != null)
-                    return Ok();
-                else
-                    return NotFound();
-            }catch(Exception)
+                Hub DeletedHub = hubRepository.Delete(id);
+                if (DeletedHub is null) return BadRequest();
+                return Ok(DeletedHub);
+            }
+            catch (Exception)
             {
-                return NotFound();
+                return StatusCode(StatusCodes.Status500InternalServerError);
             }
         }
-
-      
-
     }
 }

@@ -1,4 +1,4 @@
-﻿using AutomatedDeployment.Core.Interfaces.GenericRepositories;
+using AutomatedDeployment.Core.Interfaces.GenericRepositories;
 using AutomatedDeployment.Domain.Entities;
 using System;
 using System.Collections.Generic;
@@ -12,6 +12,7 @@ namespace AutomatedDeployment.Core.Interfaces
     {
         List<DeploymentDetails> AddDeploymentDetails(List<DeploymentDetails> deploymentDetails);
         int GetCurrentDeploymentDetailsId();
-            
+        public DeploymentDetails AddDeploymentDetails(DeploymentDetails deploymentDetails);
+        DeploymentDetails GetLastDepolymentDetails(int hubId, int applicationId);   
     }
 }

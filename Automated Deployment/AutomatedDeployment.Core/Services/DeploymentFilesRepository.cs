@@ -2,6 +2,7 @@
 using AutomatedDeployment.Core.Interfaces.GenericRepositories;
 using AutomatedDeployment.Domain.Entities;
 using AutomatedDeployment.Infrastructure.Context;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,10 +14,17 @@ namespace AutomatedDeployment.Core.Services
     public class DeploymentFilesRepository : IDeploymentFilesRepository
     {
         private readonly EfgconfigurationdbContext _efgconfigurationdbContext;
+        private readonly IDeploymentDetailsRepository _deploymentDetailsRepository;
 
+        // private readonly UnitOfWork _unitOfWork;
 
-        public DeploymentFilesRepository(EfgconfigurationdbContext efgconfigurationdbContext) =>
+        public DeploymentFilesRepository(EfgconfigurationdbContext efgconfigurationdbContext,IDeploymentDetailsRepository deploymentDetailsRepository)
+        {
             _efgconfigurationdbContext = efgconfigurationdbContext;
+            _deploymentDetailsRepository = deploymentDetailsRepository;
+          //  _unitOfWork = unitOfWork;
+        }
+
 
 
 
@@ -71,39 +79,63 @@ namespace AutomatedDeployment.Core.Services
         // Error By change Database
         public Dictionary<string, status> GetById(int hubID, int applicationId)
         {
-        //    try
-        //    {
+            try
+            {
 
-        //        return _efgconfigurationdbContext.DeploymentFiles
-        //                                  .Where(D => D.DeploymentID == GetLastDepolyment(hubID,applicationId).DeploymentID)
-        //                                  .ToDictionary(D => D.FilesName, D => D.Status);
-        //    }
-        //    catch (Exception e)
-        //    {
+                    var files = _efgconfigurationdbContext.DeploymentFiles
+                                          .Where(D => D.DeploymentDetailsId == _deploymentDetailsRepository.GetLastDepolymentDetails(hubID,applicationId).DeploymentDetailsId)
+                                          .ToDictionary(D => D.FilesName, D => D.Status);
+                return files;
+            }
+            catch (Exception e)
+            {
                 return null;
+            }
         }
 
         public Deployment GetLastDepolyment(int hubId, int applicationId)
         {
-            return null;
+           // return null;
             // Error By change Database
-            //try
-            //{
-            //  var deployment =  _efgconfigurationdbContext.Deployments
-            //                                            .Where(D => D.HubID == hubId &&
-            //                                                        D.AppID == applicationId)
-            //                                            .OrderBy(D => D.DeploymentID)
-            //                                            .LastOrDefault();
-            //    return deployment;
-            //}
-            //catch (Exception)
-            //{
+            try
+            {
 
-            //    throw;
-            //}
+                var deployment = _efgconfigurationdbContext.Deployments
+                                 .Where(d => d.DeploymentID == _deploymentDetailsRepository
+                                 .GetLastDepolymentDetails(hubId, applicationId).DeploymentId)
+                                 .SingleOrDefault();
+
+                return deployment;
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
         }
 
+        public List<LastDeploymentviewmodel> GetLastDepolyment()
+        {
+            // return null;
+            // Error By change Database
+            try
+            {
 
+                //  var deployment = _efgconfigurationdbContext.Deployments.Include(d => d.DeploymentDetails.SelectMany(d.HubId, d.AppId }));
+                var deployment = _efgconfigurationdbContext.Deployments.Include(d => d.DeploymentDetails).LastOrDefault();
+
+                List<LastDeploymentviewmodel> lastdeploy = deployment.DeploymentDetails.Select(i => new LastDeploymentviewmodel { appId = i.AppId, hubId = i.HubId }).ToList();
+
+                return lastdeploy;
+
+              
+            }
+            catch (Exception ex)
+            {
+
+                return null;
+            }
+        }
 
     }
 }

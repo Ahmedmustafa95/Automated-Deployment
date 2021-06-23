@@ -17,6 +17,7 @@ namespace AutomatedDeployment.Core.Services
 
         public IDeploymentRepository DeploymentRepository { get; }
         public IDeploymentFilesRepository DeploymentFilesRepository { get; }
+        public IDeploymentDetailsRepository DeploymentDetailsRepository { get; }
 
         public IDeploymentDetailsRepository DeploymentDetailsRepository { get; }
 
@@ -40,7 +41,6 @@ namespace AutomatedDeployment.Core.Services
             DeploymentRepository = deploymentRepository;
             DeploymentFilesRepository = deploymentFilesRepository;
             DeploymentDetailsRepository = deploymentDetailsRepository;
-
         }
 
     }

@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 
 namespace AutomatedDeployment.Core.Services
 {
+
     public class DeploymentDetailsRepository : IDeploymentDetailsRepository
     {
         private readonly EfgconfigurationdbContext _efgconfigurationdbContext;
@@ -37,6 +38,37 @@ namespace AutomatedDeployment.Core.Services
 
         public int GetCurrentDeploymentDetailsId() =>
             _efgconfigurationdbContext.DeploymentDetails.Max(d => d.DeploymentDetailsId)+1;
+            
+        public DeploymentDetails AddDeploymentDetails(DeploymentDetails deploymentDetails)
+        {
+          try
+          {
+              var deployment1= _efgconfigurationdbContext.DeploymentDetails.Add(deploymentDetails);
+               _efgconfigurationdbContext.SaveChanges();
+                return deployment1.Entity;
+          }
+           catch(Exception e)
+                {
+                    return null;
+                }
+        }
+        public DeploymentDetails GetLastDepolymentDetails(int hubId, int applicationId)
+        {
+            try
+            {
+                var deploymentDetails = _efgconfigurationdbContext.DeploymentDetails
+                                                          .Where(D => D.HubId == hubId &&
+                                                                      D.AppId == applicationId)
+                                                          .OrderBy(D => D.DeploymentDetailsId)
+                                                          .LastOrDefault();
+                return deploymentDetails;
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
 
     }
 }

@@ -29,7 +29,7 @@ namespace AutomatedDeployment.Core.Services
                 }
                 catch(Exception e)
                 {
-
+                    Console.WriteLine(e.Message);
                     return null;
                 }
                
@@ -40,9 +40,9 @@ namespace AutomatedDeployment.Core.Services
         public int GetCurrentDeploymentId()=>
             _efgconfigurationdbContext.Deployments.Max(d=>d.DeploymentID)+1;
 
-
         public int GetDeploymentCounts(int hubID, int applicationId) =>
                 _efgconfigurationdbContext.DeploymentDetails.Count(d => d.HubId == hubID && d.AppId == applicationId);
+
 
 
         public string[] GetAllfiles(int hubid, int appid)
@@ -68,4 +68,6 @@ namespace AutomatedDeployment.Core.Services
 
         }
     }
+
+
 }
