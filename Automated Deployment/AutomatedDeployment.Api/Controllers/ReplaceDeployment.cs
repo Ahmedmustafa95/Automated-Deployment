@@ -112,20 +112,35 @@ namespace AutomatedDeployment.Api.Controllers
 
                     }
 
-                    foreach (var fileName in filesState["Modified"])
-                    {
-                        DeploymentFiles deploymentFile = new DeploymentFiles()
-                        { DeploymentDetailsId = currentDeploymentDetailsId, FilesName = fileName, Status = status.Modified };
-                        deploymentFiles.Add(deploymentFile);
-                    }
+                    //for (int i = 0; i < hubsApplications.Count; i++)
+                    //{
+                    //    int deploymentDetailId = unitOfWork.DeploymentDetailsRepository
+                    //                                         .GetDeploymentDetailsIdByHubIdAndAppId
+                    //                                         (
+                    //                                            hubsApplications[i].HubID,
+                    //                                            hubsApplications[i].AppID
+                    //                                         );
+                    //    foreach (var fileName in filesState["Modified"])
+                    //    {
 
-                    foreach (var fileName in filesState["Added"])
-                    {
-                        DeploymentFiles deploymentFile = new DeploymentFiles()
-                        { DeploymentDetailsId = currentDeploymentDetailsId, FilesName = fileName, Status = status.Added };
-                        deploymentFiles.Add(deploymentFile);
-                    }
+                    //        //hubsApplications[i].HubID && hubsApplications[i].AppID
+                            
+                    //        var deploymentFile = new DeploymentFiles()
+                    //        { DeploymentDetailsId = deploymentDetailId, FilesName = fileName, Status = status.Modified };
+                    //        deploymentFiles.Add(deploymentFile);
+                    //    }
 
+                    //    foreach (var fileName in filesState["Added"])
+                    //    {
+                    //        var deploymentFile = new DeploymentFiles()
+                    //        { DeploymentDetailsId = deploymentDetailId, FilesName = fileName, Status = status.Added };
+                    //        deploymentFiles.Add(deploymentFile);
+                    //    }
+                    //}
+
+                    
+
+                    
                     var deploymentDetail = new DeploymentDetails
                     {
                         HubId = hubsApplication.HubID,
@@ -184,6 +199,34 @@ namespace AutomatedDeployment.Api.Controllers
             if (unitOfWork.DeploymentDetailsRepository.AddDeploymentDetails(deploymentDetails) is null)
                 return StatusCode(StatusCodes.Status500InternalServerError,
                     " Failed to Save Deployment Files in database");
+
+            //for (int i = 0; i < hubsApplications.Count; i++)
+            //{
+            //    int deploymentDetailId = unitOfWork.DeploymentDetailsRepository
+            //                                         .GetDeploymentDetailsIdByHubIdAndAppId
+            //                                         (
+            //                                            hubsApplications[i].HubID,
+            //                                            hubsApplications[i].AppID
+            //                                         );
+            //    foreach (var fileName in filesState["Modified"])
+            //    {
+
+            //        //hubsApplications[i].HubID && hubsApplications[i].AppID
+
+            //        var deploymentFile = new DeploymentFiles()
+            //        { DeploymentDetailsId = deploymentDetailId, FilesName = fileName, Status = status.Modified };
+            //        deploymentFiles.Add(deploymentFile);
+            //    }
+
+            //    foreach (var fileName in filesState["Added"])
+            //    {
+            //        var deploymentFile = new DeploymentFiles()
+            //        { DeploymentDetailsId = deploymentDetailId, FilesName = fileName, Status = status.Added };
+            //        deploymentFiles.Add(deploymentFile);
+            //    }
+            //}
+
+
 
             if (deploymentFiles.Count > 0)
             {
