@@ -68,38 +68,39 @@ namespace AutomatedDeployment.Core.Services
         }
 
 
+        // Error By change Database
         public Dictionary<string, status> GetById(int hubID, int applicationId)
         {
-            try
-            {
+        //    try
+        //    {
 
-                return _efgconfigurationdbContext.DeploymentFiles
-                                          .Where(D => D.DeploymentID == GetLastDepolyment(hubID,applicationId).DeploymentID)
-                                          .ToDictionary(D => D.FilesName, D => D.Status);
-            }
-            catch (Exception e)
-            {
+        //        return _efgconfigurationdbContext.DeploymentFiles
+        //                                  .Where(D => D.DeploymentID == GetLastDepolyment(hubID,applicationId).DeploymentID)
+        //                                  .ToDictionary(D => D.FilesName, D => D.Status);
+        //    }
+        //    catch (Exception e)
+        //    {
                 return null;
-            }
-
         }
 
         public Deployment GetLastDepolyment(int hubId, int applicationId)
         {
-            try
-            {
-              var deployment =  _efgconfigurationdbContext.Deployments
-                                                        .Where(D => D.HubID == hubId &&
-                                                                    D.AppID == applicationId)
-                                                        .OrderBy(D => D.DeploymentID)
-                                                        .LastOrDefault();
-                return deployment;
-            }
-            catch (Exception)
-            {
+            return null;
+            // Error By change Database
+            //try
+            //{
+            //  var deployment =  _efgconfigurationdbContext.Deployments
+            //                                            .Where(D => D.HubID == hubId &&
+            //                                                        D.AppID == applicationId)
+            //                                            .OrderBy(D => D.DeploymentID)
+            //                                            .LastOrDefault();
+            //    return deployment;
+            //}
+            //catch (Exception)
+            //{
 
-                throw;
-            }
+            //    throw;
+            //}
         }
 
 

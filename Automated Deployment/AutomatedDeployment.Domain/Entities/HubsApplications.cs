@@ -12,7 +12,6 @@ namespace AutomatedDeployment.Domain.Entities
 
         public virtual Application  Application { get; set; }
 
-  
         public int HubID { get; set; }
 
         public int AppID { get; set; }
@@ -21,7 +20,10 @@ namespace AutomatedDeployment.Domain.Entities
 
         public string BackupPath { get; set; }
 
+        public string ConfigFilepPath { get; set; }
 
+        public ICollection<DeploymentDetails> DeploymentDetails { get; set; } = 
+            new HashSet<DeploymentDetails>();
 
 
     }

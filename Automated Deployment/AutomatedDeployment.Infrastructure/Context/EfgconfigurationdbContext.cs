@@ -26,6 +26,7 @@ namespace AutomatedDeployment.Infrastructure.Context
         public virtual DbSet<Hub> Hubs { get; set; }
         public virtual DbSet<Deployment> Deployments { get; set; }
         public virtual DbSet<DeploymentFiles> DeploymentFiles { get; set; }
+        public virtual DbSet<DeploymentDetails> DeploymentDetails { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -69,7 +70,6 @@ namespace AutomatedDeployment.Infrastructure.Context
            {
                entity.HasKey(e => new { e.HubID, e.AppID });
 
-
                entity.HasOne(d => d.Application)
                    .WithMany(p => p.HubsApplications)
                    .HasForeignKey(d => d.AppID)
@@ -81,12 +81,31 @@ namespace AutomatedDeployment.Infrastructure.Context
             modelBuilder.Entity<HubsApplications>(entity =>
             {
                 entity.HasKey(e => new { e.HubID, e.AppID });
-
-
                 entity.HasOne(d => d.Hub)
                     .WithMany(p => p.HubsApplications)
                     .HasForeignKey(d => d.HubID)
                     .OnDelete(DeleteBehavior.ClientSetNull);
+            });
+
+            modelBuilder.Entity<DeploymentDetails>(D =>
+            {
+                D.HasKey(D => D.DeploymentDetailsId);
+                D.HasOne(D => D.Deployment)
+                 .WithMany(DT => DT.DeploymentDetails)
+                 .HasForeignKey(D => D.DeploymentId);
+
+                D.HasOne(D => D.HubsApplications)
+                 .WithMany(D => D.DeploymentDetails)
+                 .HasForeignKey(D => new {D.HubId,D.AppId});
+
+            });
+
+            modelBuilder.Entity<DeploymentFiles>(D =>
+            {
+                D.HasKey(D => D.DeploymentFilesID);
+                D.HasOne(D => D.DeploymentDetails)
+                 .WithMany(D => D.DeploymentFiles)
+                 .HasForeignKey(D => D.DeploymentDetailsId);
             });
 
 

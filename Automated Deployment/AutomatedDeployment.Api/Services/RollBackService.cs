@@ -38,16 +38,21 @@ namespace AutomatedDeployment.Api.Services
                 //List<string> files = new List<string>();
 
                 var lastDeploymentFolderDate = $"BK_{unitOfWork.DeploymentFilesRepository.GetLastDepolyment(hubid, applicationid).DeploymentDate.ToString("yyyy-MM-dd-hh-mm-ss")}".Trim();
-                Deployment deployment = new Deployment()
-                {
-                    HubID = hubid,
-                    AppID = applicationid,
-                    DeploymentDate = currentDate,
-                    DeployedBy="belal",
-                    ApprovedBy = "Shawky",
-                    RequestedBy = "Mustafa",
-                };
-                int addedID = unitOfWork.DeploymentRepository.AddDeployment(deployment).DeploymentID;
+                // Error By change Database
+                //Deployment deployment = new Deployment()
+                //{
+                //    HubID = hubid,
+                //    AppID = applicationid,
+                //    DeploymentDate = currentDate,
+                //    DeployedBy="belal",
+                //    ApprovedBy = "Shawky",
+                //    RequestedBy = "Mustafa",
+                //};
+
+
+
+                // Error By change Database
+                //int addedID = unitOfWork.DeploymentRepository.AddDeployment(deployment).DeploymentID;
 
 
                 //read all files 
@@ -60,17 +65,21 @@ namespace AutomatedDeployment.Api.Services
                     if (file.Value == status.Modified)
                     {
                         //files.Add(file.Key);
-                        DeploymentFiles deploymentfile = new DeploymentFiles()
-                        {
-                            DeploymentID = addedID,
-                            FilesName = file.Key,
-                            Status = status.Modified
-                        };
-                        unitOfWork.DeploymentFilesRepository.AddDeploymentFile(deploymentfile);
+
+
+                        // Error By change Database
+                        //DeploymentFiles deploymentfile = new DeploymentFiles()
+                        //{
+                        //    DeploymentID = addedID,
+                        //    FilesName = file.Key,
+                        //    Status = status.Modified
+                        //};
+
+                        // Error By change Database
+                        //unitOfWork.DeploymentFilesRepository.AddDeploymentFile(deploymentfile);
 
                         MoveFiles(AssemblyPath, NewBackupPath, file.Key);
-                        //File.Move($"{AssemblyPath}{@"\"}{file.Key}".Trim(),
-                        //          $"{NewBackupPath}{@"\"}{file.Key}".Trim());
+                        
 
                         CopyFiles(AssemblyPath, BackupPath, file.Key, lastDeploymentFolderDate);
 
@@ -82,13 +91,17 @@ namespace AutomatedDeployment.Api.Services
                     else if (file.Value == status.Added)
                     {
                         // files.Add(file.Key);
-                        DeploymentFiles deploymentfile = new DeploymentFiles()
-                        {
-                            DeploymentID = addedID,
-                            FilesName = file.Key,
-                            Status = status.Deleted
-                        };
-                        unitOfWork.DeploymentFilesRepository.AddDeploymentFile(deploymentfile);
+
+                        // Error By change Database
+                        //DeploymentFiles deploymentfile = new DeploymentFiles()
+                        //{
+                        //    DeploymentID = addedID,
+                        //    FilesName = file.Key,
+                        //    Status = status.Deleted
+                        //};
+
+                        // Error By change Database
+                        //unitOfWork.DeploymentFilesRepository.AddDeploymentFile(deploymentfile);
                         MoveFiles(AssemblyPath, NewBackupPath, file.Key);
 
                         //File.Copy(BackupPath + @" \ " + lastDeploymentFolderDate + @"\" + file.Key, AssemblyPath + @"\" + file.Key);
@@ -96,13 +109,17 @@ namespace AutomatedDeployment.Api.Services
                     else if (file.Value == status.Deleted)
                     {
                         // files.Add(file.Key);
-                        DeploymentFiles deploymentfile = new DeploymentFiles()
-                        {
-                            DeploymentID = addedID,
-                            FilesName = file.Key,
-                            Status = status.Added
-                        };
-                        unitOfWork.DeploymentFilesRepository.AddDeploymentFile(deploymentfile);
+
+                        // Error By change Database
+                        //DeploymentFiles deploymentfile = new DeploymentFiles()
+                        //{
+                        //    DeploymentID = addedID,
+                        //    FilesName = file.Key,
+                        //    Status = status.Added
+                        //};
+
+                        // Error By change Database
+                        //unitOfWork.DeploymentFilesRepository.AddDeploymentFile(deploymentfile);
                         CopyFiles(AssemblyPath, BackupPath, file.Key, lastDeploymentFolderDate);
                     }
                 }

@@ -26,7 +26,9 @@ namespace AutomatedDeployment.Api
             using var scope = host.Services.CreateScope();
             var db = scope.ServiceProvider.GetRequiredService<EfgconfigurationdbContext>();
 
+
           //  db.Database.Migrate();
+
 
         }
 

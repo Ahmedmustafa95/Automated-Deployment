@@ -35,7 +35,6 @@ namespace AutomatedDeployment.Api
             services.AddScoped<IReplaceServices, ReplaceServices>();
             services.AddScoped<IRollbackService, RollBackService>();
             services.AddScoped<IBackupServices, BackupServices>();
-            services.AddScoped<IStringManipulationServices,StringManipulationRepository>();
 
             //services.AddScoped<IDeletefilesrepository, Deletefilesrepository>();
 

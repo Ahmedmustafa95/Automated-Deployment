@@ -13,7 +13,9 @@ namespace AutomatedDeployment.Core.Interfaces
         Deployment AddDeployment(Deployment  deployment);
 
         int GetCurrentDeploymentId();
+
         string[] GetAllfiles(int hubid, int appid);
+
 
 
 
