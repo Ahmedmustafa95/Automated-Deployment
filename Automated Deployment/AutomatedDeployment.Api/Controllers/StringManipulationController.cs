@@ -15,13 +15,19 @@ namespace AutomatedDeployment.Core.Services
     public class StringManipulationController : ControllerBase
     {
         private readonly StringManipulationRepository _stringManipulationServices;
-        public StringManipulationController(StringManipulationRepository stringManipulationServices)
+        private readonly IBackupServices _backupServices;
+        private readonly IPathRepository _pathRepository;
+
+        public StringManipulationController(StringManipulationRepository stringManipulationServices,
+                                            IBackupServices backupServices, IPathRepository pathRepository)
         {
             _stringManipulationServices = stringManipulationServices;
+            _backupServices = backupServices;
+            this._pathRepository = pathRepository;
         }
 
 
-        [HttpGet("/{key}")]
+        [HttpGet("/api/[controller]/{key}")]
         public IActionResult GetAppsContainKey([FromRoute] string key)
         {
 
@@ -30,38 +36,46 @@ namespace AutomatedDeployment.Core.Services
             return Ok(AppsContianKeyList);
         }
 
-        [HttpGet]
-        [Route("/{hubid:int}/{applicationid:int}")]
-        public IActionResult GetAppConfiguration([FromRoute] int hubid, [FromRoute] int applicationid)
-        {
-            //Dictionary<string, List<XmlConfigObj>> AppConfigurtions = _stringManipulationServices.GetAppConfigFilesData(hubid, applicationid);
-
-            //if (AppConfigurtions is null) return StatusCode(StatusCodes.Status500InternalServerError);
-            //return Ok(AppConfigurtions);
-            return (Ok());
-        }
-
-        [HttpPut("/ChangeElementValue")]
-        public IActionResult ChangeElementValue(string key, string Value)
-        {
-            if (!ModelState.IsValid) return BadRequest("Not valid Data");
-            bool IsSuccess = _stringManipulationServices.UpdateKeyInMultiApplication(key, Value);
-            if (!IsSuccess) return StatusCode(StatusCodes.Status500InternalServerError);
-            return Ok(new { key, Value });
-        }
 
         [HttpPut]
-        public IActionResult UpdateSingleConfigData([FromBody] ConfigSearchResult UpdatedConfig)
+        public IActionResult UpdateAllAppsConfigFiles([FromBody] List<ConfigSearchResult> UpdatedConfig)
         {
-            try
+            if (!ModelState.IsValid) return BadRequest();
+
+            foreach (ConfigSearchResult SingleConfig in UpdatedConfig)
             {
-                return Ok(_stringManipulationServices.UpdateSingleConfigData(UpdatedConfig));
+                try
+                {
+                    _backupServices.MoveTOBackUpFolder(SingleConfig.FileName, _pathRepository.GetBackupPath(SingleConfig.HubID, SingleConfig.AppID));
+                    bool HasSuccedded = _stringManipulationServices.UpdateSingleConfigData(SingleConfig);
+                    if (!HasSuccedded) return StatusCode(StatusCodes.Status500InternalServerError);
+                }
+                catch (Exception)
+                {
+                    return StatusCode(StatusCodes.Status500InternalServerError);
+                }
             }
-            catch (Exception)
-            {
-                return NotFound();
-            }
+            return Ok();
         }
+        //[HttpGet]
+        //[Route("/{hubid:int}/{applicationid:int}")]
+        //public IActionResult GetAppConfiguration([FromRoute] int hubid, [FromRoute] int applicationid)
+        //{
+        //    //Dictionary<string, List<XmlConfigObj>> AppConfigurtions = _stringManipulationServices.GetAppConfigFilesData(hubid, applicationid);
+
+        //    //if (AppConfigurtions is null) return StatusCode(StatusCodes.Status500InternalServerError);
+        //    //return Ok(AppConfigurtions);
+        //    return (Ok());
+        //}
+
+        //[HttpPut("/ChangeElementValue")]
+        //public IActionResult ChangeElementValue(string key, string Value)
+        //{
+        //    if (!ModelState.IsValid) return BadRequest("Not valid Data");
+        //    bool IsSuccess = _stringManipulationServices.UpdateKeyInMultiApplication(key, Value);
+        //    if (!IsSuccess) return StatusCode(StatusCodes.Status500InternalServerError);
+        //    return Ok(new { key, Value });
+        //}
 
 
 

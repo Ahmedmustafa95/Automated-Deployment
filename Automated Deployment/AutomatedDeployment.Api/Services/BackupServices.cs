@@ -31,5 +31,21 @@ namespace AutomatedDeployment.Api.Services
             }
            
         }
+        public void MoveTOBackUpFolder(string fileName,string backupPath)
+        {
+            DateTime currentDate = DateTime.Now;
+
+            if (File.Exists(fileName))
+            {
+                string NewBackupPath = $"{backupPath}\\BK_{currentDate.ToString("yyyy-MM-dd-hh-mm-ss")}".Trim();
+                Directory.CreateDirectory(NewBackupPath);
+                int lastSlashIndex=fileName.LastIndexOf('\\');
+                File.Copy($"{fileName}".Trim(), $"{NewBackupPath}{@"\"}{fileName.Substring(lastSlashIndex)}".Trim());
+
+            }
+
+           
+        }
+
     }
 }
