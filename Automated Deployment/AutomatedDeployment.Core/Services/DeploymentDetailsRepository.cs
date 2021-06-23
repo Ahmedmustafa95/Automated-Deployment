@@ -70,5 +70,26 @@ namespace AutomatedDeployment.Core.Services
             }
         }
 
+        public int GetDeploymentDetailsIdByHubIdAndAppId(int hubId, int appId)
+        {
+            try
+            {
+                var deploymentDetailId = _efgconfigurationdbContext.DeploymentDetails
+                                                            .OrderBy(D => D.DeploymentDetailsId)
+                                                            .LastOrDefault
+                                                            (
+                                                               D => D.HubId == hubId &&
+                                                               D.AppId == appId
+                                                            );
+                return deploymentDetailId?.DeploymentDetailsId ?? -1;
+            }
+            catch (Exception E)
+            {
+
+                return -1;
+            }
+           
+
+        }
     }
 }

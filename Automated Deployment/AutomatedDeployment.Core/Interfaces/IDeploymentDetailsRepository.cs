@@ -13,6 +13,8 @@ namespace AutomatedDeployment.Core.Interfaces
         List<DeploymentDetails> AddDeploymentDetails(List<DeploymentDetails> deploymentDetails);
         int GetCurrentDeploymentDetailsId();
         public DeploymentDetails AddDeploymentDetails(DeploymentDetails deploymentDetails);
-        DeploymentDetails GetLastDepolymentDetails(int hubId, int applicationId);   
+        DeploymentDetails GetLastDepolymentDetails(int hubId, int applicationId);
+
+        int GetDeploymentDetailsIdByHubIdAndAppId(int hubId, int appId);
     }
 }
