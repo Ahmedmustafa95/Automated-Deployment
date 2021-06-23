@@ -10,7 +10,7 @@ namespace AutomatedDeployment.Domain.Entities
   public  class UploadingModel
   {
       public  List<IFormFile> files { get; set; }
-      public  List<string> Deleted { get; set; }
+      public  List<HubsApplications> HubsApplications { get; set; }
    
     }
 }
