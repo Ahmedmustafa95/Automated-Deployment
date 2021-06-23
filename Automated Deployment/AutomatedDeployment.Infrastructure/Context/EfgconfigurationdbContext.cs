@@ -108,6 +108,12 @@ namespace AutomatedDeployment.Infrastructure.Context
                  .HasForeignKey(D => D.DeploymentDetailsId);
             });
 
+            modelBuilder.Entity<Deployment>(D =>
+            {
+                D.Property(D => D.OriginalDeployment)
+                 .IsRequired(false);
+            });
+
 
 
 
