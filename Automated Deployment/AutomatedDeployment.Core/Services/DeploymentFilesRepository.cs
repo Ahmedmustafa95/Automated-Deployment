@@ -122,9 +122,20 @@ namespace AutomatedDeployment.Core.Services
             {
 
                 //  var deployment = _efgconfigurationdbContext.Deployments.Include(d => d.DeploymentDetails.SelectMany(d.HubId, d.AppId }));
-                var deployment = _efgconfigurationdbContext.Deployments.Include(d => d.DeploymentDetails).OrderByDescending(i=>i.DeploymentID).LastOrDefault();
+                var deployment = _efgconfigurationdbContext.Deployments
+                                    .Include(d => d.DeploymentDetails)
+                                        .ThenInclude(i=>i.HubsApplications)
+                                            .ThenInclude(i=>i.Application)
+                                    .Include(d => d.DeploymentDetails)
+                                        .ThenInclude(i => i.HubsApplications)
+                                            .ThenInclude(i => i.Hub)
+                                .OrderByDescending(i=>i.DeploymentID).LastOrDefault();
 
-                List<LastDeploymentviewmodel> lastdeploy = deployment.DeploymentDetails.Select(i => new LastDeploymentviewmodel { appId = i.AppId, hubId = i.HubId }).ToList();
+                List<LastDeploymentviewmodel> lastdeploy = deployment.DeploymentDetails
+                    .Select(i => new LastDeploymentviewmodel { appId = i.AppId,hubId = i.HubId ,
+                        ApplicationName=i.HubsApplications.Application.AppName,
+                        HubName=i.HubsApplications.Hub.HubName
+                    }).ToList();
 
                 return lastdeploy;
 
@@ -136,6 +147,7 @@ namespace AutomatedDeployment.Core.Services
                 return null;
             }
         }
+
 
     }
 }
