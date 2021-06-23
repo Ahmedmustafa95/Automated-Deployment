@@ -12,10 +12,12 @@ namespace AutomatedDeployment.Domain.Entities
         public int AppID { get; set; }
         public string HubName { get; set; }
         public string AppName { get; set; }
-        public string ConfigurationSectionName { get; set; }
-        public string ConfigurationName { get; set; }
-        public string ConfigurationValue { get; set; }
+        //public string ConfigurationSectionName { get; set; }
+        //public string ConfigurationName { get; set; }
+        //public string ConfigurationValue { get; set; }
         public string FileName { get; set; }
-        public string ConfigurationResult { get; set; }
+        public string NewConfigurationResult { get; set; }
+        public string OldConfigurationResult { get; set; }
+
     }
 }
