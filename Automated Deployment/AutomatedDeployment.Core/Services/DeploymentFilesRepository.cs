@@ -122,7 +122,7 @@ namespace AutomatedDeployment.Core.Services
             {
 
                 //  var deployment = _efgconfigurationdbContext.Deployments.Include(d => d.DeploymentDetails.SelectMany(d.HubId, d.AppId }));
-                var deployment = _efgconfigurationdbContext.Deployments.Include(d => d.DeploymentDetails).LastOrDefault();
+                var deployment = _efgconfigurationdbContext.Deployments.Include(d => d.DeploymentDetails).OrderByDescending(i=>i.DeploymentID).LastOrDefault();
 
                 List<LastDeploymentviewmodel> lastdeploy = deployment.DeploymentDetails.Select(i => new LastDeploymentviewmodel { appId = i.AppId, hubId = i.HubId }).ToList();
 
