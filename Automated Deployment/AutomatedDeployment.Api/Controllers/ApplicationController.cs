@@ -1,5 +1,6 @@
 ﻿using AutomatedDeployment.Core.Interfaces;
 using AutomatedDeployment.Domain.Entities;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -31,7 +32,7 @@ namespace AutomatedDeployment.Api.Controllers
             }
             catch (Exception)
             {
-                return NotFound();
+                return StatusCode(StatusCodes.Status500InternalServerError);
             }
         }
 
@@ -41,12 +42,14 @@ namespace AutomatedDeployment.Api.Controllers
         {
             try
             {
-                var application = applicationRepository.GetById(id);
+                if (!ModelState.IsValid) return BadRequest();
+                Application application = applicationRepository.GetById(id);
+                if(application is null) return NotFound();
                 return Ok(application);
             }
             catch (Exception)
             {
-                return NotFound();
+                return StatusCode(StatusCodes.Status500InternalServerError);
             }
         }
 
@@ -58,17 +61,18 @@ namespace AutomatedDeployment.Api.Controllers
             {
                 try
                 {
-                    applicationRepository.Add(value);
-                    return Ok();
+                    Application NewApp=applicationRepository.Add(value);
+                    if (NewApp is null) return BadRequest();
+                    return Ok(NewApp);
                 }
                 catch
                 {
-                    return NotFound();
+                    return StatusCode(StatusCodes.Status500InternalServerError);
                 }
             }
             else
             {
-                return NotFound();
+                return BadRequest();
             }
 
         }
@@ -77,14 +81,16 @@ namespace AutomatedDeployment.Api.Controllers
         [HttpPut("{id}")]
         public IActionResult Put(int id, [FromBody] Application value)
         {
+            if(!ModelState.IsValid) return BadRequest();
             try
             {
-                applicationRepository.Update(value);
-                return Ok(value);
+                Application UpdatedApp = applicationRepository.Update(value);
+                if (UpdatedApp is null) return BadRequest();
+                return Ok(UpdatedApp);
             }
             catch (Exception)
             {
-                return NotFound();
+                return StatusCode(StatusCodes.Status500InternalServerError);
             }
         }
 
@@ -92,25 +98,26 @@ namespace AutomatedDeployment.Api.Controllers
         [HttpDelete("{id}")]
         public IActionResult Delete(int id)
         {
+            if(!ModelState.IsValid) return BadRequest();
             try
             {
-
-                var app = applicationRepository.Delete(id);
-                if (app != null)
-                    return Ok();
-                else
-                    return NotFound();
+                Application DeletedApp = applicationRepository.Delete(id);
+                if(DeletedApp is null) return BadRequest();
+                return Ok(DeletedApp);
             }
             catch (Exception)
             {
-                return NotFound();
+                return StatusCode(StatusCodes.Status500InternalServerError);
             }
         }
        
         [HttpGet("GetAppByhubID/{hubID}")]
         public IActionResult GetAllApps(int hubID)
         {
-            return Ok(applicationRepository.GetAppsByHubID(hubID));
+            if (!ModelState.IsValid) return BadRequest();
+            List<HubsApplications> hubsApplicationsList = applicationRepository.GetAppsByHubID(hubID);
+            if (hubsApplicationsList is null || hubsApplicationsList.Count == 0) return NotFound();
+            return Ok(hubsApplicationsList);
         }
 
     }
