@@ -21,11 +21,11 @@
 //            unitOfWork = _unitOfWork;
 //        }
 //        public void Deletefiles(int hubid, int appid, List<IFormFile> files)
-//            {
+//        {
 //            try
 //            {
 
-               
+
 //                var hubappobject = efgconfigurationdbContext.HubsApplications.Where(h => h.HubID == hubid && h.AppID == appid).FirstOrDefault();
 
 //                var AssemblyPath = hubappobject.AssemblyPath;
@@ -54,30 +54,31 @@
 //                    };
 //                    unitOfWork.DeploymentFilesRepository.AddDeploymentFile(deploymentfile);
 //                    File.Move(AssemblyPath + @"\" + file.FileName, NewBackupPath + @"\" + file.FileName);
-                    
+
 //                }
-            
+
 
 //            }
 //            catch
 //            {
 
 //            }
-            
+
 //        }
 
 //        public string[] GetAllfiles(int hubid, int appid)
 //        {
 //            try
 //            {
-//                var assembly= efgconfigurationdbContext.HubsApplications.Where(h => h.HubID == hubid && h.AppID == appid).FirstOrDefault();
+//                var assembly = efgconfigurationdbContext.HubsApplications.Where(h => h.HubID == hubid && h.AppID == appid).FirstOrDefault();
 //                string[] filePaths = Directory.GetFiles(assembly.AssemblyPath);
 //                return filePaths;
-//            }catch
+//            }
+//            catch
 //            {
 //                return null;
 //            }
-          
+
 //        }
 //    }
 //}
