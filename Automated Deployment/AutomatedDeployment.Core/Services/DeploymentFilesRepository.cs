@@ -114,30 +114,26 @@ namespace AutomatedDeployment.Core.Services
             }
         }
 
-        public List<DeploymentDetails> GetLastDepolyment()
+        public List<LastDeploymentviewmodel> GetLastDepolyment()
         {
             // return null;
             // Error By change Database
             try
             {
-          
-              //  var deployment = _efgconfigurationdbContext.Deployments.Include(d => d.DeploymentDetails.SelectMany(d.HubId, d.AppId }));
-                var deployment = _efgconfigurationdbContext.Deployments.Include(d => d.DeploymentDetails).ToList().LastOrDefault();
 
-                if (deployment!=null)
-                {
-                    var deploymentdetails = _efgconfigurationdbContext.DeploymentDetails.Where(d => d.DeploymentId == deployment.DeploymentID).ToList();
+                //  var deployment = _efgconfigurationdbContext.Deployments.Include(d => d.DeploymentDetails.SelectMany(d.HubId, d.AppId }));
+                var deployment = _efgconfigurationdbContext.Deployments.Include(d => d.DeploymentDetails).LastOrDefault();
 
-                    return deploymentdetails;
-                }
-                return null;            
+                List<LastDeploymentviewmodel> lastdeploy = deployment.DeploymentDetails.Select(i => new LastDeploymentviewmodel { appId = i.AppId, hubId = i.HubId }).ToList();
+
+                return lastdeploy;
 
               
             }
-            catch (Exception)
+            catch (Exception ex)
             {
 
-                throw;
+                return null;
             }
         }
 

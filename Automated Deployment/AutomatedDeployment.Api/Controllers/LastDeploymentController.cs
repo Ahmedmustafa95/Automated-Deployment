@@ -27,14 +27,21 @@ namespace AutomatedDeployment.Api.Controllers
         }
 
         [HttpGet]
-        public ActionResult<List<DeploymentDetails>> LastDeployment()
+        public ActionResult<List<LastDeploymentviewmodel>> LastDeployment()
         {
 
             try
             {
                 var deployment = unitOfWork.DeploymentFilesRepository.GetLastDepolyment();
-
-                return deployment;
+                
+                if(deployment==null)
+                {
+                    return NotFound();
+                }
+                  return deployment;
+               
+               
+                
             }
             catch (Exception e)
             {
