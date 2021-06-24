@@ -1,6 +1,7 @@
 ﻿using AutomatedDeployment.Core.Interfaces;
 using AutomatedDeployment.Domain.Entities;
 using AutomatedDeployment.Infrastructure.Context;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -38,7 +39,7 @@ namespace AutomatedDeployment.Core.Services
         }
 
         public int GetCurrentDeploymentId()=>
-            _efgconfigurationdbContext.Deployments.Max(d=>d.DeploymentID)+1;
+            _efgconfigurationdbContext.Deployments.Max(d=>d.DeploymentID);
 
         public int GetDeploymentCounts(int hubID, int applicationId) =>
                 _efgconfigurationdbContext.DeploymentDetails.Count(d => d.HubId == hubID && d.AppId == applicationId);
@@ -68,6 +69,21 @@ namespace AutomatedDeployment.Core.Services
 
         }
 
+        public bool DeleteFromDeployment(int deploymentId)
+        {
+            try
+            {
+                var deletedDeployment = _efgconfigurationdbContext.Deployments.Find(deploymentId);
+                if (deletedDeployment is null) return false;
+                _efgconfigurationdbContext.Deployments.Remove(deletedDeployment);
+                _efgconfigurationdbContext.SaveChanges();
+                return true;
+            }
+            catch (Exception E)
+            {
+                return false;
+            }
+           
         public Deployment GetLastDeployment()
         {
             try
