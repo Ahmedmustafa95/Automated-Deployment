@@ -52,190 +52,29 @@ namespace AutomatedDeployment.Api.Controllers
         }
 
 
-        private bool CheckValidData(int hubid, int applicationid) =>
-         unitOfWork.HubsApplicationsRepository
-                   .GetHubsApplicationByID(hubid, applicationid) != null;
-
         [HttpPost]
-        //public IActionResult Upload(UploadingModel uploadingModel)
-        public IActionResult Upload(List<IFormFile> files)
+        public IActionResult UploadFiles(UploadingFileViewModel fileViewModel)
         {
-            //List<IFormFile>files = uploadingModel.files;
-            //List<HubsApplications> hubsApplications = uploadingModel.HubsApplications;
-            var hubsApplications = new List<HubsApplications>
+            try
             {
-                new HubsApplications
+                var uploadAndBackupFiles= replaceService.UploadAndBackupFiles(fileViewModel);
+                switch (uploadAndBackupFiles)
                 {
-                    HubID=14,
-                    AppID=8
-                },
-                 new HubsApplications
-                {
-                    HubID=14,
-                    AppID=9
-                },
-                  new HubsApplications
-                {
-                    HubID=14,
-                    AppID=10
+                    case UploadStatus.Success:
+                        return Ok();
+                    case UploadStatus.DatabaseFailure:
+                        return StatusCode(StatusCodes.Status500InternalServerError, "Failed To Save In Database");
+                    case UploadStatus.AssembyNotExist:
+                        return NotFound("Assembly Not Exist");
+                    case UploadStatus.NotValidData:
+                        return BadRequest("HubsApplication Is not Valid");
                 }
-            };
-            var deploymentDetails = new List<DeploymentDetails>();
-            var deploymentFiles = new List<DeploymentFiles>();
-            int currentDeploymentId = unitOfWork.DeploymentRepository.GetCurrentDeploymentId();
-            int currentDeploymentDetailsId = unitOfWork.DeploymentDetailsRepository
-                                                       .GetCurrentDeploymentDetailsId();
-            var currentDate = DateTime.Now;
-            Deployment deployment ;
-            foreach (var hubsApplication in hubsApplications)
-            {
-                if (!CheckValidData(hubsApplication.HubID,hubsApplication.AppID)) return BadRequest("Not Valid Data");
-                string AssemblyPath = $"{pathRepository.GetAssemblyPath(hubsApplication.HubID, hubsApplication.AppID)}{@"\"}".Trim();
-                if (AssemblyPath is null) { return NotFound(); }
-
-                if (unitOfWork.DeploymentRepository.GetDeploymentCounts(hubsApplication.HubID, hubsApplication.AppID) > 0)
-                {
-                    string BackUpPath = pathRepository.GetBackupPath(hubsApplication.HubID, hubsApplication.AppID);
-
-
-                    Dictionary<string, List<string>> filesState = replaceService.CompareDeployFilesWithAssemblyFiles(files, AssemblyPath);
-
-                    if (filesState["Modified"].Count > 0)
-                    {
-
-                        List<string> backupFiles = new List<string>();
-                        backupFiles.AddRange(filesState["Modified"]);
-                        string NewBackupPath = $"{BackUpPath}\\BK_{currentDate.ToString("yyyy-MM-dd-hh-mm-ss")}".Trim();
-                        Directory.CreateDirectory(NewBackupPath);
-                        ibackupService.MoveTOBackUpFolder(backupFiles, AssemblyPath, NewBackupPath);
-                        replaceService.Upload(files, AssemblyPath);
-
-                    }
-
-                    //for (int i = 0; i < hubsApplications.Count; i++)
-                    //{
-                    //    int deploymentDetailId = unitOfWork.DeploymentDetailsRepository
-                    //                                         .GetDeploymentDetailsIdByHubIdAndAppId
-                    //                                         (
-                    //                                            hubsApplications[i].HubID,
-                    //                                            hubsApplications[i].AppID
-                    //                                         );
-                    //    foreach (var fileName in filesState["Modified"])
-                    //    {
-
-                    //        //hubsApplications[i].HubID && hubsApplications[i].AppID
-                            
-                    //        var deploymentFile = new DeploymentFiles()
-                    //        { DeploymentDetailsId = deploymentDetailId, FilesName = fileName, Status = status.Modified };
-                    //        deploymentFiles.Add(deploymentFile);
-                    //    }
-
-                    //    foreach (var fileName in filesState["Added"])
-                    //    {
-                    //        var deploymentFile = new DeploymentFiles()
-                    //        { DeploymentDetailsId = deploymentDetailId, FilesName = fileName, Status = status.Added };
-                    //        deploymentFiles.Add(deploymentFile);
-                    //    }
-                    //}
-
-                    
-
-                    
-                    var deploymentDetail = new DeploymentDetails
-                    {
-                        HubId = hubsApplication.HubID,
-                        AppId = hubsApplication.AppID,
-                        DeploymentId = currentDeploymentId
-
-                    };
-                    deploymentDetails.Add(deploymentDetail);
-
-                    //deployment = new Deployment
-                    //{
-                    //    DeploymentDate = currentDate,
-                    //    DeploymentType = DeploymentType.Deployment,
-                    //    DeployedBy = "shawky",
-                    //    ApprovedBy = "ahmed",
-                    //    RequestedBy = "Mustafa"
-                    //};
-                    //if (unitOfWork.DeploymentRepository.AddDeployment(deployment) is null)
-                    //    return StatusCode(StatusCodes.Status500InternalServerError, " Failed to Save Deployment in database");
-
-                    //if (unitOfWork.DeploymentDetailsRepository.AddDeploymentDetails(deploymentDetails) is null)
-                    //    return StatusCode(StatusCodes.Status500InternalServerError,
-                    //        " Failed to Save Deployment Files in database");
-                    
-
-
-
-                }
-                else
-                {
-                    replaceService.Upload(files, AssemblyPath);
-                   
-                    var deploymentDetail = new DeploymentDetails
-                    {
-                        HubId = hubsApplication.HubID,
-                        AppId = hubsApplication.AppID,
-                        DeploymentId = currentDeploymentId
-
-                    };
-                    deploymentDetails.Add(deploymentDetail);
-                    
-                }
-
+                return BadRequest();
             }
-            deployment = new Deployment()
+            catch (Exception)
             {
-                DeploymentDate = currentDate,
-                DeploymentType = DeploymentType.Deployment,
-                DeployedBy = "Islam",
-                ApprovedBy = "ahmed",
-                RequestedBy = "Mustafa",
-            };
-            if (unitOfWork.DeploymentRepository.AddDeployment(deployment) is null)
-                return StatusCode(StatusCodes.Status500InternalServerError, " Failed to Save Deployment in database");
-
-            if (unitOfWork.DeploymentDetailsRepository.AddDeploymentDetails(deploymentDetails) is null)
-                return StatusCode(StatusCodes.Status500InternalServerError,
-                    " Failed to Save Deployment Files in database");
-
-            //for (int i = 0; i < hubsApplications.Count; i++)
-            //{
-            //    int deploymentDetailId = unitOfWork.DeploymentDetailsRepository
-            //                                         .GetDeploymentDetailsIdByHubIdAndAppId
-            //                                         (
-            //                                            hubsApplications[i].HubID,
-            //                                            hubsApplications[i].AppID
-            //                                         );
-            //    foreach (var fileName in filesState["Modified"])
-            //    {
-
-            //        //hubsApplications[i].HubID && hubsApplications[i].AppID
-
-            //        var deploymentFile = new DeploymentFiles()
-            //        { DeploymentDetailsId = deploymentDetailId, FilesName = fileName, Status = status.Modified };
-            //        deploymentFiles.Add(deploymentFile);
-            //    }
-
-            //    foreach (var fileName in filesState["Added"])
-            //    {
-            //        var deploymentFile = new DeploymentFiles()
-            //        { DeploymentDetailsId = deploymentDetailId, FilesName = fileName, Status = status.Added };
-            //        deploymentFiles.Add(deploymentFile);
-            //    }
-            //}
-
-
-
-            if (deploymentFiles.Count > 0)
-            {
-                if (unitOfWork.DeploymentFilesRepository.AddDeploymentFiles(deploymentFiles) is null)
-                    return StatusCode(StatusCodes.Status500InternalServerError, " Failed to Save Deployment Files in database");
+                return BadRequest();   
             }
-
-            
-            return Ok();
         }
     }
 }

@@ -16,6 +16,8 @@ namespace AutomatedDeployment.Core.Interfaces
 
         string[] GetAllfiles(int hubid, int appid);
 
+        bool DeleteFromDeployment(int deploymentId); 
+
 
 
 
