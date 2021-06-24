@@ -18,6 +18,20 @@ namespace AutomatedDeployment.Core.Services
         public DeploymentRepository(EfgconfigurationdbContext efgconfigurationdbContext)=>
             _efgconfigurationdbContext = efgconfigurationdbContext;
 
+
+        public IReadOnlyList<Deployment> GetAll()
+        {
+
+            try
+            {
+                return _efgconfigurationdbContext.Deployments.AsNoTracking().ToList();
+
+            }
+            catch(Exception e)
+            {
+                return null;
+            }
+        }
         public Deployment AddDeployment(Deployment deployment)
         {
             if (deployment is not null)

@@ -9,6 +9,8 @@ namespace AutomatedDeployment.Core.Interfaces
 {
     public interface IDeploymentRepository
     {
+        public IReadOnlyList<Deployment> GetAll();
+    
         int GetDeploymentCounts(int hubID, int applicationId); 
         Deployment AddDeployment(Deployment  deployment);
 
