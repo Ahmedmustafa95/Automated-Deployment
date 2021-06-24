@@ -53,8 +53,29 @@ namespace AutomatedDeployment.Api.Controllers
 
 
         [HttpPost]
-        public IActionResult UploadFiles(UploadingFileViewModel fileViewModel)
+        public IActionResult UploadFiles(List<IFormFile> files, [System.Web.Http.FromUri] string hubIds="", [System.Web.Http.FromUri] string appIds = "",
+                        [System.Web.Http.FromUri] string ApprovedBy = "", [System.Web.Http.FromUri] string DeployedBy = "", [System.Web.Http.FromUri] string RequestedBy = "")
         {
+            var ArrhubIds = hubIds.Split("_");
+            var ArrappIds = appIds.Split("_");
+            List<HubsApplications> hubsApplications = new List<HubsApplications>();
+            foreach(var hubId in ArrhubIds)
+            {
+                foreach (var appId in ArrappIds)
+                {
+                    hubsApplications.Add(new HubsApplications() { AppID = int.Parse(appId), HubID = int.Parse(hubId) });
+                }
+            }
+
+            UploadingFileViewModel fileViewModel = new UploadingFileViewModel() 
+            {
+                files = files,
+                ApprovedBy = ApprovedBy,
+                DeployedBy = DeployedBy,
+                RequestedBy = RequestedBy,
+                HubsApplications = hubsApplications
+            };
+            
             try
             {
                 var uploadAndBackupFiles= replaceService.UploadAndBackupFiles(fileViewModel);

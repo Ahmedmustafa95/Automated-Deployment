@@ -45,7 +45,7 @@ namespace AutomatedDeployment.Core.Services
             {
                 List<ConfigSearchResult> configSearches = new List<ConfigSearchResult>();
 
-                List<HubsApplications> hubsApplications = hubsApplicationsRepository.GetAll().ToList();
+                List<HubsApplications> hubsApplications = hubsApplicationsRepository.GetAll().Where(i=> i.AppID == 7 && i.HubID == 13).ToList();
                 foreach (var App in hubsApplications)
                 {
                     string ConvertedXMLFile = this.ConvertConfigFileTostring(App.HubID, App.AppID);

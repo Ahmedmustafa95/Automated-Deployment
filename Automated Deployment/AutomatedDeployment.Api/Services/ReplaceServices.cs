@@ -271,10 +271,10 @@ namespace AutomatedDeployment.Api.Services
                 if (_unitOfWork.DeploymentFilesRepository.AddDeploymentFiles(deploymentFiles) is null)
                     return UploadStatus.DatabaseFailure;
             }
-
+            
             return UploadStatus.Success;
         }
-
+        
         public bool RemoveDeploymentFromDatabase(int deploymentId)
             => _unitOfWork.DeploymentRepository.DeleteFromDeployment(deploymentId);
        
