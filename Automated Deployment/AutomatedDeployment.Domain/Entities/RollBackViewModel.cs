@@ -6,11 +6,12 @@ using System.Threading.Tasks;
 
 namespace AutomatedDeployment.Domain.Entities
 {
-   public class LastDeploymentviewmodel
+    public class RollBackViewModel
     {
         public int hubId { get; set; }
-        public int appId { get; set; }
-        public string ApplicationName { get; set; }
-        public string HubName { get; set; }
+        public int appID { get; set; }
+        public string deployedBy { get; set; }
+        public string requestedBy { get; set; }
+        public string approvedBy { get; set; }
     }
 }

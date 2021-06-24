@@ -11,33 +11,76 @@ namespace AutomatedDeployment.Api.Services
 {
     public class RollBackService : IRollbackService
     {
+        private readonly IPathRepository pathRepository;
         private readonly IUnitOfWork unitOfWork;
 
-        public RollBackService(IUnitOfWork _unitOfWork)
+        public RollBackService(IUnitOfWork _unitOfWork, IPathRepository _pathRepository)
         {
             unitOfWork = _unitOfWork;
+            pathRepository = _pathRepository;
         }
-        public int SingleRollback(int hubid, int applicationid,string deployedBy , string requestedBy , string  approvedBy ,DateTime currentDate)
+        public bool GenralRollback(List<RollBackViewModel> rollBackViewModels)
         {
+            if (rollBackViewModels is null ||  rollBackViewModels.Count == 0) return false;
            
-            var lastDeployment = unitOfWork.DeploymentFilesRepository.GetLastDepolyment(hubid, applicationid);
-            //rollback Deployment
-            var deployment =  Factory.createdeployment(currentDate, DeploymentType.Rollback, 
-                            lastDeployment.DeploymentID, deployedBy, approvedBy, requestedBy);
-            //create new  Deployment 
-            // var newdep = unitOfWork.DeploymentFilesRepository.GetLastDepolyment(hubid,applicationid);
-           var newdep = unitOfWork.DeploymentRepository.AddDeployment(deployment);
-            //last DeploymentDetails ID
-            //var dd = unitOfWork.DeploymentDetailsRepository.GetLastDepolymentDetails(hubid, applicationid).DeploymentDetailsId;
-            //create new Deployment details Object
-            var deploymentDetails = Factory.createDeploymentDetails(hubid, applicationid, newdep.DeploymentID);
+            Deployment lastDeployment = unitOfWork.DeploymentRepository.GetLastDeployment();
+            var lastdeploymentDate = lastDeployment.DeploymentDate;
 
-        
-            //Save new DeploymentDetails 
-          var dd= unitOfWork.DeploymentDetailsRepository.AddDeploymentDetails(deploymentDetails).DeploymentDetailsId;
-            return dd;
+
+            if (lastDeployment is null) return false;
+            RollBackViewModel firstitem = rollBackViewModels[0];
+            var currentDate = DateTime.Now;
+            int addedID = CreatAndSaveDeployment(firstitem.deployedBy, firstitem.requestedBy, firstitem.approvedBy, currentDate);
+            if (addedID == 0) return false;
+            //List<int> applicationIds = unitOfWork.DeploymentDetailsRepository.GetApplicationID(lastDeployment.DeploymentID, hubid);
+            foreach (var rollback in rollBackViewModels)
+            {
+                // SingleRollback(hubid, applicationID);
+                string AssemblyPath = pathRepository.GetAssemblyPath(rollback.hubId, rollback.appID);
+                string BackUpPath = pathRepository.GetBackupPath(rollback.hubId, rollback.appID);
+                if (AssemblyPath is null || BackUpPath is null) continue; 
+              
+                var deploymentFiles = unitOfWork.DeploymentFilesRepository.GetById(rollback.hubId, rollback.appID);
+                int addeddeploymentDetailsId = CreateAndSaveDeploymentDetails(rollback.hubId,rollback.appID,addedID);
+                Rollback(rollback.hubId, rollback.appID, BackUpPath, AssemblyPath, addeddeploymentDetailsId, currentDate, deploymentFiles, lastdeploymentDate);
+            }
+            return true;
+
         }
 
+        public int CreatAndSaveDeployment (string deployedBy, string requestedBy, string approvedBy, DateTime currentDate)
+        {
+            try
+            {
+                var lastDeployment = unitOfWork.DeploymentRepository.GetLastDeployment();
+                //rollback Deployment
+                var deployment = Factory.createdeployment(currentDate, DeploymentType.Rollback,
+                                lastDeployment.DeploymentID, deployedBy, approvedBy, requestedBy);
+                var newdep = unitOfWork.DeploymentRepository.AddDeployment(deployment);
+                return newdep.DeploymentID;
+            }
+            catch(Exception e)
+            {
+                return 0;
+            }
+
+        }
+
+        public int CreateAndSaveDeploymentDetails (int hubId, int appId , int newCreatedID)
+        {
+            try
+            {
+                var deploymentDetails = Factory.createDeploymentDetails(hubId, appId, newCreatedID);
+
+
+                //Save new DeploymentDetails 
+                var newDeploymentDetailsID = unitOfWork.DeploymentDetailsRepository.AddDeploymentDetails(deploymentDetails).DeploymentDetailsId;
+                return newDeploymentDetailsID;
+            }catch(Exception e)
+            {
+                return 0;
+            }
+        }
 
         public void Rollback(int hubid, int applicationid, string BackupPath, string AssemblyPath,int deploymentDetailsId,DateTime currentDate, Dictionary<string, status> deploymentFiles,DateTime lastDeploymentDate)
 
