@@ -67,6 +67,23 @@ namespace AutomatedDeployment.Core.Services
             }
 
         }
+
+        public Deployment GetLastDeployment()
+        {
+            try
+            {
+                Deployment deployment =_efgconfigurationdbContext.Deployments
+        
+                                                          .OrderBy(D => D.DeploymentID)
+                                                          .LastOrDefault();
+
+                return deployment;
+            }catch(Exception e)
+            {
+                Console.WriteLine(e.Message);
+                return null;
+            }
+        }
     }
 
 

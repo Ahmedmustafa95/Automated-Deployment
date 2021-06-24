@@ -11,16 +11,40 @@ namespace AutomatedDeployment.Api.Services
 {
     public class RollBackService : IRollbackService
     {
+        private readonly IPathRepository pathRepository;
         private readonly IUnitOfWork unitOfWork;
 
-        public RollBackService(IUnitOfWork _unitOfWork)
+        public RollBackService(IUnitOfWork _unitOfWork, IPathRepository _pathRepository)
         {
             unitOfWork = _unitOfWork;
+            pathRepository = _pathRepository;
         }
-        public int SingleRollback(int hubid, int applicationid,string deployedBy , string requestedBy , string  approvedBy ,DateTime currentDate)
+        public void HubRollback(int hubid, string deployedBy, string approvedBy, string requestedBy)
         {
-           
-            var lastDeployment = unitOfWork.DeploymentFilesRepository.GetLastDepolyment(hubid, applicationid);
+            Deployment lastDeployment = unitOfWork.DeploymentRepository.GetLastDeployment();
+            List<int> applicationIds = unitOfWork.DeploymentDetailsRepository.GetApplicationID(lastDeployment.DeploymentID, hubid);
+            foreach (var applicationID in applicationIds)
+            {
+                SingleRollback(hubid, applicationID);
+            }
+
+        }
+
+
+        public void SingleRollback (int hubid,int applicationid)
+        {
+            string AssemblyPath = pathRepository.GetAssemblyPath(hubid, applicationid);
+            string BackUpPath = pathRepository.GetBackupPath(hubid, applicationid);
+            var currentDate = DateTime.Now;
+            var lastdeploymentDate = unitOfWork.DeploymentRepository.GetLastDeployment().DeploymentDate;
+            var y = unitOfWork.DeploymentFilesRepository.GetById(hubid, applicationid);
+            int x = RollbackHelp(hubid, applicationid, "shawky", "belal", "eslam", currentDate);
+            Rollback(hubid, applicationid, BackUpPath, AssemblyPath, x, currentDate, y, lastdeploymentDate);
+        }
+        public int RollbackHelp(int hubid, int applicationid,string deployedBy , string requestedBy , string  approvedBy ,DateTime currentDate)
+        {
+
+            var lastDeployment = unitOfWork.DeploymentRepository.GetLastDeployment();
             //rollback Deployment
             var deployment =  Factory.createdeployment(currentDate, DeploymentType.Rollback, 
                             lastDeployment.DeploymentID, deployedBy, approvedBy, requestedBy);

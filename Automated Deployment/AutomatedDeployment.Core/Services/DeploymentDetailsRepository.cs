@@ -69,6 +69,56 @@ namespace AutomatedDeployment.Core.Services
                 throw;
             }
         }
+        public DeploymentDetails GetLastDepolymentDetails()
+        {
+            try
+            {
+                var deploymentDetails = _efgconfigurationdbContext.DeploymentDetails
+                                                          .OrderBy(D => D.DeploymentDetailsId)
+                                                          .LastOrDefault();
+                return deploymentDetails;
+            }
+            catch (Exception)
+            {
 
+                throw;
+            }
+        }
+
+        public int GetDeploymentDetailsIdByHubIdAndAppId(int hubId, int appId)
+        {
+            try
+            {
+                var deploymentDetailId = _efgconfigurationdbContext.DeploymentDetails
+                                                            .OrderBy(D => D.DeploymentDetailsId)
+                                                            .LastOrDefault
+                                                            (
+                                                               D => D.HubId == hubId &&
+                                                               D.AppId == appId
+                                                            );
+                return deploymentDetailId?.DeploymentDetailsId ?? -1;
+            }
+            catch (Exception E)
+            {
+
+                return -1;
+            }
+           
+
+        }
+        public List<int> GetApplicationID(int deploymentID,int hubId)
+        {
+            try
+            {
+                var deploymentDetailsHubs = _efgconfigurationdbContext.DeploymentDetails.Where(d => d.DeploymentId == deploymentID && d.HubId==hubId)
+                                        .Select(d => d.AppId).ToList();
+                return deploymentDetailsHubs;
+
+            }
+            catch
+            {
+                return null;
+            }
+        }
     }
 }

@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace AutomatedDeployment.Api.Controllers
 {
-     [Route("api/[controller]/{hubid}/{applicationid}")]
+     [Route("api/[controller]")]
     [ApiController]
     public class RollbackController : ControllerBase
     {
@@ -27,21 +27,34 @@ namespace AutomatedDeployment.Api.Controllers
             pathRepository = _pathRepository;
             unitOfWork = _unitOfWork;
         }
+        [HttpGet("{hubid}")]
+        public IActionResult RollbackHub(int hubid)
+        {
+            try
+            {
+                rollbackService.HubRollback(hubid,"shawky","new","shawky");
+                return Ok();
+            }catch
+            {
+                return NotFound();
+            }
+        }
 
-        [HttpGet]
+        [HttpGet("{hubid}/{applicationid}")]
         public IActionResult RollBack(int hubid, int applicationid)
         {
             try
             {
                 //string AssemblyPath = pathRepository.GetAssemblyPath(hubid, applicationid);
                 //string BackUpPath = pathRepository.GetBackupPath(hubid, applicationid);
-                string AssemblyPath = @"C:\Users\ecs\Desktop\Test";
-                string BackUpPath = @"C:\Users\ecs\Desktop\Test\backups";
-                var currentDate = DateTime.Now;
-                var lastdeployment = unitOfWork.DeploymentFilesRepository.GetLastDepolyment(hubid, applicationid).DeploymentDate;
-                var y = unitOfWork.DeploymentFilesRepository.GetById(hubid, applicationid);
-                int x = rollbackService.SingleRollback(hubid, applicationid, "shawky", "belal", "eslam",currentDate); 
-                rollbackService.Rollback(hubid, applicationid, BackUpPath, AssemblyPath,x,currentDate, y, lastdeployment);
+                ////string AssemblyPath = @"C:\Users\ecs\Desktop\Test";
+                ////string BackUpPath = @"C:\Users\ecs\Desktop\Test\backups";
+                //var currentDate = DateTime.Now;
+                //var lastdeployment = unitOfWork.DeploymentRepository.GetLastDeployment().DeploymentDate;
+                //var y = unitOfWork.DeploymentFilesRepository.GetById(hubid, applicationid);
+                //int x = rollbackService.RollbackHelp(hubid, applicationid, "shawky", "belal", "eslam",currentDate); 
+                //rollbackService.Rollback(hubid, applicationid, BackUpPath, AssemblyPath,x,currentDate, y, lastdeployment);
+                rollbackService.SingleRollback(hubid, applicationid, "shawky", "new", "shawky");
                 return Ok();
             }catch (Exception e)
             {
