@@ -16,5 +16,8 @@ namespace AutomatedDeployment.Core.Interfaces
         DeploymentDetails GetLastDepolymentDetails(int hubId, int applicationId);
 
         int GetDeploymentDetailsIdByHubIdAndAppId(int hubId, int appId);
+        public DeploymentDetails GetLastDepolymentDetails();
+      //  public DeploymentDetails GetDeploymentDetailsWithDeploymentID(int deploymentID);
+        public List<int> GetApplicationID(int deploymentID, int hubId);
     }
 }
