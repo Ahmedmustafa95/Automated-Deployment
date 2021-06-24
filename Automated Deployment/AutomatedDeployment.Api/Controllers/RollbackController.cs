@@ -33,9 +33,13 @@ namespace AutomatedDeployment.Api.Controllers
         {
             try
             {
-                string AssemblyPath = pathRepository.GetAssemblyPath(hubid, applicationid);
-                string BackUpPath = pathRepository.GetBackupPath(hubid, applicationid);
-                rollbackService.Rollback(hubid, applicationid, BackUpPath, AssemblyPath, unitOfWork.DeploymentFilesRepository.GetById(hubid, applicationid));
+                //string AssemblyPath = pathRepository.GetAssemblyPath(hubid, applicationid);
+                //string BackUpPath = pathRepository.GetBackupPath(hubid, applicationid);
+                string AssemblyPath = @"C:\Users\ecs\Desktop\Test";
+                string BackUpPath = @"C:\Users\ecs\Desktop\Test\backups";
+                var y = unitOfWork.DeploymentFilesRepository.GetById(hubid, applicationid);
+                int x = rollbackService.SingleRollback(hubid, applicationid, "shawky", "belal", "eslam"); 
+                rollbackService.Rollback(hubid, applicationid, BackUpPath, AssemblyPath,x, y);
                 return Ok();
             }catch (Exception e)
             {
