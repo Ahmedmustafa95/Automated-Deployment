@@ -129,7 +129,7 @@ namespace AutomatedDeployment.Core.Services
                                     .Include(d => d.DeploymentDetails)
                                         .ThenInclude(i => i.HubsApplications)
                                             .ThenInclude(i => i.Hub)
-                                .OrderByDescending(i=>i.DeploymentID).LastOrDefault();
+                                .OrderBy(i=>i.DeploymentID).LastOrDefault();
 
                 List<LastDeploymentviewmodel> lastdeploy = deployment.DeploymentDetails
                     .Select(i => new LastDeploymentviewmodel { appId = i.AppId,hubId = i.HubId ,
@@ -144,6 +144,44 @@ namespace AutomatedDeployment.Core.Services
             catch (Exception ex)
             {
 
+                return null;
+            }
+        }
+        public List<Hubviewmodel> Gethubslastdeployment()
+        {
+            // return null;
+            // Error By change Database
+            try
+            {
+
+                 var deployment = _efgconfigurationdbContext.Deployments.OrderBy(d=>d.DeploymentID).LastOrDefault();
+                var res = _efgconfigurationdbContext.DeploymentDetails.Where(d => d.DeploymentId == deployment.DeploymentID).Include(d => d.HubsApplications).ThenInclude(d => d.Hub).ToList();
+
+                HashSet<int> hubsid = new HashSet<int>();
+                List<Hubviewmodel> hubs = new List<Hubviewmodel>();
+
+                foreach (var x  in res)
+                {
+                    if (!hubsid.Contains(x.HubId))
+                        {
+                        var hub = new Hubviewmodel();
+                        hub.HubID = x.HubId;
+                        hub.HubName = x.HubsApplications.Hub.HubName;
+                        hubs.Add(hub);
+                        hubsid.Add(x.HubId);
+                        }
+                }
+
+
+                  
+                
+                return hubs.ToList();
+
+
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
                 return null;
             }
         }
