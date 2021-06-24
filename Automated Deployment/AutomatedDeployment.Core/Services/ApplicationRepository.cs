@@ -41,9 +41,9 @@ namespace AutomatedDeployment.Core.Services
 
             if (entity is Application)
             {
-                var app =_efgconfigurationdbContext.Add(entity);
                 try
                 {
+                    var app = _efgconfigurationdbContext.Add(entity);
                     _efgconfigurationdbContext.SaveChanges();
                     return app.Entity;
                 }

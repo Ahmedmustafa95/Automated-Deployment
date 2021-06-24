@@ -17,9 +17,9 @@ namespace AutomatedDeployment.Api.Services
         {
             unitOfWork = _unitOfWork;
         }
-        public int SingleRollback(int hubid, int applicationid,string deployedBy , string requestedBy , string  approvedBy )
+        public int SingleRollback(int hubid, int applicationid,string deployedBy , string requestedBy , string  approvedBy ,DateTime currentDate)
         {
-            var currentDate = DateTime.Now;
+           
             var lastDeployment = unitOfWork.DeploymentFilesRepository.GetLastDepolyment(hubid, applicationid);
             //rollback Deployment
             var deployment =  Factory.createdeployment(currentDate, DeploymentType.Rollback, 
@@ -37,65 +37,26 @@ namespace AutomatedDeployment.Api.Services
           var dd= unitOfWork.DeploymentDetailsRepository.AddDeploymentDetails(deploymentDetails).DeploymentDetailsId;
             return dd;
         }
-        public void Rollback(int hubid, int applicationid, string BackupPath, string AssemblyPath,int deploymentDetailsId, Dictionary<string, status> deploymentFiles)
+
+
+        public void Rollback(int hubid, int applicationid, string BackupPath, string AssemblyPath,int deploymentDetailsId,DateTime currentDate, Dictionary<string, status> deploymentFiles,DateTime lastDeploymentDate)
 
         {
-            // string BackUpPath = pathRepository.GetBackupPath(hubid, applicationid);
-
-            //if (!Directory.Exists(BackUpPath))
-            //    Directory.CreateDirectory(BackUpPath);
             try
             {
 
-                var currentDate = DateTime.Now;
 
                 string NewBackupPath = $"{BackupPath}\\BK_{currentDate.ToString("yyyy-MM-dd-hh-mm-ss")}".Trim();
                 
                 Directory.CreateDirectory(NewBackupPath);
 
-                // Dictionary has Files Name as key and Files state as value
-               
-                //var filesName = files.Select(f => f.FileName).ToList();
-                //ibackupService.MoveTOBackUpFolder(filesName, AssemblyPath, BackUpPath);
-                //List<string> files = new List<string>();
-
-                var lastDeploymentFolderDate = $"BK_{unitOfWork.DeploymentFilesRepository.GetLastDepolyment(hubid, applicationid).DeploymentDate.ToString("yyyy-MM-dd-hh-mm-ss")}".Trim();
-                // Error By change Database
-                //Deployment deployment = new Deployment()
-                //{
-                //    HubID = hubid,
-                //    AppID = applicationid,
-                //    DeploymentDate = currentDate,
-                //    DeployedBy="belal",
-                //    ApprovedBy = "Shawky",
-                //    RequestedBy = "Mustafa",
-                //};
-
-
-
-                // Error By change Database
-                //int addedID = unitOfWork.DeploymentRepository.AddDeployment(deployment).DeploymentID;
-
-
-                //read all files 
-                //string[] allfiles = Directory.GetFiles(BackupPath);
-                //string[] subs;
-                //put files in new path
+                string lastDeploymentFolderDate = $"BK_{lastDeploymentDate.ToString("yyyy-MM-dd-hh-mm-ss")}".Trim();
 
                 foreach (var file in deploymentFiles)
                 {
                     if (file.Value == status.Modified)
                     {
-                        //files.Add(file.Key);
-
-
-                        // Error By change Database
-                        //DeploymentFiles deploymentfile = new DeploymentFiles()
-                        //{
-                        //    DeploymentID = addedID,
-                        //    FilesName = file.Key,
-                        //    Status = status.Modified
-                        //};
+                        
                         DeploymentFiles deploymentfile = new DeploymentFiles()
                         {
                             DeploymentDetailsId = deploymentDetailsId,
@@ -103,18 +64,13 @@ namespace AutomatedDeployment.Api.Services
                             Status = status.Modified
                         };
 
-                        // Error By change Database
+                     
                         unitOfWork.DeploymentFilesRepository.AddDeploymentFile(deploymentfile);
 
                         MoveFiles(AssemblyPath, NewBackupPath, file.Key);
-                        
-
                         CopyFiles(AssemblyPath, BackupPath, file.Key, lastDeploymentFolderDate);
-
-                        //File.Copy($"{BackupPath}{@"\"}{lastDeploymentFolderDate}{@"\"}{file.Key}"
-                        //                                           .Trim()
-                        //         ,$"{AssemblyPath}{@"\"}{file.Key}".Trim());
-
+                      
+ 
                     }
                     else if (file.Value == status.Added)
                     {
