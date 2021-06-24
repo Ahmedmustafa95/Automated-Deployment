@@ -2,6 +2,7 @@
 using AutomatedDeployment.Core.Interfaces.GenericRepositories;
 using AutomatedDeployment.Domain.Entities;
 using AutomatedDeployment.Infrastructure.Context;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -113,7 +114,32 @@ namespace AutomatedDeployment.Core.Services
             }
         }
 
+        public List<DeploymentDetails> GetLastDepolyment()
+        {
+            // return null;
+            // Error By change Database
+            try
+            {
+          
+              //  var deployment = _efgconfigurationdbContext.Deployments.Include(d => d.DeploymentDetails.SelectMany(d.HubId, d.AppId }));
+                var deployment = _efgconfigurationdbContext.Deployments.Include(d => d.DeploymentDetails).ToList().LastOrDefault();
 
+                if (deployment!=null)
+                {
+                    var deploymentdetails = _efgconfigurationdbContext.DeploymentDetails.Where(d => d.DeploymentId == deployment.DeploymentID).ToList();
+
+                    return deploymentdetails;
+                }
+                return null;            
+
+              
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
 
     }
 }
