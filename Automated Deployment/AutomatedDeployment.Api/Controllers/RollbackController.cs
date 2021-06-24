@@ -36,13 +36,7 @@ namespace AutomatedDeployment.Api.Controllers
                 return BadRequest();
             try
             {
-                rollBackViewModels = new List<RollBackViewModel>()
-                {
-                    new RollBackViewModel(){ hubId =16,appID=9,deployedBy="new",requestedBy="batman",approvedBy="batman"},
-                    new RollBackViewModel(){ hubId =16,appID=10,deployedBy="new",requestedBy="batman",approvedBy="batman"},
-                      new RollBackViewModel(){ hubId =15,appID=10,deployedBy="new",requestedBy="batman",approvedBy="batman"},
-
-                };
+              
                 rollbackService.GenralRollback(rollBackViewModels);
                 return Ok();
             }
