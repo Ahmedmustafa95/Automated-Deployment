@@ -68,6 +68,12 @@ namespace AutomatedDeployment.Api.Controllers
                         return NotFound("Assembly Not Exist");
                     case UploadStatus.NotValidData:
                         return BadRequest("HubsApplication Is not Valid");
+                    case UploadStatus.DeletedFailed:
+                        return StatusCode(StatusCodes.Status500InternalServerError, "Failed To Upload File And Failed To Delete " +
+                            "Current Deployment From Database");
+                    case UploadStatus.Uploadfailed:
+                        return StatusCode(StatusCodes.Status500InternalServerError, "Failed To Upload File ");
+
                 }
                 return BadRequest();
             }

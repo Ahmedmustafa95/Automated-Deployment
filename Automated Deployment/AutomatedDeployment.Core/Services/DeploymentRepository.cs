@@ -83,7 +83,8 @@ namespace AutomatedDeployment.Core.Services
             {
                 return false;
             }
-           
+
+        }
         public Deployment GetLastDeployment()
         {
             try
