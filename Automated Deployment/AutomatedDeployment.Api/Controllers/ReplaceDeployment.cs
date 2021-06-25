@@ -5,9 +5,6 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace AutomatedDeployment.Api.Controllers
 {
@@ -15,39 +12,29 @@ namespace AutomatedDeployment.Api.Controllers
     [ApiController]
     public class ReplaceDeployment : ControllerBase
     {
-        private readonly IReplaceServices replaceService;
-        private readonly IPathRepository pathRepository;
-        private readonly IBackupServices ibackupService;
-        private readonly IUnitOfWork unitOfWork;
+        private readonly IReplaceServices _replaceService;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public ReplaceDeployment(IReplaceServices _replaceService, IPathRepository _pathRepository,
-            IBackupServices _ibackupService, IUnitOfWork _unitOfWork)
+        public ReplaceDeployment(IReplaceServices replaceService, IUnitOfWork unitOfWork)
         {
-            replaceService = _replaceService;
-            pathRepository = _pathRepository;
-            ibackupService = _ibackupService;
-            unitOfWork = _unitOfWork;
+            _replaceService = replaceService;
+            _unitOfWork = unitOfWork;
         }
 
         [HttpGet]
         public IActionResult GetallFiles(int hubid, int applicationid)
         {
+            if (!ModelState.IsValid) return BadRequest();
             try
             {
-                var result = unitOfWork.DeploymentRepository.GetAllfiles(hubid, applicationid);
-                if (result != null)
-                {
-                    return Ok(result);
-                }
-                else
-                {
-                    return NoContent();
-                }
+                var result = _unitOfWork.DeploymentRepository.GetAllfiles(hubid, applicationid);
+                if(result is null) return StatusCode(StatusCodes.Status500InternalServerError);
+                return Ok(result);
             }
             catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
-                return NotFound();
+                return StatusCode(StatusCodes.Status500InternalServerError);
             }
         }
 
@@ -56,6 +43,7 @@ namespace AutomatedDeployment.Api.Controllers
         public IActionResult UploadFiles(List<IFormFile> files, [System.Web.Http.FromUri] string hubIds="", [System.Web.Http.FromUri] string appIds = "",
                         [System.Web.Http.FromUri] string ApprovedBy = "", [System.Web.Http.FromUri] string DeployedBy = "", [System.Web.Http.FromUri] string RequestedBy = "")
         {
+            if (!ModelState.IsValid) return BadRequest();
             var ArrhubIds = hubIds.Split("_");
             var ArrappIds = appIds.Split("_");
             List<HubsApplications> hubsApplications = new List<HubsApplications>();
@@ -78,7 +66,7 @@ namespace AutomatedDeployment.Api.Controllers
             
             try
             {
-                var uploadAndBackupFiles= replaceService.UploadAndBackupFiles(fileViewModel);
+                var uploadAndBackupFiles= _replaceService.UploadAndBackupFiles(fileViewModel);
                 switch (uploadAndBackupFiles)
                 {
                     case UploadStatus.Success:
@@ -100,7 +88,7 @@ namespace AutomatedDeployment.Api.Controllers
             }
             catch (Exception)
             {
-                return BadRequest();   
+                return StatusCode(StatusCodes.Status500InternalServerError);
             }
         }
     }

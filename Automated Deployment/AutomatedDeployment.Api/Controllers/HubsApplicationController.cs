@@ -1,12 +1,7 @@
 ﻿using AutomatedDeployment.Core.Interfaces;
-using AutomatedDeployment.Core.Services;
 using AutomatedDeployment.Domain.Entities;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace AutomatedDeployment.Api.Controllers
 {
@@ -14,22 +9,24 @@ namespace AutomatedDeployment.Api.Controllers
     [ApiController]
     public class HubsApplicationController : ControllerBase
     {
-        private readonly IHubsApplicationsRepository hubsApplicationsRepository;
+        private readonly IHubsApplicationsRepository _hubsApplicationsRepository;
 
-        public HubsApplicationController(IHubsApplicationsRepository _hubsApplicationsRepository)
+        public HubsApplicationController(IHubsApplicationsRepository hubsApplicationsRepository)
         {
-            hubsApplicationsRepository = _hubsApplicationsRepository;
+            _hubsApplicationsRepository = hubsApplicationsRepository;
         }
         [HttpGet]
         public IActionResult GetGubApplicationByID (int hubId , int applicationId)
         {
+            if (!ModelState.IsValid) return BadRequest();
             try
             {
-                var hubapplication = hubsApplicationsRepository.GetHubsApplicationByID(hubId, applicationId);
+                HubsApplications hubapplication = _hubsApplicationsRepository.GetHubsApplicationByID(hubId, applicationId);
+                if (hubapplication is null) return NotFound();
                 return Ok(hubapplication);
             }catch
             {
-                return NotFound();
+                return StatusCode(StatusCodes.Status500InternalServerError);
             }
 
         }
@@ -49,47 +46,50 @@ namespace AutomatedDeployment.Api.Controllers
         [HttpPost]
         public IActionResult AddhubApplication( HubsApplications _hubsApplications)
         {
+            if (!ModelState.IsValid) return BadRequest();
             try
             {
-                var hubapplicaton = hubsApplicationsRepository.Add(_hubsApplications);
+                HubsApplications hubapplicaton = _hubsApplicationsRepository.Add(_hubsApplications);
+                if(hubapplicaton is null) return StatusCode(StatusCodes.Status500InternalServerError);
                 return Ok(hubapplicaton);
             }
             catch
             {
-                return NotFound(); 
+                return StatusCode(StatusCodes.Status500InternalServerError);
             }
         }
 
         [HttpPut]
-        public IActionResult UpdateHubsApplication (HubsApplications _hubsApplications,
+        public IActionResult UpdateHubsApplication (HubsApplications hubsApplications,
                                                     [FromRoute] int hubId,
-                                                    [FromRoute] int applicationId
-                                                   )
+                                                    [FromRoute] int applicationId)
         {
-            if (hubId != _hubsApplications.HubID || applicationId != _hubsApplications.AppID)
-                return NotFound();
+            if (!ModelState.IsValid) return BadRequest();
+            if (hubId !=hubsApplications.HubID || applicationId != hubsApplications.AppID)return BadRequest();
             try
             {
-
-                var hubsapplication = hubsApplicationsRepository.Update(_hubsApplications);
-                return Ok();
+                HubsApplications hubsapplication = _hubsApplicationsRepository.Update(hubsApplications);
+                if(hubsapplication is null) return StatusCode(StatusCodes.Status500InternalServerError);
+                return Ok(hubsapplication);
             }catch
             {
-                return NotFound();
+                return StatusCode(StatusCodes.Status500InternalServerError);
             }
         }
 
         [HttpDelete]
         public IActionResult DeleteHubsApplication (int hubId,int applicationId)
         {
+            if (!ModelState.IsValid) return BadRequest();
             try
             {
-                var hubsapplication = hubsApplicationsRepository.DeleteHubApplication(hubId, applicationId);
+                HubsApplications hubsapplication = _hubsApplicationsRepository.DeleteHubApplication(hubId, applicationId);
+                if(hubsapplication is null) return StatusCode(StatusCodes.Status500InternalServerError);
                 return Ok(hubsapplication);
             }
             catch
             {
-                return NotFound();
+                return StatusCode(StatusCodes.Status500InternalServerError);
             }
         }
     }

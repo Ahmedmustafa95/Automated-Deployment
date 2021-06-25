@@ -1,12 +1,10 @@
 ﻿using AutomatedDeployment.Core.Interfaces;
 using AutomatedDeployment.Domain.Entities;
 using AutomatedDeployment.Infrastructure.Context;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore;
 
 namespace AutomatedDeployment.Core.Services
 {
@@ -16,11 +14,10 @@ namespace AutomatedDeployment.Core.Services
 
         public ApplicationRepository(EfgconfigurationdbContext efgconfigurationdbContext)
         {
-            this._efgconfigurationdbContext = efgconfigurationdbContext;
+            _efgconfigurationdbContext = efgconfigurationdbContext;
         }
         public IReadOnlyList<Application> GetAll()
         {
-
             return _efgconfigurationdbContext.Applications.AsNoTracking().ToList();
         }
 
@@ -28,7 +25,7 @@ namespace AutomatedDeployment.Core.Services
         {
             try
             {
-                var application = _efgconfigurationdbContext.Applications.AsNoTracking().FirstOrDefault(i => i.AppID == id);
+                Application application = _efgconfigurationdbContext.Applications.AsNoTracking().FirstOrDefault(i => i.AppID == id);
                 return application;
             }
             catch (Exception)

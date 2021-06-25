@@ -1,13 +1,9 @@
 ﻿using AutomatedDeployment.Domain.Entities;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace AutomatedDeployment.Core.FactoryMethods
 {
-  public static  class Factory
+    public static  class Factory
     {
         public static Deployment createdeployment( DateTime currentdate,DeploymentType deploymentType,int originaldeploymentID,
             string deployedBy ,string approvedby, string requestedby)
@@ -20,8 +16,6 @@ namespace AutomatedDeployment.Core.FactoryMethods
                 DeployedBy =deployedBy,
                 ApprovedBy=approvedby,
                 RequestedBy=requestedby
-
-
             };
         }
 

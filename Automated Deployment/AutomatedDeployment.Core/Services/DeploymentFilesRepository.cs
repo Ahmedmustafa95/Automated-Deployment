@@ -1,13 +1,10 @@
 ﻿using AutomatedDeployment.Core.Interfaces;
-using AutomatedDeployment.Core.Interfaces.GenericRepositories;
 using AutomatedDeployment.Domain.Entities;
 using AutomatedDeployment.Infrastructure.Context;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace AutomatedDeployment.Core.Services
 {
@@ -16,17 +13,11 @@ namespace AutomatedDeployment.Core.Services
         private readonly EfgconfigurationdbContext _efgconfigurationdbContext;
         private readonly IDeploymentDetailsRepository _deploymentDetailsRepository;
 
-        // private readonly UnitOfWork _unitOfWork;
-
         public DeploymentFilesRepository(EfgconfigurationdbContext efgconfigurationdbContext,IDeploymentDetailsRepository deploymentDetailsRepository)
         {
             _efgconfigurationdbContext = efgconfigurationdbContext;
             _deploymentDetailsRepository = deploymentDetailsRepository;
-          //  _unitOfWork = unitOfWork;
         }
-
-
-
 
         public List<DeploymentFiles> AddDeploymentFiles(List<DeploymentFiles> deploymentFiles)
         {
@@ -65,15 +56,6 @@ namespace AutomatedDeployment.Core.Services
             return null;
         }
 
-        public IReadOnlyList<DeploymentFiles> GetAll()
-        {
-            throw new NotImplementedException();
-        }
-
-        public DeploymentFiles Update(DeploymentFiles entity)
-        {
-            throw new NotImplementedException();
-        }
 
 
         // Error By change Database
@@ -149,63 +131,75 @@ namespace AutomatedDeployment.Core.Services
                 return null;
             }
         }
-      /*  public List<Hubviewmodel> Gethubslastdeployment()
+
+
+
+        public IReadOnlyList<DeploymentFiles> GetAll()
         {
-            // return null;
-            // Error By change Database
-            try
-            {
-
-                 var deployment = _efgconfigurationdbContext.Deployments.OrderBy(d=>d.DeploymentID).LastOrDefault();
-                var res = _efgconfigurationdbContext.DeploymentDetails.Where(d => d.DeploymentId == deployment.DeploymentID).Include(d => d.HubsApplications).ThenInclude(d => d.Hub).ToList();
-
-                HashSet<int> hubsid = new HashSet<int>();
-                List<Hubviewmodel> hubs = new List<Hubviewmodel>();
-
-                foreach (var x  in res)
-                {
-                    if (!hubsid.Contains(x.HubId))
-                        {
-                        var hub = new Hubviewmodel();
-                        hub.HubID = x.HubId;
-                        hub.HubName = x.HubsApplications.Hub.HubName;
-                        hubs.Add(hub);
-                        hubsid.Add(x.HubId);
-                        }
-                }
-
-
-                  
-                
-                return hubs.ToList();
-
-
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.Message);
-                return null;
-            }
+            throw new NotImplementedException();
         }
 
-     public List<Applicationviewmodel> Getapplicationsforhubsatlastdeployment(int hubid)
+        public DeploymentFiles Update(DeploymentFiles entity)
         {
-            var deployment = _efgconfigurationdbContext.Deployments.OrderBy(d => d.DeploymentID).LastOrDefault();
-            var res = _efgconfigurationdbContext.DeploymentDetails.Where(d => d.DeploymentId == deployment.DeploymentID).Include(d => d.HubsApplications).ThenInclude(d => d.Application).ToList();
-            var deploymentDetailsathubs = res.Where(x => x.HubId == hubid);
-            List<Applicationviewmodel> apps = new List<Applicationviewmodel>();
-
-            foreach (var x in res)
-            {
-               
-                    var app = new Applicationviewmodel();
-                    app.AppID = x.AppId;
-                    app.AppName = x.HubsApplications.Application.AppName;
-                    apps.Add(app);
-           
-            }
-            return apps;
+            throw new NotImplementedException();
         }
-    */
+        /*  public List<Hubviewmodel> Gethubslastdeployment()
+          {
+              // return null;
+              // Error By change Database
+              try
+              {
+
+                   var deployment = _efgconfigurationdbContext.Deployments.OrderBy(d=>d.DeploymentID).LastOrDefault();
+                  var res = _efgconfigurationdbContext.DeploymentDetails.Where(d => d.DeploymentId == deployment.DeploymentID).Include(d => d.HubsApplications).ThenInclude(d => d.Hub).ToList();
+
+                  HashSet<int> hubsid = new HashSet<int>();
+                  List<Hubviewmodel> hubs = new List<Hubviewmodel>();
+
+                  foreach (var x  in res)
+                  {
+                      if (!hubsid.Contains(x.HubId))
+                          {
+                          var hub = new Hubviewmodel();
+                          hub.HubID = x.HubId;
+                          hub.HubName = x.HubsApplications.Hub.HubName;
+                          hubs.Add(hub);
+                          hubsid.Add(x.HubId);
+                          }
+                  }
+
+
+
+
+                  return hubs.ToList();
+
+
+              }
+              catch (Exception ex)
+              {
+                  Console.WriteLine(ex.Message);
+                  return null;
+              }
+          }
+
+       public List<Applicationviewmodel> Getapplicationsforhubsatlastdeployment(int hubid)
+          {
+              var deployment = _efgconfigurationdbContext.Deployments.OrderBy(d => d.DeploymentID).LastOrDefault();
+              var res = _efgconfigurationdbContext.DeploymentDetails.Where(d => d.DeploymentId == deployment.DeploymentID).Include(d => d.HubsApplications).ThenInclude(d => d.Application).ToList();
+              var deploymentDetailsathubs = res.Where(x => x.HubId == hubid);
+              List<Applicationviewmodel> apps = new List<Applicationviewmodel>();
+
+              foreach (var x in res)
+              {
+
+                      var app = new Applicationviewmodel();
+                      app.AppID = x.AppId;
+                      app.AppName = x.HubsApplications.Application.AppName;
+                      apps.Add(app);
+
+              }
+              return apps;
+          }
+      */
     }
 }

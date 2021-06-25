@@ -3,9 +3,6 @@ using AutomatedDeployment.Domain.Entities;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -15,11 +12,11 @@ namespace AutomatedDeployment.Api.Controllers
     [ApiController]
     public class HubController : ControllerBase
     {
-        private readonly IHubRepository hubRepository;
+        private readonly IHubRepository _hubRepository;
 
-        public HubController(IHubRepository _hubRepository)
+        public HubController(IHubRepository hubRepository)
         {
-            hubRepository = _hubRepository;
+            _hubRepository = hubRepository;
         }
         // GET: api/<HubController>
         [HttpGet]
@@ -27,7 +24,7 @@ namespace AutomatedDeployment.Api.Controllers
         {
             try
             {
-                return Ok(hubRepository.GetAll());
+                return Ok(_hubRepository.GetAll());
             }catch(Exception)
             {
                 return StatusCode(StatusCodes.Status500InternalServerError);
@@ -41,7 +38,7 @@ namespace AutomatedDeployment.Api.Controllers
             try
             {
                 if (!ModelState.IsValid) return BadRequest();
-                Hub Hub = hubRepository.GetById(id);
+                Hub Hub = _hubRepository.GetById(id);
                 if (Hub is null) return NotFound();
                 return Ok(Hub);
             }
@@ -59,7 +56,7 @@ namespace AutomatedDeployment.Api.Controllers
             {
                 try
                 {
-                    Hub NewHub = hubRepository.Add(value);
+                    Hub NewHub = _hubRepository.Add(value);
                     if (NewHub is null) return BadRequest();
                     return Ok(NewHub);
                 }
@@ -82,7 +79,7 @@ namespace AutomatedDeployment.Api.Controllers
             if (!ModelState.IsValid) return BadRequest();
             try
             {
-                Hub UpdatedHub = hubRepository.Update(value);
+                Hub UpdatedHub = _hubRepository.Update(value);
                 if (UpdatedHub is null) return BadRequest();
                 return Ok(UpdatedHub);
             }
@@ -99,7 +96,7 @@ namespace AutomatedDeployment.Api.Controllers
             if (!ModelState.IsValid) return BadRequest();
             try
             {
-                Hub DeletedHub = hubRepository.Delete(id);
+                Hub DeletedHub = _hubRepository.Delete(id);
                 if (DeletedHub is null) return BadRequest();
                 return Ok(DeletedHub);
             }

@@ -5,8 +5,6 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace AutomatedDeployment.Core.Services
 {
@@ -23,7 +21,7 @@ namespace AutomatedDeployment.Core.Services
         {
             _stringManipulationServices = stringManipulationServices;
             _backupServices = backupServices;
-            this._pathRepository = pathRepository;
+            _pathRepository = pathRepository;
         }
 
 
@@ -31,7 +29,7 @@ namespace AutomatedDeployment.Core.Services
         public IActionResult GetAppsContainKey([FromRoute] string key)
         {
             if (!ModelState.IsValid) return BadRequest();
-            var AppsContianKeyList = _stringManipulationServices.FindConfigSetting(key);
+            List<ConfigSearchResult> AppsContianKeyList = _stringManipulationServices.FindConfigSetting(key);
             if (AppsContianKeyList is null) return StatusCode(StatusCodes.Status500InternalServerError);
             return Ok(AppsContianKeyList);
         }

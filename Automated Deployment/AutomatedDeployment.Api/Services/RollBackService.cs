@@ -4,43 +4,38 @@ using AutomatedDeployment.Domain.Entities;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace AutomatedDeployment.Api.Services
 {
     public class RollBackService : IRollbackService
     {
-        private readonly IPathRepository pathRepository;
-        private readonly IUnitOfWork unitOfWork;
+        private readonly IPathRepository _pathRepository;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public RollBackService(IUnitOfWork _unitOfWork, IPathRepository _pathRepository)
+        public RollBackService(IUnitOfWork unitOfWork, IPathRepository pathRepository)
         {
-            unitOfWork = _unitOfWork;
-            pathRepository = _pathRepository;
+            _unitOfWork = unitOfWork;
+            _pathRepository =pathRepository;
         }
         public bool GenralRollback(List<RollBackViewModel> rollBackViewModels)
         {
             if (rollBackViewModels is null ||  rollBackViewModels.Count == 0) return false;
            
-            Deployment lastDeployment = unitOfWork.DeploymentRepository.GetLastDeployment();
-            var lastdeploymentDate = lastDeployment.DeploymentDate;
-
+            Deployment lastDeployment = _unitOfWork.DeploymentRepository.GetLastDeployment();
+            DateTime lastdeploymentDate = lastDeployment.DeploymentDate;
 
             if (lastDeployment is null) return false;
             RollBackViewModel firstitem = rollBackViewModels[0];
-            var currentDate = DateTime.Now;
+            DateTime currentDate = DateTime.Now;
             int addedID = CreatAndSaveDeployment(firstitem.deployedBy, firstitem.requestedBy, firstitem.approvedBy, currentDate);
             if (addedID == 0) return false;
-            //List<int> applicationIds = unitOfWork.DeploymentDetailsRepository.GetApplicationID(lastDeployment.DeploymentID, hubid);
             foreach (var rollback in rollBackViewModels)
             {
-                // SingleRollback(hubid, applicationID);
-                string AssemblyPath = pathRepository.GetAssemblyPath(rollback.hubId, rollback.appID);
-                string BackUpPath = pathRepository.GetBackupPath(rollback.hubId, rollback.appID);
+                string AssemblyPath = _pathRepository.GetAssemblyPath(rollback.hubId, rollback.appID);
+                string BackUpPath = _pathRepository.GetBackupPath(rollback.hubId, rollback.appID);
                 if (AssemblyPath is null || BackUpPath is null) continue; 
               
-                var deploymentFiles = unitOfWork.DeploymentFilesRepository.GetById(rollback.hubId, rollback.appID);
+                var deploymentFiles = _unitOfWork.DeploymentFilesRepository.GetById(rollback.hubId, rollback.appID);
                 int addeddeploymentDetailsId = CreateAndSaveDeploymentDetails(rollback.hubId,rollback.appID,addedID);
                 Rollback(rollback.hubId, rollback.appID, BackUpPath, AssemblyPath, addeddeploymentDetailsId, currentDate, deploymentFiles, lastdeploymentDate);
             }
@@ -52,11 +47,10 @@ namespace AutomatedDeployment.Api.Services
         {
             try
             {
-                var lastDeployment = unitOfWork.DeploymentRepository.GetLastDeployment();
-                //rollback Deployment
-                var deployment = Factory.createdeployment(currentDate, DeploymentType.Rollback,
+                Deployment lastDeployment = _unitOfWork.DeploymentRepository.GetLastDeployment();
+                Deployment deployment = Factory.createdeployment(currentDate, DeploymentType.Rollback,
                                 lastDeployment.DeploymentID, deployedBy, approvedBy, requestedBy);
-                var newdep = unitOfWork.DeploymentRepository.AddDeployment(deployment);
+                Deployment newdep = _unitOfWork.DeploymentRepository.AddDeployment(deployment);
                 return newdep.DeploymentID;
             }
             catch(Exception e)
@@ -71,16 +65,12 @@ namespace AutomatedDeployment.Api.Services
         {
             try
             {
-                var deploymentDetails = Factory.createDeploymentDetails(hubId, appId, newCreatedID);
-
-
-                //Save new DeploymentDetails 
-                var newDeploymentDetailsID = unitOfWork.DeploymentDetailsRepository.AddDeploymentDetails(deploymentDetails).DeploymentDetailsId;
+                DeploymentDetails deploymentDetails = Factory.createDeploymentDetails(hubId, appId, newCreatedID);
+                int newDeploymentDetailsID = _unitOfWork.DeploymentDetailsRepository.AddDeploymentDetails(deploymentDetails).DeploymentDetailsId;
                 return newDeploymentDetailsID;
             }catch(Exception e)
             {
                 Console.WriteLine(e.Message);
-
                 return 0;
             }
         }
@@ -90,8 +80,6 @@ namespace AutomatedDeployment.Api.Services
         {
             try
             {
-
-
                 string NewBackupPath = $"{BackupPath}\\BK_{currentDate.ToString("yyyy-MM-dd-hh-mm-ss")}".Trim();
                 
                 Directory.CreateDirectory(NewBackupPath);
@@ -109,10 +97,7 @@ namespace AutomatedDeployment.Api.Services
                             FilesName = file.Key,
                             Status = status.Modified
                         };
-
-                     
-                        unitOfWork.DeploymentFilesRepository.AddDeploymentFile(deploymentfile);
-
+                        _unitOfWork.DeploymentFilesRepository.AddDeploymentFile(deploymentfile);
                         MoveFiles(AssemblyPath, NewBackupPath, file.Key);
                         CopyFiles(AssemblyPath, BackupPath, file.Key, lastDeploymentFolderDate);
                       
@@ -120,8 +105,6 @@ namespace AutomatedDeployment.Api.Services
                     }
                     else if (file.Value == status.Added)
                     {
-                        // files.Add(file.Key);
-
                         // Error By change Database
                         DeploymentFiles deploymentfile = new DeploymentFiles()
                         {
@@ -129,17 +112,13 @@ namespace AutomatedDeployment.Api.Services
                             FilesName = file.Key,
                             Status = status.Deleted
                         };
-
-                        
-                        unitOfWork.DeploymentFilesRepository.AddDeploymentFile(deploymentfile);
+                        _unitOfWork.DeploymentFilesRepository.AddDeploymentFile(deploymentfile);
                         MoveFiles(AssemblyPath, NewBackupPath, file.Key);
 
                         //File.Copy(BackupPath + @" \ " + lastDeploymentFolderDate + @"\" + file.Key, AssemblyPath + @"\" + file.Key);
                     }
                     else if (file.Value == status.Deleted)
                     {
-                        // files.Add(file.Key);
-
                         // Error By change Database
                         DeploymentFiles deploymentfile = new DeploymentFiles()
                         {
@@ -149,7 +128,7 @@ namespace AutomatedDeployment.Api.Services
                         };
 
                         // Error By change Database
-                        unitOfWork.DeploymentFilesRepository.AddDeploymentFile(deploymentfile);
+                        _unitOfWork.DeploymentFilesRepository.AddDeploymentFile(deploymentfile);
                         CopyFiles(AssemblyPath, BackupPath, file.Key, lastDeploymentFolderDate);
                     }
                 }
@@ -186,9 +165,6 @@ namespace AutomatedDeployment.Api.Services
             }
 
         }
-
-
-
 
     }
 }

@@ -1,9 +1,6 @@
-﻿using Microsoft.AspNetCore.Http;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace AutomatedDeployment.Api.Services
 {
@@ -22,10 +19,10 @@ namespace AutomatedDeployment.Api.Services
             //{
             //    Directory.CreateDirectory(backupPath);
             //}
-            foreach (var item in filesName)
+            foreach (var file in filesName)
             {
-                if(File.Exists(assemblyPath +'\\'+ item))
-                    File.Move($"{assemblyPath}{@"\"}{item}".Trim(),$"{backupPath}{@"\"}{item}".Trim(),true);
+                if(File.Exists(assemblyPath +'\\'+ file))
+                    File.Move($"{assemblyPath}{@"\"}{file}".Trim(),$"{backupPath}{@"\"}{file}".Trim(),true);
                     //File.Move(assemblyPath + '\\' + item, backupPath + '\\' + item);
 
             }

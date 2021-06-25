@@ -1,44 +1,31 @@
 ﻿using AutomatedDeployment.Api.Services;
-using AutomatedDeployment.Core.Interfaces;
 using AutomatedDeployment.Domain.Entities;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace AutomatedDeployment.Api.Controllers
 {
-     [Route("api/[controller]")]
+    [Route("api/[controller]")]
     [ApiController]
     public class RollbackController : ControllerBase
     {
-        private readonly IRollbackService rollbackService;
-        private readonly IPathRepository pathRepository;
-        private readonly IUnitOfWork unitOfWork;
-
-        public RollbackController(
-            IRollbackService _rollbackService, 
-            IPathRepository _pathRepository,
-            IUnitOfWork _unitOfWork
-            )
+        private readonly IRollbackService _rollbackService;
+        public RollbackController(IRollbackService rollbackService)
         {
-            rollbackService = _rollbackService;
-            pathRepository = _pathRepository;
-            unitOfWork = _unitOfWork;
+            _rollbackService =rollbackService;
         }
 
         [HttpPost]
         public IActionResult Rollback(List<RollBackViewModel> rollBackViewModels)
         {
-            if (!ModelState.IsValid)
-                return BadRequest();
+            if (!ModelState.IsValid)return BadRequest();
             try
             {
-              
-                rollbackService.GenralRollback(rollBackViewModels);
-                return Ok();
+               bool hasSucceded= _rollbackService.GenralRollback(rollBackViewModels);
+               if(hasSucceded ==false) return StatusCode(StatusCodes.Status500InternalServerError);
+               return Ok();
             }
             catch(Exception e)
             {

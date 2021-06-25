@@ -4,8 +4,6 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -16,11 +14,11 @@ namespace AutomatedDeployment.Api.Controllers
     public class ApplicationController : ControllerBase
 
     {
-        private readonly IApplicationRepository applicationRepository;
+        private readonly IApplicationRepository _applicationRepository;
 
-        public ApplicationController(IApplicationRepository _applicationRepository)
+        public ApplicationController(IApplicationRepository applicationRepository)
         {
-            applicationRepository = _applicationRepository;
+            _applicationRepository = applicationRepository;
         }
         // GET: api/<ApplicationController>
         [HttpGet]
@@ -28,7 +26,7 @@ namespace AutomatedDeployment.Api.Controllers
         {
             try
             {
-                return Ok(applicationRepository.GetAll());
+                return Ok(_applicationRepository.GetAll());
             }
             catch (Exception)
             {
@@ -43,7 +41,7 @@ namespace AutomatedDeployment.Api.Controllers
             try
             {
                 if (!ModelState.IsValid) return BadRequest();
-                Application application = applicationRepository.GetById(id);
+                Application application = _applicationRepository.GetById(id);
                 if(application is null) return NotFound();
                 return Ok(application);
             }
@@ -61,7 +59,7 @@ namespace AutomatedDeployment.Api.Controllers
             {
                 try
                 {
-                    Application NewApp=applicationRepository.Add(value);
+                    Application NewApp= _applicationRepository.Add(value);
                     if (NewApp is null) return BadRequest();
                     return Ok(NewApp);
                 }
@@ -84,7 +82,7 @@ namespace AutomatedDeployment.Api.Controllers
             if(!ModelState.IsValid) return BadRequest();
             try
             {
-                Application UpdatedApp = applicationRepository.Update(value);
+                Application UpdatedApp = _applicationRepository.Update(value);
                 if (UpdatedApp is null) return BadRequest();
                 return Ok(UpdatedApp);
             }
@@ -101,7 +99,7 @@ namespace AutomatedDeployment.Api.Controllers
             if(!ModelState.IsValid) return BadRequest();
             try
             {
-                Application DeletedApp = applicationRepository.Delete(id);
+                Application DeletedApp = _applicationRepository.Delete(id);
                 if(DeletedApp is null) return BadRequest();
                 return Ok(DeletedApp);
             }
@@ -115,7 +113,7 @@ namespace AutomatedDeployment.Api.Controllers
         public IActionResult GetAllApps(int hubID)
         {
             if (!ModelState.IsValid) return BadRequest();
-            List<HubsApplications> hubsApplicationsList = applicationRepository.GetAppsByHubID(hubID);
+            List<HubsApplications> hubsApplicationsList = _applicationRepository.GetAppsByHubID(hubID);
             //  if (hubsApplicationsList is null || hubsApplicationsList.Count == 0) return NotFound();
 
             return Ok(hubsApplicationsList);

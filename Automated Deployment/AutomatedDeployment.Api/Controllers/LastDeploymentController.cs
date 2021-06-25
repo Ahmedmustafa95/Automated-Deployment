@@ -1,12 +1,9 @@
 ﻿using AutomatedDeployment.Core.Interfaces;
+using AutomatedDeployment.Domain.Entities;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using AutomatedDeployment.Api.Services;
-using AutomatedDeployment.Domain.Entities;
 
 namespace AutomatedDeployment.Api.Controllers
 {
@@ -14,32 +11,23 @@ namespace AutomatedDeployment.Api.Controllers
     [ApiController]
     public class LastDeploymentController : ControllerBase
     {
-       
         private readonly IUnitOfWork unitOfWork;
-
-        public LastDeploymentController(
-       
-            IUnitOfWork _unitOfWork
-            )
+        public LastDeploymentController(IUnitOfWork _unitOfWork)
         {
-         
             unitOfWork = _unitOfWork;
         }
-
         [HttpGet]
-      
         public ActionResult<List<LastDeploymentviewmodel>> LastDeployment()
         {
-
             try
             {
-                var hubsinlastdeployment = unitOfWork.DeploymentFilesRepository.GetLastDepolyment();
-
-                return hubsinlastdeployment;
+                List<LastDeploymentviewmodel> hubsinlastdeployment = unitOfWork.DeploymentFilesRepository.GetLastDepolyment();
+                if(hubsinlastdeployment is null) return StatusCode(StatusCodes.Status500InternalServerError);
+                return Ok(hubsinlastdeployment);
             }
             catch (Exception e)
             {
-                return NotFound(e);
+                return StatusCode(StatusCodes.Status500InternalServerError);
             }
         }
 

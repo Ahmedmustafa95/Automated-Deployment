@@ -1,11 +1,7 @@
 ﻿using AutomatedDeployment.Core.Interfaces;
-using AutomatedDeployment.Core.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace AutomatedDeployment.Api.Controllers
 {
@@ -26,6 +22,7 @@ namespace AutomatedDeployment.Api.Controllers
             try
             {
                 var AllDeployments = _unitOfWork.DeploymentRepository.GetAll();
+                if (AllDeployments is null) return NotFound();
                 return Ok(AllDeployments);
             }
             catch(Exception e)

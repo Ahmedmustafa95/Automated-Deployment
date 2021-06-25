@@ -1,13 +1,10 @@
 ﻿using AutomatedDeployment.Core.Interfaces;
 using AutomatedDeployment.Domain.Entities;
 using AutomatedDeployment.Infrastructure.Context;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Web.Http.ModelBinding;
-using Microsoft.EntityFrameworkCore;
 
 namespace AutomatedDeployment.Core.Services
 {

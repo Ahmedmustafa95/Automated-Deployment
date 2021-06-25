@@ -5,8 +5,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace AutomatedDeployment.Api.Services
 {
@@ -15,16 +13,13 @@ namespace AutomatedDeployment.Api.Services
         private readonly IUnitOfWork _unitOfWork;
         private readonly IBackupServices _backupServices;
         private readonly IPathRepository _pathRepository;
-
-        public ReplaceServices(IUnitOfWork unitOfWork, IBackupServices backupServices
-                                                     , IPathRepository pathRepository)
+        private FileStream stream;
+        public ReplaceServices(IUnitOfWork unitOfWork, IBackupServices backupServices, IPathRepository pathRepository)
         {
             _unitOfWork = unitOfWork;
             _backupServices = backupServices;
             _pathRepository = pathRepository;
         }
-
-        FileStream stream;
         public bool Upload(List<IFormFile> files, string path)
         {
             string dir = path;
@@ -37,8 +32,7 @@ namespace AutomatedDeployment.Api.Services
                 foreach (var formFile in files)
                 {
 
-                    var filePath = Path.GetFullPath(dir + formFile.FileName);
-
+                    string filePath = Path.GetFullPath(dir + formFile.FileName);
                     // full path to file in temp location
                     //var filePath = Path.GetTempFileName(); //we are using Temp file name just for the example. Add your own file path.
                     // filePaths.Add(filePath);
@@ -51,11 +45,8 @@ namespace AutomatedDeployment.Api.Services
             }
             catch (Exception)
             {
-
                 return false;
             }
-           
-
         }
 
         public Dictionary<string, List<string>> CompareDeployFilesWithAssemblyFiles(List<IFormFile> Uploadedfiles, string assemblyPath)
@@ -76,14 +67,11 @@ namespace AutomatedDeployment.Api.Services
             filesState.Add("Added", AddedFiles);
             filesState.Add("Modified", ModifiedFiles);
             return filesState;
-
-
         }
 
         public bool CheckValidData(int hubid, int applicationid) =>
          _unitOfWork.HubsApplicationsRepository
                    .GetHubsApplicationByID(hubid, applicationid) != null;
-
 
         public Dictionary<string,List<string>> GenerateAndMoveToBackupFolder(List<IFormFile> files
                                                  , string assemblyPath,
@@ -92,10 +80,8 @@ namespace AutomatedDeployment.Api.Services
             Dictionary<string, List<string>> filesState = default;
             string BackUpPath = $"{assemblyPath}backups".Trim();
             filesState = CompareDeployFilesWithAssemblyFiles(files, assemblyPath);
-
             if (filesState["Modified"].Count > 0)
             {
-
                 List<string> backupFiles = new List<string>();
                 backupFiles.AddRange(filesState["Modified"]);
                 string NewBackupPath = $"{BackUpPath}\\BK_{backupDate.ToString("yyyy-MM-dd-hh-mm-ss")}".Trim();
@@ -142,11 +128,7 @@ namespace AutomatedDeployment.Api.Services
 
                 return null;
             }
-
-
-
         }
-
 
         public List<DeploymentFiles>AddDeploymentFiles(Dictionary<string, List<string>> filesState,
                                        List<HubsApplications> hubsApplications)

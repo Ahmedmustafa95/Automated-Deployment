@@ -1,23 +1,20 @@
 ﻿using AutomatedDeployment.Api.Services;
 using AutomatedDeployment.Core.Interfaces;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+
 namespace AutomatedDeployment.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
     public class BackupsController : ControllerBase
     {
-        private readonly IPathRepository pathRepository;
-        private readonly IBackupServices ibackupService;
-        public BackupsController(IPathRepository _pathRepository, IBackupServices _ibackupService)
+        private readonly IPathRepository _pathRepository;
+        private readonly IBackupServices _ibackupService;
+        public BackupsController(IPathRepository pathRepository, IBackupServices ibackupService)
         {
-            pathRepository = _pathRepository;
-            ibackupService = _ibackupService;
+            _pathRepository = pathRepository;
+            _ibackupService = ibackupService;
         }
        
         [HttpGet]
@@ -29,7 +26,7 @@ namespace AutomatedDeployment.Api.Controllers
             // //string   backupPath = @"C:\Users\Ziad\Desktop\folder2";
             //filesName.Add("text1.txt");
             //filesName.Add("text2.txt");
-            ibackupService.MoveTOBackUpFolder(filesName, assemblyPath, backupPath);
+            _ibackupService.MoveTOBackUpFolder(filesName, assemblyPath, backupPath);
             return Ok();
         }
     }
