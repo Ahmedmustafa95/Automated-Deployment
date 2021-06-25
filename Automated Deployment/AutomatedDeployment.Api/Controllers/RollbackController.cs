@@ -24,7 +24,7 @@ namespace AutomatedDeployment.Api.Controllers
             try
             {
                bool hasSucceded= _rollbackService.GenralRollback(rollBackViewModels);
-               if(hasSucceded ==false) return StatusCode(StatusCodes.Status500InternalServerError);
+               if(hasSucceded ==false) return BadRequest("You Either Trying  to rollback a first Deployment or something went wrong. check Deployment Details");
                return Ok();
             }
             catch(Exception e)

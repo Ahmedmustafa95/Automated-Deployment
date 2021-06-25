@@ -22,6 +22,8 @@ namespace AutomatedDeployment.Api.Services
             if (rollBackViewModels is null ||  rollBackViewModels.Count == 0) return false;
            
             Deployment lastDeployment = _unitOfWork.DeploymentRepository.GetLastDeployment();
+            var lastDeploymentFiles = _unitOfWork.DeploymentRepository.Getallwithfiles(lastDeployment.DeploymentID);
+            if (lastDeploymentFiles.Count == 0) return false; 
             DateTime lastdeploymentDate = lastDeployment.DeploymentDate;
 
             if (lastDeployment is null) return false;
@@ -80,6 +82,7 @@ namespace AutomatedDeployment.Api.Services
         {
             try
             {
+
                 string NewBackupPath = $"{BackupPath}\\BK_{currentDate.ToString("yyyy-MM-dd-hh-mm-ss")}".Trim();
 
                 //deploymentFiles.ContainsValue(status.Modified)
