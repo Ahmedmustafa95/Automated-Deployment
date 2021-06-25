@@ -116,7 +116,8 @@ namespace AutomatedDeployment.Api.Controllers
         {
             if (!ModelState.IsValid) return BadRequest();
             List<HubsApplications> hubsApplicationsList = applicationRepository.GetAppsByHubID(hubID);
-            if (hubsApplicationsList is null || hubsApplicationsList.Count == 0) return NotFound();
+            //  if (hubsApplicationsList is null || hubsApplicationsList.Count == 0) return NotFound();
+
             return Ok(hubsApplicationsList);
         }
 
