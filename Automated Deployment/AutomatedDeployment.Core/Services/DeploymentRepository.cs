@@ -29,6 +29,8 @@ namespace AutomatedDeployment.Core.Services
             }
             catch(Exception e)
             {
+                Console.WriteLine(e.Message);
+
                 return null;
             }
         }
@@ -93,8 +95,10 @@ namespace AutomatedDeployment.Core.Services
                 _efgconfigurationdbContext.SaveChanges();
                 return true;
             }
-            catch (Exception E)
+            catch (Exception e)
             {
+                Console.WriteLine(e.Message);
+
                 return false;
             }
 

@@ -136,8 +136,10 @@ namespace AutomatedDeployment.Api.Services
                     DeploymentId = deploymentId
                 };
             }
-            catch (Exception E)
+            catch (Exception e)
             {
+                Console.WriteLine(e.Message);
+
                 return null;
             }
 
@@ -186,8 +188,9 @@ namespace AutomatedDeployment.Api.Services
                 }
                 return deploymentFiles;
             }
-            catch (Exception E)
+            catch (Exception e)
             {
+                Console.WriteLine(e.Message);
 
                 return null;
             }

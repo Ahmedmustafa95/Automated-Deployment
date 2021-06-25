@@ -61,6 +61,7 @@ namespace AutomatedDeployment.Api.Services
             }
             catch(Exception e)
             {
+                Console.WriteLine(e.Message);
                 return 0;
             }
 
@@ -78,6 +79,8 @@ namespace AutomatedDeployment.Api.Services
                 return newDeploymentDetailsID;
             }catch(Exception e)
             {
+                Console.WriteLine(e.Message);
+
                 return 0;
             }
         }

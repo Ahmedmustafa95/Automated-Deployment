@@ -89,6 +89,8 @@ namespace AutomatedDeployment.Core.Services
             }
             catch (Exception e)
             {
+                Console.WriteLine(e.Message);
+
                 return null;
             }
         }
@@ -140,8 +142,9 @@ namespace AutomatedDeployment.Core.Services
 
               
             }
-            catch (Exception ex)
+            catch (Exception e)
             {
+                Console.WriteLine(e.Message);
 
                 return null;
             }
