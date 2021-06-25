@@ -113,7 +113,6 @@ namespace AutomatedDeployment.Core.Services
                 throw;
             }
         }
-
         public List<LastDeploymentviewmodel> GetLastDepolyment()
         {
             // return null;
@@ -147,7 +146,7 @@ namespace AutomatedDeployment.Core.Services
                 return null;
             }
         }
-        public List<Hubviewmodel> Gethubslastdeployment()
+      /*  public List<Hubviewmodel> Gethubslastdeployment()
         {
             // return null;
             // Error By change Database
@@ -186,6 +185,24 @@ namespace AutomatedDeployment.Core.Services
             }
         }
 
+     public List<Applicationviewmodel> Getapplicationsforhubsatlastdeployment(int hubid)
+        {
+            var deployment = _efgconfigurationdbContext.Deployments.OrderBy(d => d.DeploymentID).LastOrDefault();
+            var res = _efgconfigurationdbContext.DeploymentDetails.Where(d => d.DeploymentId == deployment.DeploymentID).Include(d => d.HubsApplications).ThenInclude(d => d.Application).ToList();
+            var deploymentDetailsathubs = res.Where(x => x.HubId == hubid);
+            List<Applicationviewmodel> apps = new List<Applicationviewmodel>();
 
+            foreach (var x in res)
+            {
+               
+                    var app = new Applicationviewmodel();
+                    app.AppID = x.AppId;
+                    app.AppName = x.HubsApplications.Application.AppName;
+                    apps.Add(app);
+           
+            }
+            return apps;
+        }
+    */
     }
 }

@@ -17,7 +17,10 @@ namespace AutomatedDeployment.Core.Interfaces
         DeploymentFiles AddDeploymentFile(DeploymentFiles deploymentFiles);
         Deployment GetLastDepolyment(int hubId, int applicationId);
         List<LastDeploymentviewmodel> GetLastDepolyment();
-        List<Hubviewmodel> Gethubslastdeployment();
+        //.GetLastDepolyment()
+        //List<Hubviewmodel> Gethubslastdeployment();
+        //List<Applicationviewmodel> Getapplicationsforhubsatlastdeployment(int hubid);
+
 
 
 
