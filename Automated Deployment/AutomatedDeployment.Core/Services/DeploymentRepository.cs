@@ -117,6 +117,41 @@ namespace AutomatedDeployment.Core.Services
                 return null;
             }
         }
+        public  List<deploywithfilesviewmodel> Getallwithfiles(int id)
+        {
+            try
+            {
+                var deploymentfiles = _efgconfigurationdbContext.DeploymentFiles
+                       .Include(d => d.DeploymentDetails)
+                         .ThenInclude(h => h.HubsApplications).
+                           ThenInclude(h => h.Hub)
+                       .Include(d => d.DeploymentDetails)
+                         .ThenInclude(h => h.HubsApplications)
+                           .ThenInclude(h => h.Application).ToList();
+                var deployfiles = deploymentfiles.Where(d => d.DeploymentDetails.DeploymentId == id).ToList();
+
+                var deploywithfiles = deployfiles.Select(i => new deploywithfilesviewmodel
+                {
+                    status = i.Status,
+                    filesname = i.FilesName,
+                    hubname = i.DeploymentDetails.HubsApplications.Hub.HubName,
+                    appname = i.DeploymentDetails.HubsApplications.Application.AppName
+                }).ToList();
+                return deploywithfiles;
+
+
+
+
+
+
+            }
+            catch(Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                return null;
+            }
+        }
+
     }
 
 

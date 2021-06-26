@@ -25,8 +25,9 @@ namespace AutomatedDeployment.Api.Controllers
                 if(hubsinlastdeployment is null) return StatusCode(StatusCodes.Status500InternalServerError);
                 return Ok(hubsinlastdeployment);
             }
-            catch (Exception e)
+            catch
             {
+
                 return StatusCode(StatusCodes.Status500InternalServerError);
             }
         }

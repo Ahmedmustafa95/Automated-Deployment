@@ -15,7 +15,9 @@ namespace AutomatedDeployment.Core.Interfaces
 
         string[] GetAllfiles(int hubid, int appid);
 
-        bool DeleteFromDeployment(int deploymentId); 
+        bool DeleteFromDeployment(int deploymentId);
+       List<deploywithfilesviewmodel> Getallwithfiles(int id);
+
 
 
 
