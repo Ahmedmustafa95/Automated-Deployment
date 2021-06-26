@@ -81,8 +81,10 @@ namespace AutomatedDeployment.Api.Services
             try
             {
                 string NewBackupPath = $"{BackupPath}\\BK_{currentDate.ToString("yyyy-MM-dd-hh-mm-ss")}".Trim();
-                
-                Directory.CreateDirectory(NewBackupPath);
+
+                //deploymentFiles.ContainsValue(status.Modified)
+                if(deploymentFiles.ContainsValue(status.Modified) || deploymentFiles.ContainsValue(status.Added))
+                    Directory.CreateDirectory(NewBackupPath);
 
                 string lastDeploymentFolderDate = $"BK_{lastDeploymentDate.ToString("yyyy-MM-dd-hh-mm-ss")}".Trim();
 

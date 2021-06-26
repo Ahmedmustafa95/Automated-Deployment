@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 
+
 namespace AutomatedDeployment.Api.Controllers
 {
     [Route("api/[controller]")]
@@ -40,10 +41,13 @@ namespace AutomatedDeployment.Api.Controllers
 
 
         [HttpPost]
-        public IActionResult UploadFiles(List<IFormFile> files, [System.Web.Http.FromUri] string hubIds="", [System.Web.Http.FromUri] string appIds = "",
-                        [System.Web.Http.FromUri] string ApprovedBy = "", [System.Web.Http.FromUri] string DeployedBy = "", [System.Web.Http.FromUri] string RequestedBy = "")
+        public IActionResult UploadFiles(List<IFormFile> files, [System.Web.Http.FromUri] string hubIds, [System.Web.Http.FromUri] string appIds ,
+                        [System.Web.Http.FromUri] string ApprovedBy, [System.Web.Http.FromUri] string DeployedBy, [System.Web.Http.FromUri] string RequestedBy)
         {
             if (!ModelState.IsValid) return BadRequest();
+            if (files.Count == 0 || hubIds == string.Empty || appIds == string.Empty ||
+                ApprovedBy == string.Empty || DeployedBy == string.Empty || RequestedBy == string.Empty) return BadRequest("not valid data");
+            
             var ArrhubIds = hubIds.Split("_");
             var ArrappIds = appIds.Split("_");
             List<HubsApplications> hubsApplications = new List<HubsApplications>();
