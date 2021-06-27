@@ -40,26 +40,25 @@ namespace AutomatedDeployment.Core.Services
             }
         }
 
-        public DeploymentFiles AddDeploymentFiles(ConfigSearchResult configSearches)
+        public List<DeploymentFiles> AddDeploymentFiles(List<ConfigSearchResult> configSearches)
         {
-            DeploymentFiles deploymentFile = default;
+            List<DeploymentFiles> deploymentFile = new List<DeploymentFiles>();
             if (configSearches is null) return null;
 
             try
             {
-
-                int deploymentDetailId = _unitOfWork.DeploymentDetailsRepository
-                                                     .GetDeploymentDetailsIdByHubIdAndAppId
-                                                     (
-                                                        configSearches.HubID,
-                                                        configSearches.AppID
-                                                     );
-                if (deploymentDetailId == -1) return null;
-
-                deploymentFile = new DeploymentFiles()
-                { DeploymentDetailsId = deploymentDetailId, FilesName = configSearches.FileName, Status = status.Modified };
-
-
+                foreach (var configSearche in configSearches)
+                {
+                    int deploymentDetailId = _unitOfWork.DeploymentDetailsRepository
+                                                         .GetDeploymentDetailsIdByHubIdAndAppId
+                                                         (
+                                                            configSearche.HubID,
+                                                            configSearche.AppID
+                                                         );
+                    if (deploymentDetailId == -1) return null;
+                    deploymentFile.Add
+                    (new DeploymentFiles(){ DeploymentDetailsId = deploymentDetailId, FilesName = configSearche.FileName, Status = status.Modified } );
+                }
                 return deploymentFile;
             }
             catch (Exception e)
@@ -100,7 +99,19 @@ namespace AutomatedDeployment.Core.Services
             if (result is not null)
             {
                 return result.AssemblyPath;
+            }
+            else
+            {
+                return null;
+            }
+        }
 
+        public string GetConfigPath(int hubid, int applicationid)
+        {
+            HubsApplications result = efgconfigurationdbContext.HubsApplications.AsNoTracking().FirstOrDefault(c => c.AppID == applicationid && c.HubID == hubid);
+            if (result is not null)
+            {
+                return result.ConfigFilepPath;
             }
             else
             {
@@ -143,33 +154,36 @@ namespace AutomatedDeployment.Core.Services
             return result;
         }
 
-        public UploadStatus UploadAndStringManipulation(ConfigSearchResult configSearch, string deployedBy, string approvedBy, string requestedBy)
+        public UploadStatus UploadAndStringManipulation(DateTime depolymentDateTime, List<ConfigSearchResult> configsSearch, string deployedBy, string approvedBy, string requestedBy)
         {
-            ConfigSearchResult configSearchResult = configSearch;
+            List<ConfigSearchResult> configSearchResult = configsSearch;
             var deploymentDetails = new List<DeploymentDetails>();
-            var deploymentFile = new DeploymentFiles();
-            var currentDate = DateTime.Now;
+            var deploymentFile = new List<DeploymentFiles>();
+            var currentDate = depolymentDateTime;
 
             var deployment = AddDeploymentService(approvedBy, requestedBy, deployedBy, currentDate);
+            deployment.DeploymentType = DeploymentType.Configuration;
             if (_unitOfWork.DeploymentRepository.AddDeployment(deployment) is null)
                 return UploadStatus.DatabaseFailure;
 
             int currentDeploymentId = _unitOfWork.DeploymentRepository.GetCurrentDeploymentId();
 
+            foreach (var configSearch in configSearchResult)
+            {
+                var arr = configSearch.FileName.Split("\\");
+                configSearch.FileName = arr[arr.Length - 1];
 
-            if (!CheckValidData(configSearch.HubID, configSearch.AppID)) return UploadStatus.NotValidData;
-            var deploymentDetail = AddDeploymentDetailService(configSearch.HubID, configSearch.AppID, currentDeploymentId);
-            deploymentDetails.Add(deploymentDetail);
-
+                if (!CheckValidData(configSearch.HubID, configSearch.AppID)) return UploadStatus.NotValidData;
+                var deploymentDetail = AddDeploymentDetailService(configSearch.HubID, configSearch.AppID, currentDeploymentId);
+                deploymentDetails.Add(deploymentDetail);
+            }
             if (_unitOfWork.DeploymentDetailsRepository.AddDeploymentDetails(deploymentDetails) is null)
                 return UploadStatus.DatabaseFailure;
 
             deploymentFile = AddDeploymentFiles(configSearchResult);
-            if (_unitOfWork.DeploymentFilesRepository.AddDeploymentFile(deploymentFile) is null)
+            if (_unitOfWork.DeploymentFilesRepository.AddDeploymentFiles(deploymentFile) is null)
                 return UploadStatus.DatabaseFailure;
             return UploadStatus.Success;
         }
-
-
     }
 }

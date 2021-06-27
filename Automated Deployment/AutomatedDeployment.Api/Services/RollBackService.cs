@@ -29,11 +29,24 @@ namespace AutomatedDeployment.Api.Services
             if (lastDeployment is null) return false;
             RollBackViewModel firstitem = rollBackViewModels[0];
             DateTime currentDate = DateTime.Now;
-            int addedID = CreatAndSaveDeployment(firstitem.deployedBy, firstitem.requestedBy, firstitem.approvedBy, currentDate);
+            int addedID = 0;
+            if (lastDeployment.DeploymentType == DeploymentType.Configuration || lastDeployment.DeploymentType == DeploymentType.RollbackConfiguration) 
+                addedID = CreatAndSaveDeployment(DeploymentType.RollbackConfiguration, firstitem.deployedBy, firstitem.requestedBy, firstitem.approvedBy, currentDate);
+            else
+                addedID = CreatAndSaveDeployment(DeploymentType.Rollback, firstitem.deployedBy, firstitem.requestedBy, firstitem.approvedBy, currentDate);
             if (addedID == 0) return false;
+            string AssemblyPath = "";
             foreach (var rollback in rollBackViewModels)
             {
-                string AssemblyPath = _pathRepository.GetAssemblyPath(rollback.hubId, rollback.appID);
+                
+                if (lastDeployment.DeploymentType == DeploymentType.Configuration || lastDeployment.DeploymentType == DeploymentType.RollbackConfiguration)
+                {
+                    AssemblyPath = _pathRepository.GetConfigFilePath(rollback.hubId, rollback.appID);
+                    int pos = AssemblyPath.LastIndexOf("\\");
+                    AssemblyPath = AssemblyPath.Substring(0, pos);
+                }
+                else
+                    AssemblyPath = _pathRepository.GetAssemblyPath(rollback.hubId, rollback.appID);
                 string BackUpPath = _pathRepository.GetBackupPath(rollback.hubId, rollback.appID);
                 if (AssemblyPath is null || BackUpPath is null) continue; 
               
@@ -45,12 +58,12 @@ namespace AutomatedDeployment.Api.Services
 
         }
 
-        public int CreatAndSaveDeployment (string deployedBy, string requestedBy, string approvedBy, DateTime currentDate)
+        public int CreatAndSaveDeployment (DeploymentType deploymentType, string deployedBy, string requestedBy, string approvedBy, DateTime currentDate)
         {
             try
             {
                 Deployment lastDeployment = _unitOfWork.DeploymentRepository.GetLastDeployment();
-                Deployment deployment = Factory.createdeployment(currentDate, DeploymentType.Rollback,
+                Deployment deployment = Factory.createdeployment(currentDate, deploymentType,
                                 lastDeployment.DeploymentID, deployedBy, approvedBy, requestedBy);
                 Deployment newdep = _unitOfWork.DeploymentRepository.AddDeployment(deployment);
                 return newdep.DeploymentID;

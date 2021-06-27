@@ -28,9 +28,9 @@ namespace AutomatedDeployment.Api.Services
             }
            
         }
-        public void MoveTOBackUpFolder(string fileName,string backupPath)
+        public DateTime MoveTOBackUpFolder(DateTime currentDate, string fileName,string backupPath)
         {
-            DateTime currentDate = DateTime.Now;
+            //DateTime currentDate = DateTime.Now;
 
             if (File.Exists(fileName))
             {
@@ -40,8 +40,9 @@ namespace AutomatedDeployment.Api.Services
                 File.Copy($"{fileName}".Trim(), $"{NewBackupPath}{@"\"}{fileName.Substring(lastSlashIndex)}".Trim());
 
             }
+            return currentDate;
 
-           
+
         }
 
     }

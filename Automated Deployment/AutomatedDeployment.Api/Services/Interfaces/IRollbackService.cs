@@ -11,7 +11,7 @@ namespace AutomatedDeployment.Api.Services
         //public void SingleRollback(int hubid, int applicationid);
         //public void HubRollback(int hubid, string deployedBy, string approvedBy, string requestedBy);
         public bool GenralRollback(List<RollBackViewModel> rollBackViewModels);
-        public int CreatAndSaveDeployment(string deployedBy, string requestedBy, string approvedBy, DateTime currentDate);
+        public int CreatAndSaveDeployment(DeploymentType deploymentType, string deployedBy, string requestedBy, string approvedBy, DateTime currentDate);
         public int CreateAndSaveDeploymentDetails(int hubId, int appId, int newCreatedID);
 
     }

@@ -1,11 +1,12 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace AutomatedDeployment.Api.Services
 {
     public interface IBackupServices
     {
         void MoveTOBackUpFolder(List<string> filesName, string assemblyPath, string backupPath);
-        void MoveTOBackUpFolder(string fileName, string backupPath);
+        DateTime MoveTOBackUpFolder(DateTime currentDate, string fileName, string backupPath);
 
     }
 }

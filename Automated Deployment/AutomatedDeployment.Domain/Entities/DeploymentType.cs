@@ -3,6 +3,8 @@
     public enum DeploymentType
     {
         Deployment,
-        Rollback 
+        Rollback,
+        Configuration,
+        RollbackConfiguration
     }
 }

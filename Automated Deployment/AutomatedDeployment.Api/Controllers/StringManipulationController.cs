@@ -80,12 +80,13 @@ namespace AutomatedDeployment.Core.Services
             List<ConfigSearchResult> SuccessededResults = new List<ConfigSearchResult>();
             if (!ModelState.IsValid) return BadRequest();
 
+            DateTime currentDate = DateTime.Now;
             foreach (ConfigSearchResult SingleConfig  in UpdatedConfig)
             {
+                
                 try
                 {
-                    _backupServices.MoveTOBackUpFolder(SingleConfig.FileName, _pathRepository.GetBackupPath(SingleConfig.HubID, SingleConfig.AppID));
-                    _pathRepository.UploadAndStringManipulation(SingleConfig,"", "", "");
+                    _backupServices.MoveTOBackUpFolder(currentDate, SingleConfig.FileName, _pathRepository.GetBackupPath(SingleConfig.HubID, SingleConfig.AppID));
                     bool HasSuccedded = _stringManipulationServices.UpdateSingleConfigData(SingleConfig);
                     if (!HasSuccedded) continue;
                     SuccessededResults.Add(SingleConfig);
@@ -96,6 +97,7 @@ namespace AutomatedDeployment.Core.Services
                 }
             }
             if(SuccessededResults.Count==0)return StatusCode(StatusCodes.Status500InternalServerError);
+            _pathRepository.UploadAndStringManipulation(currentDate, UpdatedConfig, "", "", "");
             return Ok(SuccessededResults);
         }
         //[HttpGet]

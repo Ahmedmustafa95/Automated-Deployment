@@ -7,6 +7,7 @@ namespace AutomatedDeployment.Core.Interfaces
 {
     public  interface IPathRepository
     {
+        public string GetConfigPath(int hubid, int applicationid);
         string GetAssemblyPath(int applicationid, int hubid);
         string GetBackupPath(int applicationid, int hubid);
 
@@ -14,12 +15,12 @@ namespace AutomatedDeployment.Core.Interfaces
         HubsApplications GetHubApplication(int applicationid, int hubid);
 
 
-        UploadStatus UploadAndStringManipulation(ConfigSearchResult configSearch, string deployedBy
+        UploadStatus UploadAndStringManipulation(DateTime DeplymentDateTime, List<ConfigSearchResult> configSearch, string deployedBy
                                                                          , string approvedBy
                                                                          , string requestedBy);
 
 
-        DeploymentFiles AddDeploymentFiles(ConfigSearchResult configSearches);
+        List<DeploymentFiles> AddDeploymentFiles(List<ConfigSearchResult> configSearches);
         DeploymentDetails AddDeploymentDetailService(int hubId, int appId, int deploymentId);
         Deployment AddDeploymentService(string approvedBy, string requestedBy, string developedBy,
                                 DateTime currentDate);
