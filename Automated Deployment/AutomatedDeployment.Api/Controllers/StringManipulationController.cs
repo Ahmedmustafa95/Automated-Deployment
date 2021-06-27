@@ -75,7 +75,7 @@ namespace AutomatedDeployment.Core.Services
 
 
         [HttpPut]
-        public IActionResult UpdateAllAppsConfigFiles([FromBody] List<ConfigSearchResult> UpdatedConfig)
+        public IActionResult UpdateAllAppsConfigFiles([FromBody] List<ConfigSearchResult> UpdatedConfig, [System.Web.Http.FromUri] string ApprovedBy, [System.Web.Http.FromUri] string DeployedBy, [System.Web.Http.FromUri] string RequestedBy)
         {
             List<ConfigSearchResult> SuccessededResults = new List<ConfigSearchResult>();
             if (!ModelState.IsValid) return BadRequest();
@@ -97,7 +97,7 @@ namespace AutomatedDeployment.Core.Services
                 }
             }
             if(SuccessededResults.Count==0)return StatusCode(StatusCodes.Status500InternalServerError);
-            _pathRepository.UploadAndStringManipulation(currentDate, UpdatedConfig, "", "", "");
+            _pathRepository.UploadAndStringManipulation(currentDate, UpdatedConfig, DeployedBy, ApprovedBy, RequestedBy);
             return Ok(SuccessededResults);
         }
         //[HttpGet]
