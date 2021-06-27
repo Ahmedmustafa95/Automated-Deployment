@@ -16,7 +16,8 @@ namespace AutomatedDeployment.Core.Services
         private readonly IHubsApplicationsRepository hubsApplicationsRepository;
         public StringManipulationRepository(EfgconfigurationdbContext _efgconfigurationdbContext,
                                              IPathRepository _pathRepository,
-                                             IHubsApplicationsRepository _hubsApplicationsRepository)
+                                             IHubsApplicationsRepository _hubsApplicationsRepository
+            )
         {
             efgconfigurationdbContext = _efgconfigurationdbContext;
             PathRepository = _pathRepository;
@@ -29,13 +30,6 @@ namespace AutomatedDeployment.Core.Services
         //  get all applications in all hubs containing that key
         public List<ConfigSearchResult> FindConfigSetting(string ConfigName)
         {
-            //UpdateSingleConfigData(this.SearchForConfig(this.ConvertConfigFileTostring(15,9), "NewLastName"), new ConfigSearchResult()
-            //{
-            //    AppID = 9,
-            //    HubID = 15,
-            //    ConfigurationResult = "<add key='NewLastName' value='Hassan2222' />",
-            //    FileName= "C:\\Users\\ahmed\\Desktop\\Project1\\Web1.config"
-            //});
             try
             {
                 List<ConfigSearchResult> configSearches = new List<ConfigSearchResult>();

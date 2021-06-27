@@ -183,24 +183,6 @@ namespace AutomatedDeployment.Api.Services
         {
             List<IFormFile>files = fileViewModel.files;
             List<HubsApplications> hubsApplications = fileViewModel.HubsApplications;
-            //var hubsApplications = new List<HubsApplications>
-            //{
-            //    new HubsApplications
-            //    {
-            //        HubID=17,
-            //        AppID=8
-            //    },
-            //     new HubsApplications
-            //    {
-            //        HubID=17,
-            //        AppID=9
-            //    },
-            //      new HubsApplications
-            //    {
-            //        HubID=17,
-            //        AppID=10
-            //    }
-            //};
             var deploymentDetails = new List<DeploymentDetails>();
             var deploymentFiles = new List<DeploymentFiles>();
             var currentDate = DateTime.Now;
@@ -217,7 +199,7 @@ namespace AutomatedDeployment.Api.Services
                 if (!CheckValidData(hubsApplication.HubID, hubsApplication.AppID)) return UploadStatus.NotValidData;
                 string assemblyPath = $"{_pathRepository.GetAssemblyPath(hubsApplication.HubID,hubsApplication.AppID)}{@"\"}".Trim();
                 if (assemblyPath is null) { return UploadStatus.AssembyNotExist; }
-
+                
                 if (_unitOfWork.DeploymentRepository.GetDeploymentCounts(hubsApplication.HubID, hubsApplication.AppID) > 0)
                 {
                     filesState= GenerateAndMoveToBackupFolder(files, assemblyPath, currentDate);
@@ -237,15 +219,12 @@ namespace AutomatedDeployment.Api.Services
                 else
                 {
                     Upload(files, assemblyPath);
-
                     var deploymentDetail = AddDeploymentDetailService(hubsApplication.HubID, hubsApplication.AppID, currentDeploymentId);
                     deploymentDetails.Add(deploymentDetail);
 
                 }
 
             }
-
-          
 
             if (_unitOfWork.DeploymentDetailsRepository.AddDeploymentDetails(deploymentDetails) is null)
                 return UploadStatus.DatabaseFailure;

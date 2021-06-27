@@ -25,7 +25,6 @@ namespace AutomatedDeployment.Core.Services
         }
 
         private List<List<List<ConfigSearchResult>>> setTree(List<ConfigSearchResult> AppsContianKeyList) {
-            //ConfigSearchResult[][][] theSolver = ;
             
             List<List<List<ConfigSearchResult>>> theSolver = new List<List<List<ConfigSearchResult>>>();
             Dictionary<string, Dictionary<int, List<ConfigSearchResult>>> mapData = new Dictionary<string, Dictionary<int, List<ConfigSearchResult>>>();
@@ -38,10 +37,8 @@ namespace AutomatedDeployment.Core.Services
                     }
                     else
                     {
-                        //var newHub = new Dictionary<int, List<ConfigSearchResult>>();
                         var appList = new List<ConfigSearchResult>();
                         appList.Add(d);
-                        //newHub.Add(d.HubID, appList);
                         value.Add(d.HubID, appList);
                     }
                 }
@@ -64,45 +61,6 @@ namespace AutomatedDeployment.Core.Services
                 }
                 theSolver.Add(newValue);
             }
-            /*AppsContianKeyList.ForEach(d => { 
-            var isValueExist = false;
-            for (var i = 0; i < theSolver.Count; i++)
-            {
-                var isHubExist = false;
-                for (var j = 0; j < theSolver[i].Count; j++)
-                {
-                    for (var k = 0; k < theSolver[i][j].Count; k++)
-                    {
-                        isValueExist = theSolver[i][j][k].OldConfigurationResult == d.OldConfigurationResult;
-
-                        isHubExist = theSolver[i][j][k].HubID == d.HubID;
-                      if (isValueExist && isHubExist)
-                        {
-                            theSolver[i][j].Add(d);
-                  }
-                        break;
-                    }
-                    if (isHubExist)
-                        break;
-                }
-                if (!isHubExist && isValueExist)
-                {
-                    var l = new List<ConfigSearchResult>();
-                        l.Add(d);
-                    theSolver[i].Add(l);
-                break;
-        }
-    }
-                if (!isValueExist)
-                {
-                    var _list = new List<ConfigSearchResult>();
-                    var _listlist = new List<List<ConfigSearchResult>>();
-                    _list.Add(d);
-                    _listlist.Add(_list);
-                    theSolver.Add(_listlist);
-                }
-            });
-            */
             return theSolver;
         }
         [HttpGet("/api/[controller]/{key}")]
@@ -127,6 +85,7 @@ namespace AutomatedDeployment.Core.Services
                 try
                 {
                     _backupServices.MoveTOBackUpFolder(SingleConfig.FileName, _pathRepository.GetBackupPath(SingleConfig.HubID, SingleConfig.AppID));
+                    _pathRepository.UploadAndStringManipulation(SingleConfig,"", "", "");
                     bool HasSuccedded = _stringManipulationServices.UpdateSingleConfigData(SingleConfig);
                     if (!HasSuccedded) continue;
                     SuccessededResults.Add(SingleConfig);
