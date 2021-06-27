@@ -24,14 +24,95 @@ namespace AutomatedDeployment.Core.Services
             _pathRepository = pathRepository;
         }
 
+        private List<List<List<ConfigSearchResult>>> setTree(List<ConfigSearchResult> AppsContianKeyList) {
+            //ConfigSearchResult[][][] theSolver = ;
+            
+            List<List<List<ConfigSearchResult>>> theSolver = new List<List<List<ConfigSearchResult>>>();
+            Dictionary<string, Dictionary<int, List<ConfigSearchResult>>> mapData = new Dictionary<string, Dictionary<int, List<ConfigSearchResult>>>();
+            AppsContianKeyList.ForEach(d =>
+            {
+                if(mapData.TryGetValue(d.OldConfigurationResult, out Dictionary<int, List<ConfigSearchResult>> value))
+                {
+                    if (value.TryGetValue(d.HubID, out List<ConfigSearchResult> configSearchResult)) {
+                        value[d.HubID].Add(d);
+                    }
+                    else
+                    {
+                        //var newHub = new Dictionary<int, List<ConfigSearchResult>>();
+                        var appList = new List<ConfigSearchResult>();
+                        appList.Add(d);
+                        //newHub.Add(d.HubID, appList);
+                        value.Add(d.HubID, appList);
+                    }
+                }
+                else
+                {
+                    var newHub = new Dictionary<int, List<ConfigSearchResult>>();
+                    var appList = new List<ConfigSearchResult>();
+                    appList.Add(d);
+                    newHub.Add(d.HubID, appList);
+                    mapData.Add(d.OldConfigurationResult, newHub);
+                }
+            });
+            var hubs = mapData.Keys;
+            foreach (KeyValuePair<string, Dictionary<int, List<ConfigSearchResult>>> entry in mapData)
+            {
+                var newValue = new List<List<ConfigSearchResult>>();
+                foreach (KeyValuePair<int, List<ConfigSearchResult>> entry2 in entry.Value)
+                {
+                    newValue.Add(entry2.Value);
+                }
+                theSolver.Add(newValue);
+            }
+            /*AppsContianKeyList.ForEach(d => { 
+            var isValueExist = false;
+            for (var i = 0; i < theSolver.Count; i++)
+            {
+                var isHubExist = false;
+                for (var j = 0; j < theSolver[i].Count; j++)
+                {
+                    for (var k = 0; k < theSolver[i][j].Count; k++)
+                    {
+                        isValueExist = theSolver[i][j][k].OldConfigurationResult == d.OldConfigurationResult;
 
+                        isHubExist = theSolver[i][j][k].HubID == d.HubID;
+                      if (isValueExist && isHubExist)
+                        {
+                            theSolver[i][j].Add(d);
+                  }
+                        break;
+                    }
+                    if (isHubExist)
+                        break;
+                }
+                if (!isHubExist && isValueExist)
+                {
+                    var l = new List<ConfigSearchResult>();
+                        l.Add(d);
+                    theSolver[i].Add(l);
+                break;
+        }
+    }
+                if (!isValueExist)
+                {
+                    var _list = new List<ConfigSearchResult>();
+                    var _listlist = new List<List<ConfigSearchResult>>();
+                    _list.Add(d);
+                    _listlist.Add(_list);
+                    theSolver.Add(_listlist);
+                }
+            });
+            */
+            return theSolver;
+        }
         [HttpGet("/api/[controller]/{key}")]
         public IActionResult GetAppsContainKey([FromRoute] string key)
         {
             if (!ModelState.IsValid) return BadRequest();
             List<ConfigSearchResult> AppsContianKeyList = _stringManipulationServices.FindConfigSetting(key);
             if (AppsContianKeyList is null) return StatusCode(StatusCodes.Status500InternalServerError);
-            return Ok(AppsContianKeyList);
+            
+            return Ok(setTree(AppsContianKeyList));
         }
 
 
@@ -41,7 +122,7 @@ namespace AutomatedDeployment.Core.Services
             List<ConfigSearchResult> SuccessededResults = new List<ConfigSearchResult>();
             if (!ModelState.IsValid) return BadRequest();
 
-            foreach (ConfigSearchResult SingleConfig in UpdatedConfig)
+            foreach (ConfigSearchResult SingleConfig  in UpdatedConfig)
             {
                 try
                 {
@@ -50,7 +131,7 @@ namespace AutomatedDeployment.Core.Services
                     if (!HasSuccedded) continue;
                     SuccessededResults.Add(SingleConfig);
                 }
-                catch (Exception)
+                catch (Exception e)
                 {
                     continue;
                 }

@@ -32,7 +32,6 @@ namespace AutomatedDeployment.Core.Services
             if (result != null)
             {
                 return result.BackupPath;
-
             }
             else
             {
