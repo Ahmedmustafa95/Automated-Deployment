@@ -1,5 +1,6 @@
 using AutomatedDeployment.Infrastructure.Context;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
@@ -18,7 +19,7 @@ namespace AutomatedDeployment.Api
         {
             using var scope = host.Services.CreateScope();
             var db = scope.ServiceProvider.GetRequiredService<EfgconfigurationdbContext>();
-          //  db.Database.Migrate();
+            db.Database.Migrate();
         }
 
         public static IHostBuilder CreateHostBuilder(string[] args) =>
