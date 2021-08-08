@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AutomatedDeployment.Infrastructure.Migrations
 {
     [DbContext(typeof(EfgconfigurationdbContext))]
-    [Migration("20210623132154_addAllowNullToOriginalDeployment")]
-    partial class addAllowNullToOriginalDeployment
+    [Migration("20210803114821_Initial")]
+    partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {

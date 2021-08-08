@@ -8,6 +8,7 @@ namespace AutomatedDeployment.Domain.Entities
         public Hub()
         {
             HubsApplications = new HashSet<HubsApplications>();
+            RequestDeploymentHubsApplications = new HashSet<RequestDeploymentHubsApplications>();
         }
 
         [Key]
@@ -17,5 +18,6 @@ namespace AutomatedDeployment.Domain.Entities
         public string HubName { get; set; }
 
         public virtual ICollection<HubsApplications> HubsApplications { get; set; }
+        public virtual ICollection<RequestDeploymentHubsApplications> RequestDeploymentHubsApplications { get; set; }
     }
 }

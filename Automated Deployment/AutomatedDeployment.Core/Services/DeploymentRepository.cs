@@ -111,7 +111,8 @@ namespace AutomatedDeployment.Core.Services
                                                           .LastOrDefault();
 
                 return deployment;
-            }catch(Exception e)
+            }
+            catch(Exception e)
             {
                 Console.WriteLine(e.Message);
                 return null;

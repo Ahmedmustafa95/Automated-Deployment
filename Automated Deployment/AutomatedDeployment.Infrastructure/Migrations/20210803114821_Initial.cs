@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace AutomatedDeployment.Infrastructure.Migrations
 {
-    public partial class Intial : Migration
+    public partial class Initial : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -21,6 +21,24 @@ namespace AutomatedDeployment.Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Deployments",
+                columns: table => new
+                {
+                    DeploymentID = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    DeploymentDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    DeploymentType = table.Column<int>(type: "int", nullable: false),
+                    OriginalDeployment = table.Column<int>(type: "int", nullable: true),
+                    DeployedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    RequestedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ApprovedBy = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Deployments", x => x.DeploymentID);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Hubs",
                 columns: table => new
                 {
@@ -31,38 +49,6 @@ namespace AutomatedDeployment.Infrastructure.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Hubs", x => x.HubID);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Deployments",
-                columns: table => new
-                {
-                    DeploymentID = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    DeploymentDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    DeploymentType = table.Column<int>(type: "int", nullable: false),
-                    OriginalDeployment = table.Column<int>(type: "int", nullable: false),
-                    DeployedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    RequestedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    ApprovedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    ApplicationAppID = table.Column<int>(type: "int", nullable: true),
-                    HubID = table.Column<int>(type: "int", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Deployments", x => x.DeploymentID);
-                    table.ForeignKey(
-                        name: "FK_Deployments_Applications_ApplicationAppID",
-                        column: x => x.ApplicationAppID,
-                        principalTable: "Applications",
-                        principalColumn: "AppID",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_Deployments_Hubs_HubID",
-                        column: x => x.HubID,
-                        principalTable: "Hubs",
-                        principalColumn: "HubID",
-                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -111,6 +97,12 @@ namespace AutomatedDeployment.Infrastructure.Migrations
                         principalTable: "Deployments",
                         principalColumn: "DeploymentID",
                         onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_DeploymentDetails_HubsApplications_HubId_AppId",
+                        columns: x => new { x.HubId, x.AppId },
+                        principalTable: "HubsApplications",
+                        principalColumns: new[] { "HubID", "AppID" },
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -140,19 +132,14 @@ namespace AutomatedDeployment.Infrastructure.Migrations
                 column: "DeploymentId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_DeploymentDetails_HubId_AppId",
+                table: "DeploymentDetails",
+                columns: new[] { "HubId", "AppId" });
+
+            migrationBuilder.CreateIndex(
                 name: "IX_DeploymentFiles_DeploymentDetailsId",
                 table: "DeploymentFiles",
                 column: "DeploymentDetailsId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Deployments_ApplicationAppID",
-                table: "Deployments",
-                column: "ApplicationAppID");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Deployments_HubID",
-                table: "Deployments",
-                column: "HubID");
 
             migrationBuilder.CreateIndex(
                 name: "IX_HubsApplications_AppID",
@@ -166,13 +153,13 @@ namespace AutomatedDeployment.Infrastructure.Migrations
                 name: "DeploymentFiles");
 
             migrationBuilder.DropTable(
-                name: "HubsApplications");
-
-            migrationBuilder.DropTable(
                 name: "DeploymentDetails");
 
             migrationBuilder.DropTable(
                 name: "Deployments");
+
+            migrationBuilder.DropTable(
+                name: "HubsApplications");
 
             migrationBuilder.DropTable(
                 name: "Applications");

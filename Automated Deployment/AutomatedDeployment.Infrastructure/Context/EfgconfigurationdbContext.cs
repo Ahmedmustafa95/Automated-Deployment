@@ -1,4 +1,5 @@
 ﻿using AutomatedDeployment.Domain.Entities;
+using AutomatedDeployment.Infrastructure.Configuration;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System;
@@ -22,6 +23,8 @@ namespace AutomatedDeployment.Infrastructure.Context
         public virtual DbSet<Deployment> Deployments { get; set; }
         public virtual DbSet<DeploymentFiles> DeploymentFiles { get; set; }
         public virtual DbSet<DeploymentDetails> DeploymentDetails { get; set; }
+        public virtual DbSet<RequestDeployment> RequestDeployments { get; set; }
+        public virtual DbSet<RequestDeploymentHubsApplications> RequestDeploymentHubsApplications { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -38,28 +41,7 @@ namespace AutomatedDeployment.Infrastructure.Context
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.HasAnnotation("Relational:Collation", "SQL_Latin1_General_CP1_CI_AS");
-
-            //modelBuilder.Entity<Application>(entity =>
-            //{
-            //    entity.Property(e => e.AppID).ValueGeneratedNever();
-            //});
-
-            //modelBuilder.Entity<Configuration>(entity =>
-            //{
-            //    entity.HasKey(e => new { e.HubID, e.AppID });
-
-            //    entity.HasOne(d => d.App)
-            //        .WithMany(p => p.Configurations)
-            //        .HasForeignKey(d => d.AppID)
-            //        .OnDelete(DeleteBehavior.ClientSetNull)
-            //        .HasConstraintName("FK_Configurations_Applications");
-
-            //    entity.HasOne(d => d.Hub)
-            //        .WithMany(p => p.Configurations)
-            //        .HasForeignKey(d => d.HubID)
-            //        .OnDelete(DeleteBehavior.ClientSetNull)
-            //        .HasConstraintName("FK_Configurations_Hubs");
-            //});
+            modelBuilder.ApplyConfiguration(new RequestDeploymentHubsApplicationsConfiguration());
 
             modelBuilder.Entity<HubsApplications>(entity =>
            {

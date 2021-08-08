@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AutomatedDeployment.Infrastructure.Migrations
 {
     [DbContext(typeof(EfgconfigurationdbContext))]
-    [Migration("20210622231148_AddManyToManyBetweenDeploymentAndDeploymentDetailsAndHubApplication")]
-    partial class AddManyToManyBetweenDeploymentAndDeploymentDetailsAndHubApplication
+    [Migration("20210808094501_UpadteRequestDEploymentTable")]
+    partial class UpadteRequestDEploymentTable
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -58,7 +58,7 @@ namespace AutomatedDeployment.Infrastructure.Migrations
                     b.Property<int>("DeploymentType")
                         .HasColumnType("int");
 
-                    b.Property<int>("OriginalDeployment")
+                    b.Property<int?>("OriginalDeployment")
                         .HasColumnType("int");
 
                     b.Property<string>("RequestedBy")
@@ -158,6 +158,47 @@ namespace AutomatedDeployment.Infrastructure.Migrations
                     b.ToTable("HubsApplications");
                 });
 
+            modelBuilder.Entity("AutomatedDeployment.Domain.Entities.RequestDeployment", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<DateTime>("DeploymentTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("RequestBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("RollbackScript")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("RequestDeployments");
+                });
+
+            modelBuilder.Entity("AutomatedDeployment.Domain.Entities.RequestDeploymentHubsApplications", b =>
+                {
+                    b.Property<int>("ApplicationId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("HubId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("RequestDeploymentId")
+                        .HasColumnType("int");
+
+                    b.HasKey("ApplicationId", "HubId", "RequestDeploymentId");
+
+                    b.HasIndex("HubId");
+
+                    b.HasIndex("RequestDeploymentId");
+
+                    b.ToTable("RequestDeploymentHubsApplications");
+                });
+
             modelBuilder.Entity("AutomatedDeployment.Domain.Entities.DeploymentDetails", b =>
                 {
                     b.HasOne("AutomatedDeployment.Domain.Entities.Deployment", "Deployment")
@@ -205,9 +246,35 @@ namespace AutomatedDeployment.Infrastructure.Migrations
                     b.Navigation("Hub");
                 });
 
+            modelBuilder.Entity("AutomatedDeployment.Domain.Entities.RequestDeploymentHubsApplications", b =>
+                {
+                    b.HasOne("AutomatedDeployment.Domain.Entities.Application", "Application")
+                        .WithMany("RequestDeploymentHubsApplications")
+                        .HasForeignKey("ApplicationId")
+                        .IsRequired();
+
+                    b.HasOne("AutomatedDeployment.Domain.Entities.Hub", "Hub")
+                        .WithMany("RequestDeploymentHubsApplications")
+                        .HasForeignKey("HubId")
+                        .IsRequired();
+
+                    b.HasOne("AutomatedDeployment.Domain.Entities.RequestDeployment", "RequestDeployment")
+                        .WithMany("RequestDeploymentHubsApplications")
+                        .HasForeignKey("RequestDeploymentId")
+                        .IsRequired();
+
+                    b.Navigation("Application");
+
+                    b.Navigation("Hub");
+
+                    b.Navigation("RequestDeployment");
+                });
+
             modelBuilder.Entity("AutomatedDeployment.Domain.Entities.Application", b =>
                 {
                     b.Navigation("HubsApplications");
+
+                    b.Navigation("RequestDeploymentHubsApplications");
                 });
 
             modelBuilder.Entity("AutomatedDeployment.Domain.Entities.Deployment", b =>
@@ -223,11 +290,18 @@ namespace AutomatedDeployment.Infrastructure.Migrations
             modelBuilder.Entity("AutomatedDeployment.Domain.Entities.Hub", b =>
                 {
                     b.Navigation("HubsApplications");
+
+                    b.Navigation("RequestDeploymentHubsApplications");
                 });
 
             modelBuilder.Entity("AutomatedDeployment.Domain.Entities.HubsApplications", b =>
                 {
                     b.Navigation("DeploymentDetails");
+                });
+
+            modelBuilder.Entity("AutomatedDeployment.Domain.Entities.RequestDeployment", b =>
+                {
+                    b.Navigation("RequestDeploymentHubsApplications");
                 });
 #pragma warning restore 612, 618
         }
